@@ -24,7 +24,9 @@
 
 - **Zabdiel Silvestre**
 
-- **Ana Carolina Gonzales**
+- **Ana Carolina González**
+
+- **Santiago Armijos**
 
 <br>
 
