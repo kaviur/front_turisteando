@@ -14,15 +14,17 @@
 
 - **Norlys Castañeda**
 
-- **Hans Huarpay**
+- **Hans Urpay**
 
 - **Gina Arias**
 
 - **Karen Urbano**
 
-- **Camilo**
+- **Camilo Villada**
 
-- **Silvestre**
+- **Zabdiel Silvestre**
+
+- **Ana Carolina Gonzales**
 
 <br>
 
