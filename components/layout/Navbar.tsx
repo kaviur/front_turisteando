@@ -1,8 +1,21 @@
+"use client";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export const Navbar = () => {
-  const isMobile = window.innerWidth <= 768;
+  const [isMobile, setIsMobile] = useState(false);
+
+    // Detecta el ancho de la pantalla
+    useEffect(() => {
+      const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+      };
+  
+      handleResize();
+      window.addEventListener("resize", handleResize);
+  
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
   return (
     <div className={`z-10 bg-opacity-0 backdrop-blur-md ${isMobile ? "fixed bottom-0 left-0 w-full" : "fixed top-0 left-0 w-full bg-base-100 "}`}>
