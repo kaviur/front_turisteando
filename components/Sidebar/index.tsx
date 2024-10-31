@@ -43,7 +43,7 @@ const menuItems = [
       </svg>
     ),
     label: "Dashboard",
-    route: "#",
+    route: "/admin",
   },
   {
     icon: (
@@ -62,8 +62,11 @@ const menuItems = [
       </svg>
     ),
     label: "Productos",
-    route: "/proucts",
-    children: [{ label: "eCommerce", route: "/" }],
+    route: "#",
+    children: [
+      { label: "Tabla Productos", route: "#" },
+      { label: "Agregar Producto", route: "/admin/addproduct" },
+    ],
   },
   {
     icon: (
@@ -86,7 +89,7 @@ const menuItems = [
       </svg>
     ),
     label: "Profile",
-    route: "/profile",
+    route: "#",
   },
 ];
 
