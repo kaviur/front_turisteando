@@ -7,48 +7,55 @@ const productData: Product[] = [
     name: "Tour guiado a Machu Picchu",
     category: "Tour",
     price: 329,
+    city: "Cusco, Perú",
   },
   {
     image: "/images/logo.png",
     name: "Tour por el Valle Sagrado",
     category: "Tour",
     price: 19,
+    city: "Cusco, Perú",
   },
   {
     image: "/images/logo.png",
     name: "Tour Reserva Nacional de Paracas",
     category: "Tour",
     price: 45,
+    city: "Cusco, Perú",
   },
   {
     image: "/images/logo.png",
     name: "Trekking en la Montaña de 7 Colores",
     category: "Actividad",
     price: 29,
+    city: "Cusco, Perú",
   },
 ];
 
 const ProductsTable = () => {
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-      <div className="px-4 py-6 md:px-6 xl:px-7.5">
-        <h4 className="text-xl font-semibold text-secondary dark:text-white">
+      <div className="px-4 py-6 md:px-6 xl:px-7">
+        <h4 className="text-2xl font-semibold text-secondary dark:text-white">
           Productos
         </h4>
       </div>
 
       <div className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5">
-        <div className="col-span-3 flex items-center">
-          <p className="font-medium">Producto</p>
+        <div className="col-span-4 flex items-center">
+          <p className="font-medium py-2">Producto</p>
         </div>
-        <div className="col-span-2 hidden items-center sm:flex">
-          <p className="font-medium">Categoría</p>
+        <div className="col-span-1 hidden items-center sm:flex ml-6">
+          <p className="font-medium py-2">Categoría</p>
         </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium">Precio</p>
+        <div className="col-span-1 flex items-center ml-6">
+          <p className="font-medium py-2">Precio</p>
         </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium"></p>
+        <div className="col-span-1 flex items-center ml-6">
+          <p className="font-medium">Ciudad</p>
+        </div>
+        <div className="col-span-1 flex items-center ml-6 justify-end">
+          <p className="font-medium py-2"></p>
         </div>
       </div>
 
@@ -57,7 +64,7 @@ const ProductsTable = () => {
           className="grid grid-cols-6 border-t border-stroke px-4 py-4.5 dark:border-strokedark sm:grid-cols-8 md:px-6 2xl:px-7.5"
           key={key}
         >
-          <div className="col-span-3 flex items-center">
+          <div className="col-span-4 flex items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-14 w-20 rounded-md flex items-center">
                 <Image
@@ -67,23 +74,26 @@ const ProductsTable = () => {
                   alt="Product"
                 />
               </div>
-              <p className="text-sm text-black dark:text-white">
+              <p className="text-sm text-black dark:text-white italic">
                 {product.name}
               </p>
             </div>
           </div>
-          <div className="col-span-2 hidden items-center sm:flex">
-            <span className="text-success dark:text-white inline-flex items-center rounded-full bg-success bg-opacity-10 px-2 py-1 text-xs font-medium">
+          <div className="col-span-1 hidden items-center sm:flex">
+            <span className="text-success dark:text-white inline-flex items-center rounded-full bg-success bg-opacity-10 px-2 py-1 text-xs font-medium ml-6">
               {product.category}
             </span>
           </div>
-          <div className="col-span-1 flex items-center">
+          <div className="col-span-1 flex items-center ml-6">
             <p className="text-sm text-black dark:text-white">
-              ${product.price}
+              $ {product.price}
             </p>
           </div>
-          <div className="col-span-1 flex items-center">
-            <p className="text-sm text-meta-3">Ver Detalle</p>
+          <div className="col-span-1 flex items-center ml-6">
+            <p className="text-sm text-black dark:text-white">{product.city}</p>
+          </div>
+          <div className="col-span-1 flex items-center ml-6 justify-end">
+            <p className="text-xs text-gray-500">Ver Detalle</p>
           </div>
         </div>
       ))}
