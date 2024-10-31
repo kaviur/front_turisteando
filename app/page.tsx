@@ -43,7 +43,7 @@ export default function Home() {
       {isMobile && showOnboarding ? (
         <Onboarding onSkip={handleSkipOnboarding} />
       ) : (
-        <div className={isMobile ?`mb-16` : ``} >
+        <div className={isMobile ?`mb-16` : `my-20`} >
           <Navbar />
           <Main />
           <Footer />
