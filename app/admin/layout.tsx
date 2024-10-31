@@ -1,8 +1,8 @@
 "use client";
-import Header from "@/components/HeaderDashboard";
+import Header from "@/components/HeaderAdmin";
 import React, { useState } from "react";
 
-export default function DashboardLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
