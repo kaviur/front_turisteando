@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import { DM_Sans } from 'next/font/google'
+ 
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+})
 export const metadata: Metadata = {
   title: "Turisteando",
   description:
@@ -10,7 +15,7 @@ export const metadata: Metadata = {
 export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
   return (
-    <html >
+    <html className={dmSans.className}>
       <body>{children}</body>
     </html>
   );
