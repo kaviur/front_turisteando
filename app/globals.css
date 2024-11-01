@@ -1,3 +1,5 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Importar estilos de react-datepicker en el archivo global (por ejemplo, styles/globals.css) */
+@import "react-datepicker/dist/react-datepicker.css";
