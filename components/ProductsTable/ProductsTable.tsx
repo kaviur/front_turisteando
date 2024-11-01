@@ -66,7 +66,7 @@ const productData: Product[] = [
     city: "Ica, Perú",
   },
   {
-    image: "/MERCADO_SAN_PEDRO.JPG",
+    image: "/MERCADO_SAN_PEDRO.jpg",
     name: "Visita al Mercado de San Pedro en Cusco",
     category: "Actividad",
     price: 10,
