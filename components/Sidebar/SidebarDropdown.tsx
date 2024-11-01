@@ -20,8 +20,8 @@ const SidebarDropdown: React.FC<SidebarDropdownProps> = ({ item }) => {
         <li key={index}>
           <Link
             href={dropdownItem.route}
-            className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-              pathname === dropdownItem.route ? "text-white" : ""
+            className={`group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-secondary ${
+              pathname === dropdownItem.route ? "text-accent" : ""
             }`}
           >
             {dropdownItem.label}
