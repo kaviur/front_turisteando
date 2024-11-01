@@ -19,7 +19,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   imageSrc,
   location,
   description,
-  peopleOptions,
   scheduleOptions,
 }) => {
   const router = useRouter();
@@ -72,7 +71,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <DatePicker
             inline
             selected={selectedDate}
-            onChange={(date: Date) => setSelectedDate(date)}
+            onChange={(date) => setSelectedDate(date)}
             className="w-full p-2 border rounded-md text-gray-600"
             placeholderText="Selecciona una fecha"
           />
