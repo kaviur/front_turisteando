@@ -61,7 +61,7 @@ const menuItems = [
       </svg>
     ),
     label: "Productos",
-    route: "#",
+    route: "/admin/addproduct",
     children: [
       {
         icon: (
