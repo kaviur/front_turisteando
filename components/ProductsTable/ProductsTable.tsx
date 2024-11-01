@@ -36,7 +36,7 @@ const ProductsTable = () => {
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default">
       <div className="px-4 py-6 md:px-6 xl:px-7">
-        <h4 className="text-2xl font-semibold text-secondary ">Productos</h4>
+        <h4 className="text-2xl font-semibold text-secondary">Productos</h4>
       </div>
 
       <div className="grid grid-cols-6 border-t border-stroke px-4 py-4 sm:grid-cols-8 md:px-6 2xl:px-7">
@@ -81,13 +81,13 @@ const ProductsTable = () => {
             </span>
           </div>
           <div className="col-span-1 flex items-center ml-6">
-            <p className="text-sm text-black ">$ {product.price}</p>
+            <p className="text-sm text-black">$ {product.price}</p>
           </div>
           <div className="col-span-1 flex items-center ml-6">
-            <p className="text-sm text-black ">{product.city}</p>
+            <p className="text-sm text-black">{product.city}</p>
           </div>
           <div className="col-span-1 flex items-center ml-6 justify-end">
-            <p className="text-xs text-gray-500">Ver Detalle</p>
+            <p className="text-xs text-accent">Ver Detalle</p>
           </div>
         </div>
       ))}

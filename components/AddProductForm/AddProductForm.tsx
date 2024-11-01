@@ -12,8 +12,10 @@ const AddProductForm = () => {
       <div className="flex flex-col gap-9 w-[720px]">
         {/* <!-- Contact Form --> */}
         <div className="rounded-sm border border-stroke bg-white shadow-default">
-          <div className="border-b border-stroke px-6 py-4 ">
-            <h3 className="font-medium text-primary">Agregar Producto</h3>
+          <div className="border-b border-stroke px-6 py-5 ">
+            <h3 className="font-medium text-primary text-xl">
+              Agregar Producto
+            </h3>
           </div>
           <form action="#">
             <div className="p-6">
@@ -32,7 +34,7 @@ const AddProductForm = () => {
 
               <div className="mb-4">
                 <label className="mb-3 block text-sm font-medium text-black">
-                  Categoría <span className="text-meta-1">*</span>
+                  Categoría
                 </label>
                 <input
                   type="email"
