@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { DM_Sans } from 'next/font/google'
  
-// If loading a variable font, you don't need to specify the font weight
 const dmSans = DM_Sans({
   subsets: ['latin'],
   display: 'swap',

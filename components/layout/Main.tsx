@@ -4,6 +4,7 @@ import Testimonial from "../Testimonial";
 import Link from "next/link";
 
 export const Main = () => {
+
   return (
     <>
     <section className="relative h-screen flex items-center justify-center text-center text-white bg-black bg-opacity-50 ">
@@ -12,9 +13,9 @@ export const Main = () => {
         <Image
           src="/MACHU_PICCHU.png" // Cambia esta ruta a la imagen que deseas usar
           alt="Background Image"
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
+          fill={true}
+          priority={true}	
+          style={{objectFit: "cover", objectPosition: "center"}}
           className="brightness-75"
         />
       </div>
