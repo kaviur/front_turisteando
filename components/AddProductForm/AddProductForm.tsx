@@ -36,11 +36,13 @@ const AddProductForm = () => {
                 <label className="mb-3 block text-sm font-medium text-black">
                   Categoría
                 </label>
-                <input
-                  type="email"
-                  placeholder="Selecciona la categoría"
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                />
+                <select className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter">
+                  <option value="" disabled selected>
+                    Selecciona la categoría
+                  </option>
+                  <option value="tour">Tour</option>
+                  <option value="actividad">Actividad</option>
+                </select>
               </div>
 
               <div className="mb-6">
