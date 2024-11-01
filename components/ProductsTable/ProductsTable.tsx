@@ -3,28 +3,28 @@ import { Product } from "@/types/product";
 
 const productData: Product[] = [
   {
-    image: "/images/logo.png",
+    image: "/CAÑON_DEL_COLCA.png",
     name: "Tour guiado a Machu Picchu",
     category: "Tour",
     price: 329,
     city: "Cusco, Perú",
   },
   {
-    image: "/images/logo.png",
+    image: "/CAÑON_DEL_COLCA.png",
     name: "Tour por el Valle Sagrado",
     category: "Tour",
     price: 19,
     city: "Cusco, Perú",
   },
   {
-    image: "/images/logo.png",
+    image: "/CAÑON_DEL_COLCA.png",
     name: "Tour Reserva Nacional de Paracas",
     category: "Tour",
     price: 45,
     city: "Cusco, Perú",
   },
   {
-    image: "/images/logo.png",
+    image: "/CAÑON_DEL_COLCA.png",
     name: "Trekking en la Montaña de 7 Colores",
     category: "Actividad",
     price: 29,
