@@ -1,13 +1,11 @@
-import { Footer } from "@/components/layout/Footer";
-import { Main } from "@/components/layout/Main";
-import { Navbar } from "@/components/layout/Navbar";
+import AddProductForm from "@/components/AddProductForm/AddProductForm";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <Main />
-      <Footer />
+      <div className="ml-96 flex justify-center">
+        <AddProductForm />
+      </div>
     </>
   );
 }
