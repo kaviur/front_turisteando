@@ -3,3 +3,86 @@
 @tailwind utilities;
 /* Importar estilos de react-datepicker en el archivo global (por ejemplo, styles/globals.css) */
 @import "react-datepicker/dist/react-datepicker.css";
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+
+.react-datepicker__triangle {
+  display: none;
+}
+
+.react-datepicker__day.react-datepicker__day--keyboard-selected {
+  border: none;
+  border-radius: 7px;
+  background-color: pink !important;
+  color:pink !important;
+}
+
+.react-datepicker__day.react-datepicker__day--keyboard-selected:hover {
+  border: none;
+  border-radius: 7px;
+  background-color: pink !important;
+  color: pink !important;
+}
+
+/* .react-datepicker-popper .react-datepicker__navigation {
+  padding-top: ;
+  color: blue !important;
+} */
+
+.react-datepicker {
+  border: none !important;
+  font-family: "Dm sans";
+}
+
+.react-datepicker__header {
+  color: blue !important;
+  border-bottom: none !important;
+  background: none;
+  
+}
+.react-datepicker__day-name{
+  color: gray !important;
+  
+}
+
+.react-datepicker__day.react-datepicker__day--today {
+  border-radius: 7px;
+  border: solid 2px oklch(var(--p)) !important;
+  background-color: white !important;
+  color: oklch(var(--p)) !important;
+  width: 30px;
+  height: 30px;
+}
+
+.react-datepicker__day.react-datepicker__day--selected {
+  border-radius: 7px;
+  background-color: oklch(var(--p))  !important;
+  color: white;
+}
+/* 
+.react-datepicker__day--selected:hover,
+.react-datepicker__day--in-selecting-range:hover,
+.react-datepicker__day--in-range:hover,
+.react-datepicker__month-text--selected:hover,
+.react-datepicker__month-text--in-selecting-range:hover,
+.react-datepicker__month-text--in-range:hover,
+.react-datepicker__quarter-text--selected:hover,
+.react-datepicker__quarter-text--in-selecting-range:hover,
+.react-datepicker__quarter-text--in-range:hover,
+.react-datepicker__year-text--selected:hover,
+.react-datepicker__year-text--in-selecting-range:hover,
+.react-datepicker__year-text--in-range:hover {
+  background-color: oklch(var(--p)) !important;
+  color: white!important;
+} */
+
+.react-datepicker__day:hover, .react-datepicker__day--weekend:hover {
+  background-color: #ffc7e1 !important;
+}
+
+.react-datepicker__navigation--previous {
+  right: 32px !important;
+}

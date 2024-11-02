@@ -58,7 +58,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
       {/* Imagen, calendario, selección de horario y cantidad de personas */}
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex  ">
+        <div className="flex ">
           <Image
             src={imageSrc}
             alt={title}
@@ -67,16 +67,17 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             className="rounded-lg shadow-lg bg-cover"
           />
         </div>
-        <div className="flex flex-col bg-white p-4 rounded-lg shadow-lg space-y-4">
+        <div className="flex flex-col bg-white  rounded-lg shadow-lg space-y-4 min-w-60 w-64">
           <DatePicker
             inline
             selected={selectedDate}
+            
             onChange={(date) => setSelectedDate(date)}
-            className="w-full p-2 border rounded-md text-gray-600"
+            className=" p-2 border rounded-md text-gray-600 shadow-inner"
             placeholderText="Selecciona una fecha"
           />
 
-          <div className="space-y-2">
+          <div className="space-y-2 px-4">
             <label className="text-lg font-semibold">Horario:</label>
             <select
               className="w-full p-2 border rounded-md text-gray-600"
@@ -94,14 +95,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </select>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 px-4 pb-4">
             <label className="text-lg font-semibold">
               Cantidad de personas:
             </label>
             <input
               type="number"
               min={1}
-              className="w-full p-2 border rounded-md text-gray-600"
+              className=" w-full p-2 border rounded-md text-gray-600"
               value={numberOfPeople}
               onChange={(e) => setNumberOfPeople(Number(e.target.value))}
               placeholder="Número de personas"
