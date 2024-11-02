@@ -4,50 +4,49 @@ import Testimonial from "../Testimonial";
 import Link from "next/link";
 
 export const Main = () => {
-
   return (
     <>
-    <section className="relative h-screen flex items-center justify-center text-center text-white bg-black bg-opacity-50 ">
-      {/* Imagen de fondo */}
-      <div className="absolute inset-0 -z-10  ">
-        <Image
-          src="/MACHU_PICCHU.png" // Cambia esta ruta a la imagen que deseas usar
-          alt="Background Image"
-          fill={true}
-          priority={true}	
-          style={{objectFit: "cover", objectPosition: "center"}}
-          className="brightness-75"
-        />
-      </div>
-
-      {/* Contenido central */}
-      <div className="space-y-6 max-w-lg px-4">
-        <h1 className="text-4xl font-bold md:text-5xl">
-          Descubre los mejores lugares para visitar en tus vacaciones
-        </h1>
-        
-        {/* Buscador */}
-        <div className="flex items-center gap-2 bg-white rounded-lg shadow-lg p-2">
-          <input
-            type="text"
-            placeholder="Search"
-            className="flex-grow p-2 text-gray-700 outline-none"
+      <section className="relative h-screen flex items-center justify-center text-center text-white bg-black bg-opacity-50 ">
+        {/* Imagen de fondo */}
+        <div className="absolute inset-0 -z-10  ">
+          <Image
+            src="/MACHU_PICCHU.png" // Cambia esta ruta a la imagen que deseas usar
+            alt="Background Image"
+            fill={true}
+            priority={true}
+            style={{ objectFit: "cover", objectPosition: "center" }}
+            className="brightness-75"
           />
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="h-5 w-5 text-gray-500"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-              clipRule="evenodd"
-            />
-          </svg>
         </div>
-      </div>
-    </section>
+
+        {/* Contenido central */}
+        <div className="space-y-6 max-w-xl px-4">
+          <h1 className="text-lg font-bold md:text-5xl">
+            Descubre los mejores lugares para visitar en tus vacaciones
+          </h1>
+
+          {/* Buscador */}
+          <div className="flex items-center gap-2 bg-white rounded-lg shadow-lg p-2">
+            <input
+              type="text"
+              placeholder="Search"
+              className="flex-grow p-2 text-gray-700 outline-none"
+            />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="h-5 w-5 text-primary"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
 
       <section className="px-8 py-12 bg-white">
         {/* Encabezado */}
