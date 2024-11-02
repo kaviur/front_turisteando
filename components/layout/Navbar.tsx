@@ -88,7 +88,7 @@ export const Navbar = () => {
             </ul>
           </div>
           <div className="navbar-end">
-            <a className="btn btn-primary text-white">Iniciar Sesión</a>
+            <a className="btn btn-primary rounded-full px-10 text-white">Iniciar Sesión</a>
           </div>
         </div>
       )}
