@@ -101,10 +101,12 @@ export const Navbar = () => {
       ) : (
         // Navegación en escritorio
         <div className="navbar bg-base-100 bg-opacity-80 backdrop-blur-lg shadow-lg p-4">
-          <div className="navbar-start">
+          <div className="navbar-start flex-col w-72">
             <Link className="btn btn-ghost text-xl" href="/">
               <Image src="/logo.png" alt="Logo" width={120} height={120} />
             </Link>
+            <p className="text-sm italic w-fit text-gray-600">¡Vive la aventura de tus sueños!</p>
+
           </div>
           <div className="navbar-center">
             <ul className="menu menu-horizontal px-1">
@@ -122,11 +124,14 @@ export const Navbar = () => {
               </li>
             </ul>
           </div>
-          <div className="navbar-end">
-            <a className="btn btn-primary rounded-full px-10 text-white">
+          <div className="navbar-end gap-2">
+            <a className="btn btn-primary rounded-full px-6 text-white">
               Iniciar Sesión
             </a>
-          </div>
+            <a className="btn btn-accent btn-outline rounded-full px-6 text-white hover:text-white">
+              Crear Cuenta
+            </a>
+        </div>
         </div>
       )}
     </div>
