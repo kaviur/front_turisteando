@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
+import { LuClock } from "react-icons/lu";
+import { TiGroup } from "react-icons/ti";
+import { FaLocationDot } from "react-icons/fa6";
+
 
 interface ProductDetailsProps {
   title: string;
@@ -9,6 +13,8 @@ interface ProductDetailsProps {
   imageSrc: string;
   location: string;
   description: string;
+  duration: string;
+  people: string;
   peopleOptions: string[];
   scheduleOptions: string[];
 }
@@ -19,6 +25,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   imageSrc,
   location,
   description,
+  duration,
+  people,
   scheduleOptions,
 }) => {
   const router = useRouter();
@@ -71,14 +79,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <DatePicker
             inline
             selected={selectedDate}
-            
             onChange={(date) => setSelectedDate(date)}
             className=" p-2 border rounded-md text-gray-600 shadow-inner"
             placeholderText="Selecciona una fecha"
           />
 
           <div className="space-y-2 px-4">
-            <label className="text-lg font-semibold">Horario:</label>
+            <label className="text-lg font-semibold">
+              <LuClock />
+            </label>
             <select
               className="w-full p-2 border rounded-md text-gray-600"
               value={selectedSchedule}
@@ -97,7 +106,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
           <div className="space-y-2 px-4 pb-4">
             <label className="text-lg font-semibold">
-              Cantidad de personas:
+              <TiGroup />
             </label>
             <input
               type="number"
@@ -113,7 +122,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
       {/* Ubicación */}
       <div className="text-secondary text-lg font-medium">
-        Ubicación: {location}
+      <FaLocationDot />
+      {location}
       </div>
 
       {/* Descripción */}
@@ -124,13 +134,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
         {/* Información adicional: Personas y horarios */}
         <div className="flex flex-col md:flex-row gap-4 ">
-          <div className="flex flex-col space-y-2">
-            <span className="font-semibold">Personas:</span>
-            <span className="font-semibold">Horarios:</span>
+          <div className="flex gap-2 items-center">
+            <TiGroup color="text-accent" />
+            <span className="text-accent">{people}</span>
+
           </div>
-          <div className="flex flex-col space-y-2">
-            <span className="text-gray-600">2</span>
-            <span className="text-gray-600">13:00 PM - 17:00 PM</span>
+          <div className="flex gap-2 items-center">
+            <LuClock color="gray" />
+            <span className="text-gray-600">{duration}</span>
+
           </div>
         </div>
       </div>
