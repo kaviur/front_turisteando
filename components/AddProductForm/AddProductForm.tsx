@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import PrimaryButton from "../ui/PrimaryButton";
 
 export const metadata: Metadata = {
   title: "Next.js Form Layout | TailAdmin - Next.js Dashboard Template",
@@ -66,10 +67,7 @@ const AddProductForm = () => {
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                 />
               </div>
-
-              <button className="flex w-full justify-center rounded-full bg-primary p-3 font-medium text-white hover:bg-opacity-90 mt-16">
-                Crear Producto
-              </button>
+              <PrimaryButton text="Crear Producto" style="w-full mt-16" />
             </div>
           </form>
         </div>
