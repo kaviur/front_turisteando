@@ -16,8 +16,14 @@ export default function ProductPage() {
         imageSrc="/MACHU_PICCHU.png"
         location="Cusco, Perú"
         description="Visita uno de los lugares más emblemáticos de Sudamérica. Explora la historia y disfruta del paisaje."
+        people="Tour Grupal"
+        duration="Duración: 2hs"
         peopleOptions={["1-2 personas", "3-4 personas", "5-6 personas"]}
-      scheduleOptions={["10:00 AM - 12:00 PM", "2:00 PM - 4:00 PM", "6:00 PM - 8:00 PM"]}
+        scheduleOptions={[
+          "10:00 AM - 12:00 PM",
+          "2:00 PM - 4:00 PM",
+          "6:00 PM - 8:00 PM",
+        ]}
       />
 
       <section className="px-8 py-12 bg-white">
