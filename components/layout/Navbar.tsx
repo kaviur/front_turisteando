@@ -2,6 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import PrimaryButton from "../ui/PrimaryButton";
+import SecondaryButton from "../ui/SecondaryButton";
 
 export const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -123,9 +125,8 @@ export const Navbar = () => {
             </ul>
           </div>
           <div className="navbar-end">
-            <a className="btn btn-primary rounded-full px-10 text-white">
-              Iniciar Sesión
-            </a>
+            <PrimaryButton text="Iniciar Sesión" style="mr-3" />
+            <SecondaryButton text="Crear Cuenta" />
           </div>
         </div>
       )}
