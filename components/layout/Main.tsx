@@ -4,6 +4,7 @@ import FavouriteCard from "../FavouriteCard";
 import Testimonial from "../Testimonial";
 import Link from "next/link";
 import { MdOutlineSearch } from "react-icons/md";
+import { FaArrowRight } from "react-icons/fa";
 import { CgSearch } from "react-icons/cg";
 import { Tabs } from "../Tabs";
 // Import Swiper React components
@@ -14,7 +15,6 @@ import { FreeMode, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import { FaArrowRight } from "react-icons/fa";
 
 export const Main = () => {
   return (
@@ -23,7 +23,7 @@ export const Main = () => {
         {/* Imagen de fondo */}
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/MACHU_PICCHU.png" // Cambia esta ruta a la imagen que deseas usar
+            src="/MACHU_PICCHU.png" 
             alt="Background Image"
             fill={true}
             priority={true}
@@ -81,7 +81,7 @@ export const Main = () => {
       </section>
 
       {/* Desktop section  */}
-      <section className="px-8 py-12 hidden md:block">
+      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
         {/* Encabezado */}
         <div className="flex items-center justify-between mb-4">
           {/* Títulos a la izquierda */}
@@ -113,7 +113,7 @@ export const Main = () => {
             clickable: true,
           }}
           modules={[FreeMode, Pagination]}
-          className="mySwiper "
+          className="mySwiper"
         >
           <SwiperSlide>
             <Card
@@ -132,7 +132,7 @@ export const Main = () => {
               imageSrc="/RESERVA_NACIONAL_PARACAS.png"
               title="Reserva Nacional de Paracas"
               isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
+              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras."
             />
           </SwiperSlide>
           <SwiperSlide>
@@ -213,7 +213,7 @@ export const Main = () => {
         {/* Encabezado */}
         <div className="flex items-center justify-between">
           {/* Títulos a la izquierda */}
-            <h2 className="text-3xl font-bold">Favoritos</h2>
+          <h2 className="text-3xl font-bold">Favoritos</h2>
           {/* Link a la derecha */}
           <Link
             href="/tours"
@@ -224,13 +224,13 @@ export const Main = () => {
           </Link>
         </div>
         <FavouriteCard
-        imageSrc="/CAÑON_DEL_COLCA.jpg"
-        title="Tour en el Cañón del Colca"
+          imageSrc="/CAÑON_DEL_COLCA.jpg"
+          title="Tour en el Cañón del Colca"
         />
       </section>
 
       {/* Desktop Section */}
-      <section className="px-8 py-12 hidden md:block">
+      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
         {/* Encabezado */}
         <div className="flex items-center justify-between">
           {/* Títulos a la izquierda */}
@@ -288,7 +288,7 @@ export const Main = () => {
         Explora mas Opciones
       </button>
 
-      <section className="px-8 py-12 hidden md:block">
+      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
         {/* Encabezado */}
         {/* Títulos a la izquierda */}
         <div>

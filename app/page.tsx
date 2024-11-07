@@ -31,7 +31,7 @@ export default function Home() {
       {isMobile && showOnboarding ? (
         <Onboarding onSkip={handleSkipOnboarding} />
       ) : (
-        <div className={isMobile ?`` : `mt-20`} >
+        <div className={isMobile ?`` : `mt-24 mx-auto`} >
           <Navbar />
           <Main />
           <Footer />
