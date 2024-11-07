@@ -55,7 +55,7 @@ export default function Register() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="absolute top-6 left-6">
+      <div className="absolute top-6 left-6 hidden md:block">
         <img src="/images/logo.svg" alt="Logo" className="w-32" />
       </div>
       <form
