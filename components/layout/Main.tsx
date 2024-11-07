@@ -7,12 +7,9 @@ import { MdOutlineSearch } from "react-icons/md";
 import { CgSearch } from "react-icons/cg";
 import { Tabs } from "../Tabs";
 // Import Swiper React components
-
 import { Swiper, SwiperSlide } from "swiper/react";
 // import required modules
-
 import { FreeMode, Pagination } from "swiper/modules";
-
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -226,7 +223,6 @@ export const Main = () => {
             <FaArrowRight />
           </Link>
         </div>
-        {/* Grid de Cards */}
         <FavouriteCard
         imageSrc="/CAÑON_DEL_COLCA.jpg"
         title="Tour en el Cañón del Colca"

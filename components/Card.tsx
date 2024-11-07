@@ -25,7 +25,7 @@ export default function Card({
           className="w-full h-full image-full object-cover"
             src={imageSrc}
             alt={title}
-            width={400} // Ajuste a imagen móvil
+            width={400}
             height={400}
           />
         <div className="absolute bottom-0 rounded-xl m-2 p-2 bg-base-100 opacity-100">

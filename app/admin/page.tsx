@@ -3,7 +3,6 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <>
       <div className="ml-60">
         <div className="flex justify-between items-center mt-5 mb-14">
           <span className="text-4xl font-bold flex items-center">
@@ -44,6 +43,5 @@ export default function Home() {
           <ProductsTable />
         </div>
       </div>
-    </>
   );
 }

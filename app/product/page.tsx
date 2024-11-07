@@ -78,18 +78,24 @@ export default function ProductPage() {
         {/* Grid de Cards */}
         <div className="mt-8 grid gap-20 md:grid-cols-2 lg:grid-cols-3">
           <Card
+            isMobile={false}
+            mobileTitle="Huacachina"
             imageSrc="/HUACACHINA.png"
             title="Zapatos"
             isPrimary={false}
             description=""
           />
           <Card
+            isMobile={false}
+            mobileTitle="Huacachina"
             imageSrc="/RESERVA_NACIONAL_PARACAS 1.png"
             title="Zapatos"
             isPrimary={false}
             description=""
           />
           <Card
+            isMobile={false}
+            mobileTitle="Huacachina"
             imageSrc="/SACRED_VALLEY.png"
             title="Zapatos"
             isPrimary={false}

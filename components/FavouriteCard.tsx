@@ -12,7 +12,7 @@ export default function FavouriteCard({
   title,
 }: CardProps) {
     return (
-      <div className="rounded-3xl overflow-hidden w-full h-44  flex items-center ">
+      <div className="rounded-3xl overflow-hidden w-full flex items-center justify-around ">
           <Image
           className="w-32 h-32 rounded-xl  "
             src={imageSrc}

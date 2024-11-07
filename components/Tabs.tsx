@@ -168,7 +168,6 @@ export const Tabs = () => {
         );
       case 3:
         return (
-          //<div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3"> </div>
           <Swiper
             slidesPerView={2}
             spaceBetween={4}
