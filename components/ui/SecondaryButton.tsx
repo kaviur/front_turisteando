@@ -14,7 +14,7 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`flex justify-center rounded-full py-2 px-10 font-medium text-black hover:bg-opacity-90 text-sm border-2 border-accent${style}`}
+      className={`btn rounded-full ${style}`}
     >
       {text}
     </button>

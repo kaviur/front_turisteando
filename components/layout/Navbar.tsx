@@ -102,31 +102,38 @@ export const Navbar = () => {
         </div>
       ) : (
         // Navegación en escritorio
-        <div className="navbar bg-base-100 bg-opacity-80 backdrop-blur-lg shadow-lg p-4">
-          <div className="navbar-start">
+        <div className="flex justify-between items-center bg-base-100 bg-opacity-80 backdrop-blur-lg shadow-lg p-4">
+          <div className=" ">
             <Link className="btn btn-ghost text-xl" href="/">
               <Image src="/logo.png" alt="Logo" width={120} height={120} />
             </Link>
           </div>
-          <div className="navbar-center">
-            <ul className="menu menu-horizontal px-1">
+          <div className="">
+            <ul className="menu menu-horizontal ">
               <li>
-                <a>Tours</a>
+                <Link href={"/tours"} className="px-2">Tours</Link>
               </li>
               <li>
-                <a>Actividades</a>
+                <Link href={"/activities"} className="px-2">Actividades</Link>
               </li>
               <li>
-                <a>Novedades</a>
+                <Link href={"/news"} className="px-2">Novedades</Link>
               </li>
               <li>
-                <a>Favoritos</a>
+                <Link href={"/favorites"}
+                className="px-2">Favoritos</Link>
               </li>
             </ul>
           </div>
-          <div className="navbar-end">
-            <PrimaryButton text="Iniciar Sesión" style="mr-3" />
-            <SecondaryButton text="Crear Cuenta" />
+          <div className="">
+            <PrimaryButton 
+              text="Iniciar Sesión" 
+              style="mr-3 "
+            />
+            <SecondaryButton
+              text="Crear Cuenta"
+              style="btn-ghost border border-gray-200"
+            />
           </div>
         </div>
       )}
