@@ -1,22 +1,24 @@
-import React from "react";
+"use client";
 
 interface PrimaryButtonProps {
   text: string;
   onClick?: () => void;
   style?: string;
+  children?: React.ReactNode;
 }
 
 const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   text,
   style,
   onClick,
+  children
 }) => {
   return (
     <button
       onClick={onClick}
       className={`btn btn-primary text-white rounded-full ${style}`}
     >
-      {text}
+      {children || text}
     </button>
   );
 };
