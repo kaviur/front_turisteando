@@ -16,7 +16,7 @@ export const Footer = () => {
         </aside>
 
         {/* Secciones */}
-        <div className="hidden md:flex gap-2 text-left text-gray-500">
+        <div className="hidden md:flex lg:gap-6 gap-2 justify-around text-gray-500">
           <nav className="flex flex-col gap-4">
             <h6 className="footer-title font-bold text-gray-800 text-lg">Sobre Nosotros</h6>
             <a className="link link-hover">Sobre Turisteando</a>

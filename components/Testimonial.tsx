@@ -26,10 +26,8 @@ export default function Testimonial({
   };
 
   return (
-    <div className="card bg-base-100 w-96 shadow-xl">
-      <div className="card-body">
-
-      <div className=" flex items-center gap-4">
+    <div className="max-w-xl w-full mb-12 min-h-80 h-80 max-h-96 shadow-md rounded-xl bg-base-100 p-2 ">
+      <div className="flex items-center gap-4">
         {/* Foto de usuario */}
         <Image src={userImage} alt={`${userName}'s photo`} width={50} height={50} className="rounded-full" />
         
@@ -64,7 +62,6 @@ export default function Testimonial({
       
       {/* Texto de la experiencia */}
       <p className="mt-4 text-gray-700">{reviewText}</p>
-      </div>
     </div>
   );
 }
