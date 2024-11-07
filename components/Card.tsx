@@ -20,7 +20,7 @@ export default function Card({
 }: CardProps) {
   if (isMobile) {
     return (
-      <div className="rounded-3xl overflow-hidden relative w-44 h-52 shadow-xl">
+      <div className="rounded-3xl overflow-hidden relative w-44 h-52 shadow-xl mb-6">
           <Image
           className="w-full h-full image-full object-cover"
             src={imageSrc}
@@ -45,15 +45,15 @@ export default function Card({
       </div>
     );
   }
-
+// Desktop Version Card
   return (
-    <div className="card bg-base-100 w-96 shadow-xl">
-      <figure className="h-52">
-        <Image src={imageSrc} alt={title} width={400} height={400} />
+    <div className="cursor-pointer bg-base-100 max-w-xl w-full mb-12 shadow-md rounded-xl">
+      <figure className="min-h-52 h-64 max-h-64">
+        <Image className="rounded-t-xl w-full h-full image-full object-cover" src={imageSrc} alt={title} width={400} height={400} />
       </figure>
-      <div className="card-body">
+      <div className="h-72 overflow-hidden px-2 pt-2">
         <h2
-          className={`card-title ${
+          className={` text-xl ${
             isPrimary ? "text-primary" : "text-secondary"
           }`}
         >

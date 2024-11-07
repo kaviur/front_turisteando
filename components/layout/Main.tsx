@@ -4,6 +4,7 @@ import FavouriteCard from "../FavouriteCard";
 import Testimonial from "../Testimonial";
 import Link from "next/link";
 import { MdOutlineSearch } from "react-icons/md";
+import { FaArrowRight } from "react-icons/fa";
 import { CgSearch } from "react-icons/cg";
 import { Tabs } from "../Tabs";
 // Import Swiper React components
@@ -14,7 +15,6 @@ import { FreeMode, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import { FaArrowRight } from "react-icons/fa";
 
 export const Main = () => {
   return (
@@ -23,7 +23,7 @@ export const Main = () => {
         {/* Imagen de fondo */}
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/MACHU_PICCHU.png" // Cambia esta ruta a la imagen que deseas usar
+            src="/MACHU_PICCHU.png" 
             alt="Background Image"
             fill={true}
             priority={true}
@@ -81,7 +81,7 @@ export const Main = () => {
       </section>
 
       {/* Desktop section  */}
-      <section className="px-8 py-12 hidden md:block">
+      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
         {/* Encabezado */}
         <div className="flex items-center justify-between mb-4">
           {/* Títulos a la izquierda */}
@@ -98,22 +98,24 @@ export const Main = () => {
           {/* Link a la derecha */}
           <Link
             href="/tours"
-            className="text-primary font-semibold hover:underline"
+            className="text-primary flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white "
           >
-            Ver todos
+            Ver todos <FaArrowRight size={22} />
           </Link>
         </div>
 
         {/*Cards Swiper Component*/}
         <Swiper
+          
           slidesPerView={3}
-          spaceBetween={30}
+          spaceBetween={12}
           freeMode={true}
           pagination={{
             clickable: true,
+            dynamicBullets: true
           }}
           modules={[FreeMode, Pagination]}
-          className="mySwiper "
+          className="mySwiper"
         >
           <SwiperSlide>
             <Card
@@ -132,7 +134,7 @@ export const Main = () => {
               imageSrc="/RESERVA_NACIONAL_PARACAS.png"
               title="Reserva Nacional de Paracas"
               isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
+              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras."
             />
           </SwiperSlide>
           <SwiperSlide>
@@ -211,9 +213,9 @@ export const Main = () => {
       {/* Responsive mobile section  */}
       <section className="px-8 py-12 md:hidden ">
         {/* Encabezado */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between ">
           {/* Títulos a la izquierda */}
-            <h2 className="text-3xl font-bold">Favoritos</h2>
+          <h2 className="text-3xl font-bold">Favoritos</h2>
           {/* Link a la derecha */}
           <Link
             href="/tours"
@@ -224,15 +226,15 @@ export const Main = () => {
           </Link>
         </div>
         <FavouriteCard
-        imageSrc="/CAÑON_DEL_COLCA.jpg"
-        title="Tour en el Cañón del Colca"
+          imageSrc="/CAÑON_DEL_COLCA.jpg"
+          title="Tour en el Cañón del Colca"
         />
       </section>
 
       {/* Desktop Section */}
-      <section className="px-8 py-12 hidden md:block">
+      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto ">
         {/* Encabezado */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-4">
           {/* Títulos a la izquierda */}
           <div>
             <h2 className="text-3xl font-bold text-secondary">
@@ -249,46 +251,123 @@ export const Main = () => {
           {/* Link a la derecha */}
           <Link
             href="/tours"
-            className="text-primary font-semibold hover:underline"
+            className="text-secondary flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-secondary hover:text-white "
           >
-            Ver todos
+            Ver todos <FaArrowRight size={24} />
+
           </Link>
         </div>
 
-        {/* Grid de Cards */}
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card
-            mobileTitle="Montaña 7 Colores"
-            isMobile={false}
-            imageSrc="/MONTAÑA_7_COLORES.jpg"
-            title="Trekking en la Montaña de 7 Colores"
-            isPrimary={false}
-            description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-          />
-          <Card
-            mobileTitle="Selva Amazónica"
-            isMobile={false}
-            imageSrc="/SELVA_AMAZONICA.jpg"
-            title="Exploración de la Selva Amazónica"
-            isPrimary={false}
-            description="Vive la experiencia de explorar la selva amazónica peruana desde Iquitos o Puerto Maldonado. Puedes realizar caminatas por la selva, avistamiento de fauna y paseos en bote por ríos llenos de vida."
-          />
-          <Card
-            mobileTitle="Huacachina"
-            isMobile={false}
-            imageSrc="/HUACACHINA.png"
-            title="Sandboarding en Huacachina"
-            isPrimary={false}
-            description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-          />
-        </div>
+        {/*Cards Swiper Component*/}
+        <Swiper
+          slidesPerView={3}
+          spaceBetween={12}
+          freeMode={true}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          modules={[FreeMode, Pagination]}
+          className="mySwiper"
+        >
+          <SwiperSlide>
+            <Card
+              mobileTitle="Canon Colca"
+              isMobile={false}
+              imageSrc="/CAÑON_DEL_COLCA.jpg"
+              title="Tour en el Cañón del Colca"
+              isPrimary={true}
+              description="Un tour de dos días al Cañón del Colca, uno de los cañones más profundos del mundo. Además de disfrutar de paisajes espectaculares, puedes avistar el majestuoso cóndor andino. El tour suele partir desde Arequipa."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Paracas"
+              isMobile={false}
+              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
+              title="Reserva Nacional de Paracas"
+              isPrimary={true}
+              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Valle Sagrado"
+              isMobile={false}
+              imageSrc="/SACRED_VALLEY.png"
+              title="Valle Sagrado"
+              isPrimary={false}
+              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Paracas"
+              isMobile={false}
+              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
+              title="Reserva Nacional de Paracas"
+              isPrimary={true}
+              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Valle Sagrado"
+              isMobile={false}
+              imageSrc="/SACRED_VALLEY.png"
+              title="Valle Sagrado"
+              isPrimary={false}
+              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Paracas"
+              isMobile={false}
+              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
+              title="Reserva Nacional de Paracas"
+              isPrimary={true}
+              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Valle Sagrado"
+              isMobile={false}
+              imageSrc="/SACRED_VALLEY.png"
+              title="Valle Sagrado"
+              isPrimary={false}
+              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Paracas"
+              isMobile={false}
+              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
+              title="Reserva Nacional de Paracas"
+              isPrimary={true}
+              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Card
+              mobileTitle="Valle Sagrado"
+              isMobile={false}
+              imageSrc="/SACRED_VALLEY.png"
+              title="Valle Sagrado"
+              isPrimary={false}
+              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
+            />
+          </SwiperSlide>
+        </Swiper>
       </section>
 
       <button className="btn btn-primary text-white my-12 btn-wide mx-auto rounded-3xl hidden md:block">
         Explora mas Opciones
       </button>
 
-      <section className="px-8 py-12 hidden md:block">
+      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
         {/* Encabezado */}
         {/* Títulos a la izquierda */}
         <div>
@@ -299,33 +378,70 @@ export const Main = () => {
           </h2>
         </div>
 
-        {/* Grid de Cards */}
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/*Testimonial Swiper Component*/}
+        <Swiper
+          slidesPerView={3}
+          spaceBetween={12}
+          freeMode={true}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          modules={[FreeMode, Pagination]}
+          className="mySwiper"
+        >
+          <SwiperSlide>
           <Testimonial
             userImage="/juanuser.jpg"
             userName="Juan Pérez"
             city="Bogotá"
             country="Colombia"
             date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
           />
-          <Testimonial
-            userImage="/anauser.jpg"
-            userName="Ana Susana"
-            city="Bogotá"
-            country="Colombia"
-            date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-          />
+          </SwiperSlide>
+          <SwiperSlide>
           <Testimonial
             userImage="/sarauser.jpg"
             userName="Sara User"
             city="Bogotá"
             country="Colombia"
             date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
           />
-        </div>
+          </SwiperSlide>
+          <SwiperSlide>
+          <Testimonial
+            userImage="/anauser.jpg"
+            userName="Ana Susana"
+            city="Bogotá"
+            country="Colombia"
+            date="mayo 2024"
+            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+          />
+          </SwiperSlide>
+          <SwiperSlide>
+          <Testimonial
+            userImage="/juanuser.jpg"
+            userName="Juan Pérez"
+            city="Bogotá"
+            country="Colombia"
+            date="mayo 2024"
+            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+          />
+          </SwiperSlide>
+          <SwiperSlide>
+          <Testimonial
+            userImage="/anauser.jpg"
+            userName="Ana Susana"
+            city="Bogotá"
+            country="Colombia"
+            date="mayo 2024"
+            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+          />
+          </SwiperSlide>
+
+        </Swiper>
       </section>
     </>
   );

@@ -9,8 +9,8 @@ import { FaLocationDot, FaRegCalendarDays } from "react-icons/fa6";
 
 export const Navbar = () => {
   return (
-    <div className="z-10 bg-opacity-0 backdrop-blur-md block md:fixed top-0 left-0 w-full bg-base-100">
-      <div className="flex justify-between items-center bg-base-100 bg-opacity-80 backdrop-blur-lg md:shadow-lg p-4">
+    <div className="z-10 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
+      <div className="flex justify-between items-center p-4 max-w-7xl mx-auto">
         <div className=" ">
           <Link className="btn  btn-ghost text-xl hidden md:block" href="/">
             <Image src="/logo.png" alt="Logo" width={120} height={120} />
