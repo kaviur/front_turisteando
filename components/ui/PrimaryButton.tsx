@@ -14,7 +14,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`flex justify-center rounded-full bg-primary py-2 px-10 font-medium text-white hover:bg-opacity-90 text-sm ${style}`}
+      className={`btn btn-primary text-white rounded-full ${style}`}
     >
       {text}
     </button>
