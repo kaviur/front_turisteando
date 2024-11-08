@@ -1,11 +1,4 @@
-import { Metadata } from "next";
 import PrimaryButton from "../ui/PrimaryButton";
-
-export const metadata: Metadata = {
-  title: "Next.js Form Layout | TailAdmin - Next.js Dashboard Template",
-  description:
-    "This is Next.js Form Layout page for TailAdmin - Next.js Tailwind CSS Admin Dashboard Template",
-};
 
 const AddProductForm = () => {
   return (
@@ -37,8 +30,11 @@ const AddProductForm = () => {
                 <label className="mb-3 block text-sm font-medium text-black">
                   Categoría
                 </label>
-                <select className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter">
-                  <option value="" disabled selected>
+                <select
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
                     Selecciona la categoría
                   </option>
                   <option value="tour">Tour</option>
