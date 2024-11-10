@@ -5,7 +5,14 @@ import DatePicker from "react-datepicker";
 import { LuClock } from "react-icons/lu";
 import { TiGroup } from "react-icons/ti";
 import { FaLocationDot } from "react-icons/fa6";
-
+// Import Swiper React components
+import { Swiper, SwiperSlide } from "swiper/react";
+// import required modules
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/free-mode";
+import "swiper/css/pagination";
 
 interface ProductDetailsProps {
   title: string;
@@ -18,6 +25,43 @@ interface ProductDetailsProps {
   peopleOptions: string[];
   scheduleOptions: string[];
 }
+const CustomPrevArrow = () => (
+  <div className="custom-prev-arrow">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 19.5 8.25 12l7.5-7.5"
+      />
+    </svg>
+  </div>
+);
+
+const CustomNextArrow = () => (
+  <div className="custom-next-arrow">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+      />
+    </svg>
+  </div>
+);
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
   title,
@@ -35,7 +79,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
 
   return (
-    <section className="max-w-5xl mx-auto p-4 space-y-4">
+    <section className="max-w-7xl mx-auto p-4 space-y-4">
       {/* Título y enlace de regreso */}
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-bold text-primary">{title}</h1>
@@ -65,8 +109,30 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
 
       {/* Imagen, calendario, selección de horario y cantidad de personas */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex ">
+
+      
+      <div className="flex flex-row justify-between gap-4">
+        <div className="max-w-xl mr-auto">
+        {/* <div className="relative"> */}
+      {/* Flechas de navegación personalizadas */}
+
+      {/* <Swiper
+        slidesPerView={1}
+        spaceBetween={2}
+        loop={true}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
+        }}
+        navigation={{
+          enabled: true,
+          prevEl: ".custom-prev-arrow",
+          nextEl: ".custom-next-arrow",
+        }}
+        modules={[Autoplay, Navigation]}
+        className="mySwiper"
+      >
+        <SwiperSlide>
           <Image
             src={imageSrc}
             alt={title}
@@ -74,22 +140,93 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             height={400}
             className="rounded-lg shadow-lg bg-cover"
           />
+        </SwiperSlide>
+        <SwiperSlide>
+          <Image
+            src={imageSrc}
+            alt={title}
+            width={500}
+            height={400}
+            className="rounded-lg shadow-lg bg-cover"
+          />
+        </SwiperSlide>
+        <SwiperSlide>
+          <Image
+            src={imageSrc}
+            alt={title}
+            width={500}
+            height={400}
+            className="rounded-lg shadow-lg bg-cover"
+          />
+        </SwiperSlide>
+      </Swiper>
+
+    </div> */}
+          <Swiper
+            slidesPerView={1}
+            spaceBetween={2}
+            loop={true}
+                // autoplay={{
+                //   delay: 5000,
+                //   disableOnInteraction: false,
+                // }}
+            // pagination={{
+            //   clickable: true,
+            // }}
+            navigation={{
+              enabled: true,
+              // prevEl: ".custom-prev-arrow",
+              // nextEl: ".custom-next-arrow",
+            }}
+            modules={[Autoplay, Navigation, Pagination]}
+            className="mySwiper"
+          >
+            <SwiperSlide>
+              <Image
+                src={imageSrc}
+                alt={title}
+                width={100}
+                height={400}
+                className="rounded-lg shadow-lg bg-cover"
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Image
+                src={imageSrc}
+                alt={title}
+                width={500}
+                height={400}
+                className="rounded-lg shadow-lg bg-cover"
+              />
+            </SwiperSlide>
+            <SwiperSlide>
+              <Image
+                src={imageSrc}
+                alt={title}
+                width={500}
+                height={400}
+                className="rounded-lg shadow-lg bg-cover"
+              />
+            </SwiperSlide>
+          </Swiper>
+          <CustomPrevArrow />
+          <CustomNextArrow />
         </div>
+       
         <div className="flex flex-col bg-white  rounded-lg shadow-lg space-y-4 min-w-60 w-64">
           <DatePicker
             inline
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
-            className=" p-2 border rounded-md text-gray-600 shadow-inner"
-            placeholderText="Selecciona una fecha"
+            className="p-2 border rounded-md text-gray-600 shadow-inner"
           />
 
-          <div className="space-y-2 px-4">
-            <label className="text-lg font-semibold">
+          <div className="px-4 flex gap-2 items-center justify-between">
+            <label className="text-lg font-semibold text-secondary">
               <LuClock />
             </label>
             <select
-              className="w-full p-2 border rounded-md text-gray-600"
+              className="w-full p-2 px-1 border rounded-md text-gray-600"
               value={selectedSchedule}
               onChange={(e) => setSelectedSchedule(e.target.value)}
             >
@@ -104,8 +241,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </select>
           </div>
 
-          <div className="space-y-2 px-4 pb-4">
-            <label className="text-lg font-semibold">
+          <div className="flex gap-2 items-center justify-between px-4 pb-4">
+            <label className="text-lg font-semibold text-secondary"> 
               <TiGroup />
             </label>
             <input
@@ -122,8 +259,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
       {/* Ubicación */}
       <div className="text-secondary text-lg font-medium">
-      <FaLocationDot />
-      {location}
+        <FaLocationDot />
+        {location}
       </div>
 
       {/* Descripción */}
@@ -137,12 +274,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <div className="flex gap-2 items-center">
             <TiGroup color="text-accent" />
             <span className="text-accent">{people}</span>
-
           </div>
           <div className="flex gap-2 items-center">
             <LuClock color="gray" />
             <span className="text-gray-600">{duration}</span>
-
           </div>
         </div>
       </div>
