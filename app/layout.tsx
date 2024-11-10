@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { DM_Sans } from 'next/font/google'
- 
+import { DM_Sans } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
+
 const dmSans = DM_Sans({
-  subsets: ['latin'],
-  display: 'swap',
-})
+  subsets: ["latin"],
+  display: "swap",
+});
 export const metadata: Metadata = {
   title: "Turisteando",
   description:
@@ -16,7 +17,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props;
   return (
     <html className={dmSans.className}>
-      <body>{children}</body>
+      <body>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   );
 }
