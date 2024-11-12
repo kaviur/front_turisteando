@@ -1,4 +1,4 @@
-export interface TouristPlanRequestDto {
+export interface TouristPlans {
   title: string;
   description: string;
   price: number;
