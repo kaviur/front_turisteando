@@ -265,7 +265,7 @@ export const Tabs = () => {
           }`}
           onClick={() => setActiveTab(1)}
         >
-          <BiCategoryAlt className="mr-2" />
+          <BiCategoryAlt className="mr-2" size={24} />
           Todo
         </a>
         <a

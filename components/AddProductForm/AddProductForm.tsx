@@ -9,11 +9,17 @@ const AddProductForm = () => {
   const [fileName, setFileName] = useState("Machu Picchu");
 
   // Método que actualiza el nombre del archivo
-  const updateFileName = (event) => {
-    const input = event.target;
-    const name = input.files.length > 0 ? input.files[0].name : "Machu Picchu";
-    setFileName(name);
-  };  
+  function updateFileName(input: HTMLInputElement): void {
+    if (!input.files) return;
+  
+    const files = Array.from(input.files);
+    const fileNames = files.map((file) => file.name).join(', ');
+  
+    const fileNameInput = document.getElementById('file-name') as HTMLInputElement | null;
+    if (fileNameInput) {
+      fileNameInput.value = fileNames || 'Ningún archivo ha sido seleccionado';
+    }
+  }
 
 
   return (
@@ -178,13 +184,18 @@ const AddProductForm = () => {
                 <label class="block text-sm font-medium text-black mb-2">Imágenes</label>
                 <div class="flex items-center border border-gray-300 rounded overflow-hidden">
                   <label class="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
-                    Selecciona el archivo
-                    <input type="file" class="hidden" onchange="updateFileName(this)" />
+                    Selecciona los archivos
+                    <input 
+                      type="file" 
+                      class="hidden" 
+                      multiple 
+                      onchange="updateFileName(this)" 
+                    />
                   </label>
                   <input
                     type="text"
                     id="file-name"
-                    placeholder="Machu Picchu"
+                    placeholder="Ningún archivo ha sido seleccionado"
                     class="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
                     readonly
                   />
