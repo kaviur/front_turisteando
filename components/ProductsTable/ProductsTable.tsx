@@ -1,7 +1,7 @@
-import { TouristPlans } from "@/types/touristPlan";
+import { TouristPlan } from "@/types/touristPlan";
 import Image from "next/image";
 
-const ProductsTable = ({ products }: { products: TouristPlans[] }) => {
+const ProductsTable = ({ products }: { products: TouristPlan[] }) => {
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default">
       <div className="px-4 py-6 md:px-6 xl:px-7">
@@ -34,9 +34,9 @@ const ProductsTable = ({ products }: { products: TouristPlans[] }) => {
           <div className="col-span-4 flex items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-14 w-20 rounded-md flex items-center">
-                {product.imagesUrl && product.imagesUrl.length > 0 ? (
+                {product.images && product.images.length > 0 ? (
                   <Image
-                    src={product.imagesUrl[0]}
+                    src={product.images[0].imageUrl}
                     width={60}
                     height={50}
                     alt="Product"
@@ -52,14 +52,14 @@ const ProductsTable = ({ products }: { products: TouristPlans[] }) => {
           </div>
           <div className="col-span-1 hidden items-center sm:flex">
             <span className="text-success inline-flex items-center rounded-full bg-success bg-opacity-10 px-2 py-1 text-xs font-medium ml-6">
-              {product.categoryId}
+              {product.category.name} {/* Correcto acceso a la categoría */}
             </span>
           </div>
           <div className="col-span-1 flex items-center ml-6">
             <p className="text-sm text-black">$ {product.price}</p>
           </div>
           <div className="col-span-1 flex items-center ml-6">
-            <p className="text-sm text-black">{product.cityId}</p>
+            <p className="text-sm text-black">{product.city.name}</p> {/* Correcto acceso a la ciudad */}
           </div>
           <div className="col-span-1 flex items-center ml-6 justify-end">
             <p className="text-xs text-accent">Ver Detalle</p>

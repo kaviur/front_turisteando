@@ -2,32 +2,33 @@
 
 import ProductsTable from "@/components/ProductsTable/ProductsTable";
 import Link from "next/link";
-import { TouristPlans } from "@/types/touristPlan";
+import { TouristPlan } from "@/types/touristPlan";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [touristPlans, setTouristPlans] = useState<TouristPlans[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [touristPlans, setTouristPlans] = useState<TouristPlan[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch the tourist plans when the component mounts
   useEffect(() => {
     const fetchTouristPlans = async () => {
       try {
-        const res = await fetch("/api/products/getProducts");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`);
         const data = await res.json();
-
+        console.log(data); // Para verificar los datos que estás recibiendo
+    
         if (res.ok) {
-          setTouristPlans(data.data); // Assuming `data` contains the tourist plans
+          setTouristPlans(data.data); // Aquí estamos accediendo a la propiedad 'data' de la respuesta JSON
         } else {
           setError("Failed to fetch tourist plans");
         }
-      } catch (error) {
+      } catch {
         setError("Error occurred while fetching tourist plans");
       } finally {
         setLoading(false);
       }
-    };
+    };    
 
     fetchTouristPlans();
   }, []); // Empty dependency array ensures this effect runs once after initial render
