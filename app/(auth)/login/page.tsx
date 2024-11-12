@@ -27,7 +27,7 @@ export default function Login() {
       } else {
         setIsSuccess(true);
       }
-    } catch (error) {
+    } catch{
       setIsError(true);
     } finally {
       setIsPending(false);
