@@ -27,14 +27,14 @@ export default function Register() {
         body: JSON.stringify({ email, password, name, lastName }),
       });
 
-      const data = await response.json();
+      // const data = await response.json();
 
       if (response.ok) {
         setIsSuccess(true);
       } else {
         setIsError(true);
       }
-    } catch (error) {
+    } catch {
       setIsError(true);
     } finally {
       setIsPending(false);
