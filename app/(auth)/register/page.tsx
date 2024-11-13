@@ -206,7 +206,7 @@ export default function Register() {
         <button
           type="submit"
           disabled={isPending}
-          className="btn btn-primary w-full font-bold text-[16px] text-white"
+          className="btn btn-primary w-full font-bold text-[16px] rounded-3xl text-white"
         >
           {isPending ? "Registrando..." : "Crear cuenta"}
         </button>
