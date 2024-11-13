@@ -5,7 +5,7 @@ import PrimaryButton from "@/components/ui/PrimaryButton";
 import SecondaryButton from "@/components/ui/SecondaryButton";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaExclamationCircle } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 

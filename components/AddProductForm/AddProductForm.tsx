@@ -1,25 +1,25 @@
 "use client";
 
 import PrimaryButton from "../ui/PrimaryButton";
-import { useState } from "react";
+// import { useState } from "react";
 
 const AddProductForm = () => {
 
   // Estado para almacenar el nombre del archivo seleccionado
-  const [fileName, setFileName] = useState("Machu Picchu");
+  // const [fileName, setFileName] = useState("Machu Picchu");
 
   // Método que actualiza el nombre del archivo
-  function updateFileName(input: HTMLInputElement): void {
-    if (!input.files) return;
+  // function updateFileName(input: HTMLInputElement): void {
+  //   if (!input.files) return;
   
-    const files = Array.from(input.files);
-    const fileNames = files.map((file) => file.name).join(', ');
+  //   const files = Array.from(input.files);
+  //   const fileNames = files.map((file) => file.name).join(', ');
   
-    const fileNameInput = document.getElementById('file-name') as HTMLInputElement | null;
-    if (fileNameInput) {
-      fileNameInput.value = fileNames || 'Ningún archivo ha sido seleccionado';
-    }
-  }
+  //   const fileNameInput = document.getElementById('file-name') as HTMLInputElement | null;
+  //   if (fileNameInput) {
+  //     fileNameInput.value = fileNames || 'Ningún archivo ha sido seleccionado';
+  //   }
+  // }
 
 
   return (
@@ -180,24 +180,24 @@ const AddProductForm = () => {
                 </select>
               </div>
 
-              <div class="mb-6">
-                <label class="block text-sm font-medium text-black mb-2">Imágenes</label>
-                <div class="flex items-center border border-gray-300 rounded overflow-hidden">
-                  <label class="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-black mb-2">Imágenes</label>
+                <div className="flex items-center border border-gray-300 rounded overflow-hidden">
+                  <label className="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
                     Selecciona los archivos
                     <input 
                       type="file" 
-                      class="hidden" 
+                      className="hidden" 
                       multiple 
-                      onchange="updateFileName(this)" 
+                      // onChange="updateFileName(this)" 
                     />
                   </label>
                   <input
                     type="text"
                     id="file-name"
                     placeholder="Ningún archivo ha sido seleccionado"
-                    class="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
-                    readonly
+                    className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
+                    readOnly
                   />
                 </div>
               </div>
