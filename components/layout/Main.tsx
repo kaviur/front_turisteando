@@ -23,7 +23,7 @@ export const Main = () => {
         {/* Imagen de fondo */}
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/MACHU_PICCHU.png" 
+            src="/MACHU_PICCHU.png"
             alt="Background Image"
             fill={true}
             priority={true}
@@ -81,7 +81,7 @@ export const Main = () => {
       </section>
 
       {/* Desktop section  */}
-      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
+      <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto">
         {/* Encabezado */}
         <div className="flex items-center justify-between mb-4">
           {/* Títulos a la izquierda */}
@@ -106,13 +106,12 @@ export const Main = () => {
 
         {/*Cards Swiper Component*/}
         <Swiper
-          
           slidesPerView={3}
           spaceBetween={12}
           freeMode={true}
           pagination={{
             clickable: true,
-            dynamicBullets: true
+            dynamicBullets: true,
           }}
           modules={[FreeMode, Pagination]}
           className="mySwiper"
@@ -232,7 +231,7 @@ export const Main = () => {
       </section>
 
       {/* Desktop Section */}
-      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto ">
+      <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto ">
         {/* Encabezado */}
         <div className="flex items-center justify-between mb-4">
           {/* Títulos a la izquierda */}
@@ -254,7 +253,6 @@ export const Main = () => {
             className="text-secondary flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-secondary hover:text-white "
           >
             Ver todos <FaArrowRight size={24} />
-
           </Link>
         </div>
 
@@ -363,15 +361,15 @@ export const Main = () => {
         </Swiper>
       </section>
 
-      <button className="btn btn-primary text-white my-12 btn-wide mx-auto rounded-3xl hidden md:block">
+      <button className="btn btn-primary text-white my-8 btn-wide mx-auto rounded-3xl hidden md:block">
         Explora mas Opciones
       </button>
 
-      <section className="px-8 py-12 hidden md:block max-w-7xl mx-auto">
+      <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto">
         {/* Encabezado */}
         {/* Títulos a la izquierda */}
         <div>
-          <h2 className="text-3xl font-bold text-gray-500 text-center">
+          <h2 className="text-3xl font-bold text-gray-500 text-center mb-6">
             Lo que los usuarios de{" "}
             <span className="text-primary font-semibold">Turisteando </span>
             están diciendo
@@ -391,56 +389,55 @@ export const Main = () => {
           className="mySwiper"
         >
           <SwiperSlide>
-          <Testimonial
-            userImage="/juanuser.jpg"
-            userName="Juan Pérez"
-            city="Bogotá"
-            country="Colombia"
-            date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-          />
+            <Testimonial
+              userImage="/juanuser.jpg"
+              userName="Juan Pérez"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
           </SwiperSlide>
           <SwiperSlide>
-          <Testimonial
-            userImage="/sarauser.jpg"
-            userName="Sara User"
-            city="Bogotá"
-            country="Colombia"
-            date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-          />
+            <Testimonial
+              userImage="/sarauser.jpg"
+              userName="Sara User"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
           </SwiperSlide>
           <SwiperSlide>
-          <Testimonial
-            userImage="/anauser.jpg"
-            userName="Ana Susana"
-            city="Bogotá"
-            country="Colombia"
-            date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-          />
+            <Testimonial
+              userImage="/anauser.jpg"
+              userName="Ana Susana"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
           </SwiperSlide>
           <SwiperSlide>
-          <Testimonial
-            userImage="/juanuser.jpg"
-            userName="Juan Pérez"
-            city="Bogotá"
-            country="Colombia"
-            date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-          />
+            <Testimonial
+              userImage="/juanuser.jpg"
+              userName="Juan Pérez"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
           </SwiperSlide>
           <SwiperSlide>
-          <Testimonial
-            userImage="/anauser.jpg"
-            userName="Ana Susana"
-            city="Bogotá"
-            country="Colombia"
-            date="mayo 2024"
-            reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-          />
+            <Testimonial
+              userImage="/anauser.jpg"
+              userName="Ana Susana"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
           </SwiperSlide>
-
         </Swiper>
       </section>
     </>
