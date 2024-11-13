@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { toast, Toaster } from "react-hot-toast";
+import Image from "next/image";
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -80,7 +81,13 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="absolute top-6 left-6 hidden md:block">
-        <img src="/images/logo.svg" alt="Logo" className="w-40" />
+        <Image
+          width={200}
+          height={200}
+          src="/images/logo.svg"
+          alt="Logo"
+          className="w-32"
+        />
       </div>
       <Toaster />
       <form
