@@ -1,65 +1,65 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function Register() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isPending, setIsPending] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsPending(true);
-    setIsError(false);
-    setIsSuccess(false);
 
-    // sdsdsdsd@lineacr.com
-    try {
-      // Aquí haces el llamado a la API para registrar al usuario
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, name, lastName }),
+    await toast
+      .promise(
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, name, lastName }),
+        }).then((response) => {
+          if (!response.ok) throw new Error("Error al registrar la cuenta");
+          router.push("/login"); // Redirige a home en caso de éxito
+        }),
+        {
+          loading: "Registrando...",
+          success: "Registro exitoso",
+          error: "Error al registrar la cuenta",
+        }
+      )
+      .finally(() => {
+        setIsPending(false);
       });
-
-      // const data = await response.json();
-
-      if (response.ok) {
-        setIsSuccess(true);
-      } else {
-        setIsError(true);
-      }
-    } catch {
-      setIsError(true);
-    } finally {
-      setIsPending(false);
-    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
+      <Toaster position="top-center" />
       <div className="absolute top-6 left-6 hidden md:block">
         <Image width={200} height={200} src="/images/logo.svg" alt="Logo" className="w-32" />
       </div>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md"
+        className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md flex flex-col gap-3"
       >
-        <h2 className="mb-6 text-2xl font-bold text-center text-[30px] text-[#101018]">Crea una cuenta</h2>
-        <p className="mb-6 text-center text-[14px] text-[#828F9C]">Bienvenido! Por favor ingresa tus datos para crear tu cuenta.</p>
+        <h2 className="text-2xl font-bold text-center text-[30px] text-[#101018]">Crea una cuenta</h2>
+        <p className="mb-2 text-center text-[14px] text-[#828F9C]">
+          Bienvenido! Por favor ingresa tus datos para crear tu cuenta.
+        </p>
 
         {/* Campo de Nombre */}
         <label className="input input-bordered flex flex-col gap-2">
           <input
             type="text"
             name="nombre"
-            className="p-2 focus:outline-none"
+            className="grow p-2 focus:outline-none"
             placeholder="Nombre"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -68,7 +68,7 @@ export default function Register() {
         </label>
 
         {/* Campo de Apellido */}
-        <label className="input input-bordered flex flex-col gap-2 ">
+        <label className="input input-bordered flex flex-col gap-2">
           <input
             type="text"
             name="apellido"
@@ -111,18 +111,10 @@ export default function Register() {
           {isPending ? "Registrando..." : "Crear cuenta"}
         </button>
 
-        {/* Mensajes de estado */}
-        {isPending && <p>Registrando...</p>}
-        {isError && <p className="text-red-500 mt-2">Error al registrar la cuenta</p>}
-        {isSuccess && <p className="text-green-500 mt-2">Registro exitoso</p>}
-
         {/* Texto para redirigir a la página de inicio de sesión */}
         <p className="mt-4 text-center text-sm">
           ¿Ya tienes una cuenta?{" "}
-          <a
-            href="/login"
-            className="text-blue-500 hover:underline"
-          >
+          <a href="/login" className="text-blue-500 hover:underline">
             Iniciar Sesión
           </a>
         </p>
