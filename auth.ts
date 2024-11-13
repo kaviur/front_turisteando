@@ -48,6 +48,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
+    // @ts-ignore
     async session({ session, token }) {
       session.user = token.user as AdapterUser & { id: string; email: string };
       return session;

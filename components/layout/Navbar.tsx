@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import PrimaryButton from "../ui/PrimaryButton";
 import SecondaryButton from "../ui/SecondaryButton";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -8,11 +9,14 @@ import { FaUser } from "react-icons/fa";
 import { FaLocationDot, FaRegCalendarDays } from "react-icons/fa6";
 
 export const Navbar = () => {
+  const { data: session } = useSession();
+  //@ts-ignore
+  const user = session?.user?.user;
   return (
     <div className="z-10 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
-      <div className="flex justify-between items-center p-4 max-w-7xl mx-auto">
+      <div className="flex justify-between items-center p-4 max-w-screen-2xl mx-auto">
         <div className=" ">
-          <Link className="btn  btn-ghost text-xl hidden md:block" href="/">
+          <Link className="btn btn-ghost text-xl hidden md:block" href="/">
             <Image src="/logo.png" alt="Logo" width={120} height={120} />
           </Link>
 
@@ -64,7 +68,7 @@ export const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:block">
-          <ul className="menu menu-horizontal ">
+          <ul className="menu menu-horizontal">
             <li>
               <Link href={"/tours"} className="px-2">
                 Tours
@@ -88,68 +92,81 @@ export const Navbar = () => {
           </ul>
         </div>
 
-        {/* User info desktop */}
-        <div className="flex flex-col items-start justify-center gap-2 md:hidden font-semibold ">
-          {/* Username desde el backend */}
-          <p className="">Hola, Juan Pérez! 👋</p>
-          <div className="flex items-center gap-2 text-secondary">
-            <FaLocationDot size={16}/>
-          {/* Ubicacion desde el backend */}
-            <span className="text-xs">Lima, Perú</span>
-          </div>
-        </div>
-
-        {/* Login and Signup Buttons */}
-        <div className="hidden md:block">
-          <PrimaryButton text="Iniciar Sesión" style="mr-3" />
-          <SecondaryButton
-            text="Crear Cuenta"
-            style="btn-ghost border border-gray-200"
-          />
-        </div>
-        {/* User info mobile */}
-        <div className="dropdown dropdown-end md:hidden">
-          <div className="flex items-center gap-2 justify-center">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle avatar"
-            >
-              <div className="w-10 rounded-full">
-                <div className="bg-secondary w-full h-full flex justify-center items-center">
-                  <p className="text-white font-semibold text-base">NC</p>
+        {/* User info (Desktop and Mobile) */}
+        {session ? (
+          <div className="flex items-center gap-2">
+            <p className="block md:hidden">Hola, {user?.name}! 👋</p>
+            <div className="dropdown dropdown-end">
+              <div className="flex items-center gap-2 justify-center">
+                <div
+                  tabIndex={0}
+                  role="button"
+                  className="btn btn-ghost btn-circle avatar"
+                >
+                  <div className="w-10 rounded-full">
+                    <div className="bg-secondary w-full h-full flex justify-center items-center">
+                      <p className="text-white font-semibold text-base">
+                        {user?.name?.charAt(0)}
+                        {/* @ts-ignore */}
+                        {user?.lastName?.charAt(0)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div role="button" tabIndex={0}>
+                  <RiArrowDropDownLine size={24} />
                 </div>
               </div>
-            </div>
-            <div role="button" tabIndex={0}>
-              <RiArrowDropDownLine size={24} />
+
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              >
+                <li>
+                  <Link className="py-4" href={"/reservations"}>
+                    <FaRegCalendarDays className="mr-2" />
+                    Mis reservas
+                  </Link>
+                </li>
+                <li>
+                  <Link className="py-4" href={"/profile"}>
+                    <FaUser className="mr-2" />
+                    Perfil
+                  </Link>
+                </li>
+                <div className="divider my-0"></div>
+                <li>
+                  <button
+                    className="py-4 text-accent justify-center"
+                    onClick={() => signOut()}
+                  >
+                    Cerrar sesión
+                  </button>
+                </li>
+              </ul>
             </div>
           </div>
-
-          <ul
-            tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-          >
-            <li>
-              <Link className="py-4" href={"/reservations"}>
-                <FaRegCalendarDays color="oklch(var(--s))" className="mr-2" />
-                Mis reservas
+        ) : (
+          <>
+            <div className="block md:hidden">
+              {" "}
+              <Link href={"/login"}>
+                <PrimaryButton text="Iniciar Sesión" style="mr-3" />
+              </Link>{" "}
+            </div>
+            <div className="hidden md:block">
+              <Link href={"/login"}>
+                <PrimaryButton text="Iniciar Sesión" style="mr-3" />
               </Link>
-            </li>
-            <li>
-              <Link className="py-4" href={"/profile"}>
-                <FaUser color="oklch(var(--s))" className="mr-2"/>
-                Profile
+              <Link href={"/register"}>
+                <SecondaryButton
+                  text="Crear Cuenta"
+                  style="btn-ghost border border-gray-200"
+                />
               </Link>
-            </li>
-            <div className="divider my-0"></div>
-            <li>
-              <Link className="py-4 text-accent justify-center " href={"/logout"}>
-                Cerrar sesión
-              </Link>
-            </li>
-          </ul>
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
