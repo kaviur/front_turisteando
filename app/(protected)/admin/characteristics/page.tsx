@@ -1,11 +1,10 @@
-import AddProductForm from "@/components/AddProductForm/AddProductForm";
+import ReusableSmallForm from "@/components/ReusableSmallForm/ReusableSmallForm";
 
 export default function Home() {
   return (
     <>
       <div className="ml-96 flex justify-center">
-        {/* Cambiar a componente characteristics */}
-        <AddProductForm />
+        <ReusableSmallForm entityType={"característica"} />
       </div>
     </>
   );
