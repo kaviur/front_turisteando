@@ -6,11 +6,11 @@ import PrimaryButton from "../ui/PrimaryButton";
 import SecondaryButton from "../ui/SecondaryButton";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
-import { FaLocationDot, FaRegCalendarDays } from "react-icons/fa6";
+import { FaRegCalendarDays } from "react-icons/fa6";
 
 export const Navbar = () => {
   const { data: session } = useSession();
-  //@ts-ignore
+  //@ts-expect-error: Error en la validación de tipos
   const user = session?.user?.user;
   return (
     <div className="z-10 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
@@ -107,7 +107,8 @@ export const Navbar = () => {
                     <div className="bg-secondary w-full h-full flex justify-center items-center">
                       <p className="text-white font-semibold text-base">
                         {user?.name?.charAt(0)}
-                        {/* @ts-ignore */}
+                        {/*  @ts-expect-error
+                         */}
                         {user?.lastName?.charAt(0)}
                       </p>
                     </div>

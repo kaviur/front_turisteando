@@ -6,7 +6,7 @@ import { FaUser, FaEnvelope, FaUserTag } from "react-icons/fa";
 const Profile = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  //@ts-ignore
+  //@ts-expect-error: Error en la validación de tipos
   const user = session?.user?.user;
   // Verificar si la sesión está cargando o si el usuario no está autenticado
   if (status === "loading") {

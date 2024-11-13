@@ -11,6 +11,7 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Testimonial from "@/components/Testimonial";
+import { useMutation } from "@tanstack/react-query";
 
 interface Product {
   id: number;
@@ -52,28 +53,34 @@ export default function ProductPage() {
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
 
+  const { mutate, isPending, isError } = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`
+      );
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error("Error fetching product");
+      }
+      return data.data;
+    },
+    onSuccess: (data) => {
+      setProduct(data);
+    },
+    onError: (error) => {
+      console.error("Failed to fetch product:", error);
+    },
+  });
+
   useEffect(() => {
     if (productId) {
-      const fetchProduct = async () => {
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`);
-          const data = await response.json();
-          
-          if (data.success && data.data) {
-            setProduct(data.data);
-          } else {
-            console.error("Error fetching product", data.errors);
-          }
-        } catch (error) {
-          console.error("Failed to fetch product:", error);
-        }
-      };
-
-      fetchProduct();
+      mutate();
     }
-  }, [productId]);
+  }, [productId, mutate]);
 
-  if (!product) return <div>Loading...</div>;
+  if (isPending) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching product.</div>;
+  if (!product) return null;
 
   return (
     <div className="mt-28">
