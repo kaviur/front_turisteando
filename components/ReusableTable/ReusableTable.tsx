@@ -35,7 +35,7 @@ const ReusableTable = ({ items, entityType, onEdit, onDelete }: ReusableTablePro
           </div>
         )}
         <div className="col-span-1 flex items-center justify-end">
-          <p className="font-medium py-2">Acciones</p>
+          <p className="font-medium py-2"></p>
         </div>
       </div>
 

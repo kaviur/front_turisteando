@@ -1,59 +1,30 @@
-"use client";
+/* "use client";
 
-import ReusableSmallForm from "@/components/ReusableSmallForm/ReusableSmallForm";
-import { useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
+import ReusableTable from "@/components/ReusableTable/ReusableTable";
+import { Category } from "@/types/category";
+import { useEffect, useState } from "react"; */
 
-export default function Home() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState(""); // Estado para descripción
-  const [icono, setIcono] = useState<File | null>(null); // Ícono para categoría
-  const [isPending, setIsPending] = useState(false);
+const CategoriesPage = () => {
+  /* const [categories, setCategories] = useState<Category[]>([]);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsPending(true);
 
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("description", description); // Añadir descripción
-    if (icono) formData.append("icono", icono); // Añadir archivo si existe
-
-    await toast
-      .promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/create`, { 
-          method: "POST",
-          body: formData,
-        }).then((response) => {
-          if (!response.ok) throw new Error("Error al registrar la categoría");
-        }),
-        {
-          loading: "Registrando...",
-          success: "Registro exitoso",
-          error: "Error al registrar la categoría",
-        }
-      )
-      .finally(() => {
-        setIsPending(false);
-      });
-  };
-
+  useEffect(() => {
+    // Llama a la API para obtener las categorías
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Datos recibidos:", data); // Aquí haces el console.log de la data
+        setCategories(data);
+      })
+      .catch((error) => console.error("Error fetching categories:", error));
+  }, []);
+ */
   return (
-    <>
-      <div className="ml-96 flex justify-center">
-        <Toaster position="top-center" />
-        <ReusableSmallForm
-          entityType="categoría"
-          name={name}
-          setName={setName}
-          description={description} // Pasar el estado de descripción
-          setDescription={setDescription} // Pasar la función para actualizar la descripción
-          icono={icono}
-          setIcono={setIcono}
-          onSubmit={handleSubmit}
-          isPending={isPending} 
-        />
-      </div>
-    </>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Categorías</h1>
+      {/* <ReusableTable data={categories} /> */}
+    </div>
   );
-}
+};
+
+export default CategoriesPage;
