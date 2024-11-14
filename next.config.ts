@@ -22,14 +22,14 @@ const remotePatternsList: RemotePattern[] = hostnames.map((hostname) => ({
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    remotePatterns: [
-      {
-        protocol: "http",
-        hostname: "res.cloudinary.com",
-        pathname: "/dworm9bnx/image/upload/**",
-      },
+     remotePatterns: [
+       {
+         protocol: 'http',
+         hostname: 'res.cloudinary.com',
+         pathname: '/dworm9bnx/image/upload/**',
+       },
       ...remotePatternsList,
-    ],
+     ],
   },
 };
 

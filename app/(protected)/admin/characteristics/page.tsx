@@ -1,62 +1,26 @@
-"use client";
+/* "use client";
 
-import ReusableSmallForm from "@/components/ReusableSmallForm/ReusableSmallForm";
-import { useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
+import ReusableTable from "@/components/ReusableTable/ReusableTable";
+import { Characteristics } from "@/types/characteristics";
+import { useEffect, useState } from "react"; */
 
-export default function Home() {
+const CharacteristicsPage = () => {
+  /* const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
 
-  const [name, setName] = useState("");
-  const [icono, setIcono] = useState<File | null>(null);  // Para manejar el archivo de ícono
-  const [description, setDescription] = useState("");      // Agregamos descripción
-  const [isPending, setIsPending] = useState(false);
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsPending(true);
-
-    const formData = new FormData();
-    formData.append("name", name);
-    if (icono) formData.append("icono", icono);  // Añadir archivo si existe
-    if (description) formData.append("description", description);
-
-    await toast
-      .promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/characteristic/create`, {
-          method: "POST",
-          body: formData,
-        }).then((response) => {
-
-          console.log (response);
-          if (!response.ok) throw new Error("Error al registrar la característica");
-        }),
-        {
-          loading: "Registrando...",
-          success: "Registro exitoso",
-          error: "Error al registrar la característica",
-        }
-      )
-      .finally(() => {
-        setIsPending(false);
-      });
-  };
+  useEffect(() => {
+    // Llama a la API para obtener las características
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/characteristics`)
+      .then((res) => res.json())
+      .then((data) => setCharacteristics(data))
+      .catch((error) => console.error("Error fetching characteristics:", error));
+  }, []); */
 
   return (
-    <>
-      <div className="ml-96 flex justify-center">
-        <Toaster position="top-center" />
-        <ReusableSmallForm
-          entityType="característica"
-          name={name}
-          setName={setName}
-          icono={icono}
-          setIcono={setIcono}
-          description={description}
-          setDescription={setDescription}
-          onSubmit={handleSubmit}
-          isPending={isPending}  // Pasar isPending al formulario
-        />
-      </div>
-    </>
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Características</h1>
+      {/* <ReusableTable data={characteristics} /> */}
+    </div>
   );
-}
+};
+
+export default CharacteristicsPage;
