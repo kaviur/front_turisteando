@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Card from "../Card";
 import FavouriteCard from "../FavouriteCard";
@@ -7,16 +8,78 @@ import { MdOutlineSearch } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa";
 import { CgSearch } from "react-icons/cg";
 import { Tabs } from "../Tabs";
-// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
-// import required modules
 import { FreeMode, Pagination } from "swiper/modules";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 
+// Definir el tipo para los tours
+type Tour = {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  seller: string;
+  city: {
+    id: number;
+    name: string;
+    country: {
+      id: number;
+      name: string;
+    };
+  };
+  category: {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+  };
+  images: {
+    id: number;
+    imageUrl: string;
+  }[];
+  availabilityStartDate: string;
+  availabilityEndDate: string;
+  capacity: number;
+  duration: string;
+  characteristic: {
+    id: number;
+    name: string;
+    icon: string;
+  }[];
+  active: boolean;
+};
+
 export const Main = () => {
+  // Tipar el estado 'tours' como un array de 'Tour'
+  const [tours, setTours] = useState<Tour[]>([]);
+
+  useEffect(() => {
+    const fetchTours = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
+        );
+        const data = await response.json();
+
+        // Verificamos que 'data' sea un objeto y tenga la propiedad 'data' que es un array
+        if (data && Array.isArray(data.data)) {
+          setTours(data.data); // Asignamos el array de tours
+        } else {
+          console.error(
+            "La respuesta de la API no contiene un array de tours:",
+            data
+          );
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos:", error);
+      }
+    };
+
+    fetchTours();
+  }, []);
+
   return (
     <>
       <section className="relative h-screen items-center justify-center text-center text-white bg-black bg-opacity-50 hidden md:flex">
@@ -37,6 +100,7 @@ export const Main = () => {
           <h1 className="font-bold md:text-5xl">
             Descubre los mejores lugares para visitar en tus vacaciones 😍
           </h1>
+          
 
           {/* Buscador */}
           <div className="flex items-center gap-2 bg-white rounded-full shadow-lg p-2">
@@ -53,6 +117,7 @@ export const Main = () => {
           </div>
         </div>
       </section>
+      
 
       {/* Responsive mobile section  */}
       <section className="flex items-center justify-center text-white md:hidden mt-18 w-full max-w-3xl">
@@ -80,12 +145,14 @@ export const Main = () => {
         <Tabs />
       </section>
 
-      {/* Desktop section  */}
-      <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto">
-        {/* Encabezado */}
+
+
+
+      {/* Tours */}
+      <section className="px-8 py-12 hidden md:block max-w-screen-2xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          {/* Títulos a la izquierda */}
-          <div className="">
+                   {/* Títulos a la izquierda */}
+                   <div className="">
             <h2 className="text-3xl font-bold text-primary">
               Descubre nuestros Tours
             </h2>
@@ -96,119 +163,40 @@ export const Main = () => {
           </div>
 
           {/* Link a la derecha */}
+
           <Link
             href="/tours"
-            className="text-primary flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white "
+            className="text-primary flex items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white"
           >
             Ver todos <FaArrowRight size={22} />
           </Link>
         </div>
 
-        {/*Cards Swiper Component*/}
+        {/* Cards Swiper Component */}
         <Swiper
           slidesPerView={3}
           spaceBetween={12}
           freeMode={true}
-          pagination={{
-            clickable: true,
-            dynamicBullets: true,
-          }}
+          pagination={{ clickable: true, dynamicBullets: true }}
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          <SwiperSlide>
-            <Card
-              mobileTitle="Canon Colca"
-              isMobile={false}
-              imageSrc="/CAÑON_DEL_COLCA.jpg"
-              title="Tour en el Cañón del Colca"
-              isPrimary={true}
-              description="Un tour de dos días al Cañón del Colca, uno de los cañones más profundos del mundo. Además de disfrutar de paisajes espectaculares, puedes avistar el majestuoso cóndor andino. El tour suele partir desde Arequipa."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
+          {tours.map((tour) => (
+            <SwiperSlide key={tour?.id}>
+              <Card
+                id={tour.id} // Asegurarse de que el tipo de `id` sea string
+                mobileTitle={tour.title} // Aquí lo corregí para usar `title`
+                isMobile={false}
+                imageSrc={tour.images[0]?.imageUrl} // Asegúrate de acceder a la imagen
+                title={tour.title}
+                isPrimary={tour.category?.name === "Tours"} // Ejemplo para el valor de isPrimary
+                description={tour.description}
+              />
+            </SwiperSlide>
+          ))}
         </Swiper>
       </section>
-
+      
       {/* Responsive mobile section  */}
       <section className="px-8 py-12 md:hidden ">
         {/* Encabezado */}
@@ -268,96 +256,19 @@ export const Main = () => {
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          <SwiperSlide>
-            <Card
-              mobileTitle="Canon Colca"
-              isMobile={false}
-              imageSrc="/CAÑON_DEL_COLCA.jpg"
-              title="Tour en el Cañón del Colca"
-              isPrimary={true}
-              description="Un tour de dos días al Cañón del Colca, uno de los cañones más profundos del mundo. Además de disfrutar de paisajes espectaculares, puedes avistar el majestuoso cóndor andino. El tour suele partir desde Arequipa."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Paracas"
-              isMobile={false}
-              imageSrc="/RESERVA_NACIONAL_PARACAS.png"
-              title="Reserva Nacional de Paracas"
-              isPrimary={true}
-              description="Explora la hermosa Reserva Nacional de Paracas, ubicada en la costa del Pacífico. Este tour te permite disfrutar de impresionantes paisajes desérticos, playas aisladas y una rica fauna marina. Puedes avistar flamencos, lobos marinos y aves guaneras. Además, visitarás la famosa Catedral de Paracas, una formación rocosa icónica, y disfrutarás de las vistas del Océano Pacífico desde diversos miradores."
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Card
-              mobileTitle="Valle Sagrado"
-              isMobile={false}
-              imageSrc="/SACRED_VALLEY.png"
-              title="Valle Sagrado"
-              isPrimary={false}
-              description="Un tour de un día completo para explorar el Valle Sagrado de los Incas, que incluye visitas a Pisac, Ollantaytambo y los vibrantes mercados de Chinchero. Conocerás la cultura inca, verás pueblos tradicionales y disfrutarás de paisajes impresionantes."
-            />
-          </SwiperSlide>
+          {tours.map((tour) => (
+            <SwiperSlide key={tour?.id}>
+              <Card
+                id={tour.id} // Asegurarse de que el tipo de `id` sea string
+                mobileTitle={tour.title} // Aquí lo corregí para usar `title`
+                isMobile={false}
+                imageSrc={tour.images[0]?.imageUrl} // Asegúrate de acceder a la imagen
+                title={tour.title}
+                isPrimary={tour.category?.name === "Tours"} // Ejemplo para el valor de isPrimary
+                description={tour.description}
+              />
+            </SwiperSlide>
+          ))}
         </Swiper>
       </section>
 
@@ -440,6 +351,8 @@ export const Main = () => {
           </SwiperSlide>
         </Swiper>
       </section>
+
+      {/* Resto del código permanece igual */}
     </>
   );
 };

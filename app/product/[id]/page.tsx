@@ -11,7 +11,6 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Testimonial from "@/components/Testimonial";
-import { useMutation } from "@tanstack/react-query";
 
 interface Product {
   id: number;
@@ -53,34 +52,28 @@ export default function ProductPage() {
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
 
-  const { mutate, isPending, isError } = useMutation({
-    mutationFn: async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`
-      );
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error("Error fetching product");
-      }
-      return data.data;
-    },
-    onSuccess: (data) => {
-      setProduct(data);
-    },
-    onError: (error) => {
-      console.error("Failed to fetch product:", error);
-    },
-  });
-
   useEffect(() => {
     if (productId) {
-      mutate();
-    }
-  }, [productId, mutate]);
+      const fetchProduct = async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`);
+          const data = await response.json();
+          
+          if (data.success && data.data) {
+            setProduct(data.data);
+          } else {
+            console.error("Error fetching product", data.errors);
+          }
+        } catch (error) {
+          console.error("Failed to fetch product:", error);
+        }
+      };
 
-  if (isPending) return <div>Loading...</div>;
-  if (isError) return <div>Error fetching product.</div>;
-  if (!product) return null;
+      fetchProduct();
+    }
+  }, [productId]);
+
+  if (!product) return <div>Loading...</div>;
 
   return (
     <div className="mt-28">
@@ -134,40 +127,7 @@ export default function ProductPage() {
         </Swiper>
       </section>
 
-      <section className="px-8 py-12 w-full hidden md:block max-w-7xl mx-auto">
-        <div className="flex justify-center">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-500 mb-6">
-              Descubre más lugares para visitar en tu viaje
-            </h2>
-          </div>
-        </div>
-
-        <Swiper
-          slidesPerView={3}
-          spaceBetween={12}
-          freeMode={true}
-          pagination={{
-            clickable: true,
-            dynamicBullets: true,
-          }}
-          modules={[FreeMode, Pagination]}
-          className="mySwiper"
-        >
-          <SwiperSlide>
-            <Card
-              mobileTitle="Canon Colca"
-              isMobile={false}
-              imageSrc="/CAÑON_DEL_COLCA.jpg"
-              title="Tour en el Cañón del Colca"
-              isPrimary={true}
-              description="Un tour de dos días al Cañón del Colca, uno de los cañones más profundos del mundo. Además de disfrutar de paisajes espectaculares, puedes avistar el majestuoso cóndor andino. El tour suele partir desde Arequipa."
-            />
-          </SwiperSlide>
-          {/* Otras cards */}
-        </Swiper>
-      </section>
-
+      
       <button className="btn btn-secondary text-white my-8. btn-wide mx-auto block rounded-3xl ">
         Explora más Opciones
       </button>
