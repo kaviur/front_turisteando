@@ -55,7 +55,7 @@ const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
                         </div>
                     </div>
                     <div className="col-span-2 flex items-center ml-6">
-                        <p className="text-sm text-black">{product.description}</p>
+                        <p className="text-sm text-black truncate w-48">{product.description}</p>
                     </div>
                     <div className="col-span-1 hidden items-center sm:flex">
                         <span className="text-success inline-flex items-center rounded-full bg-success bg-opacity-10 px-2 py-1 text-xs font-medium ml-6">

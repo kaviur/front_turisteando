@@ -3,6 +3,7 @@ import { RemotePattern } from "next/dist/shared/lib/image-config";
 
 const hostnames = [
   "upload.wikimedia.org",
+  "res.cloudinary.com",
   "www.ollantaytambo.org",
   "www.civitatis.com",
   "sp-ao.shortpixel.ai",
