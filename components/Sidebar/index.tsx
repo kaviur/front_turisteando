@@ -84,7 +84,7 @@ const menuItems = [
           </svg>
         ),
         label: "Tabla Productos",
-        route: "#",
+        route: "/admin/productactions",
       },
       {
         icon: (
