@@ -218,7 +218,7 @@ const menuItems = [
           </svg>
         ),
         label: "Lista de Características",
-        route: "/admin/characteristic",
+        route: "/admin/characteristics",
       },
       {
         icon: (
@@ -241,7 +241,7 @@ const menuItems = [
           </svg>
         ),
         label: "Agregar Característica",
-        route: "/admin/addcharacteristics",
+        route: "/admin/addcharacteristic",
       },
     ],
   },
