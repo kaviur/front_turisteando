@@ -8,7 +8,7 @@ interface CardProps {
   title: string;
   isPrimary: boolean;
   description: string;
-  isMobile: boolean;
+  isMobile?: boolean;
   mobileTitle: string;
 }
 
@@ -18,12 +18,12 @@ export default function Card({
   title,
   isPrimary,
   description,
-  isMobile,
+  isMobile = false,
   mobileTitle
 }: CardProps) {
   if (isMobile) {
     return (
-      <div className="rounded-3xl overflow-hidden relative w-44 h-52 shadow-xl mb-6">
+      <Link href={`/product/${id}`} className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6">
         <Image
           className="w-full h-full object-cover"
           src={imageSrc}
@@ -45,14 +45,14 @@ export default function Card({
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 
   // Desktop Version Card
   return (
-    <Link href={`/product/${id}`} className="cursor-pointer bg-base-100 max-w-xl w-full mb-12 shadow-md rounded-xl">
-      <figure className="min-h-52 h-64 max-h-64">
+    <Link href={`/product/${id}`} className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden">
+      <figure className="min-h-52 h-48 max-h-64">
         <Image
           className="rounded-t-xl w-full h-full object-cover"
           src={imageSrc}

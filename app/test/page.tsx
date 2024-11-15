@@ -18,6 +18,8 @@ export default function HomePage() {
         {/* @ts-expect-error*/}
         {session?.user?.user?.role}
         <p>mail, {user?.email}</p>
+        {/* @ts-expect-error: test comment*/}
+        <p>token, {session?.user?.accessToken}</p>
         <button onClick={() => signOut()}>Cerrar sesión</button>
       </>
     );
