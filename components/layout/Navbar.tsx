@@ -12,6 +12,10 @@ export const Navbar = () => {
   const { data: session } = useSession();
   //@ts-expect-error: Error en la validación de tipos
   const user = session?.user?.user;
+
+  
+    console.log(session?.user);
+  
   return (
     <div className="z-10 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
       <div className="flex justify-between items-center p-4 max-w-screen-2xl mx-auto">
