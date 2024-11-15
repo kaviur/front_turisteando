@@ -15,7 +15,7 @@ export default function HomePage() {
         {/* @ts-expect-error
          */}
         <p>Bienvenido, {`${user?.name} ${user?.lastName}`}</p>
-        {/* @ts-expect-error*/}
+        {/* @ts-expect-error: 'role' podría no estar presente en la estructura 'session?.user?.user'  */}
         {session?.user?.user?.role}
         <p>mail, {user?.email}</p>
         {/* @ts-expect-error: test comment*/}

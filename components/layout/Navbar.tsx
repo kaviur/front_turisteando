@@ -14,7 +14,7 @@ export const Navbar = () => {
   //@ts-expect-error: Error en la validación de tipos
   const user = session?.user?.user;
 
-// Acceder al accessToken
+// @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
 const accessToken = session?.accessToken;
 
 console.log(accessToken);  // Esto debería imprimir el token JWT

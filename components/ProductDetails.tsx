@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import { LuClock } from "react-icons/lu";
@@ -24,24 +23,24 @@ interface ProductDetailsProps {
   peopleOptions: string[];
   scheduleOptions: string[];
 }
-const CustomPrevArrow = () => (
-  <div className="custom-prev-arrow">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="size-6"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.75 19.5 8.25 12l7.5-7.5"
-      />
-    </svg>
-  </div>
-);
+// const CustomPrevArrow = () => (
+//   <div className="custom-prev-arrow">
+//     <svg
+//       xmlns="http://www.w3.org/2000/svg"
+//       fill="none"
+//       viewBox="0 0 24 24"
+//       strokeWidth={1.5}
+//       stroke="currentColor"
+//       className="size-6"
+//     >
+//       <path
+//         strokeLinecap="round"
+//         strokeLinejoin="round"
+//         d="M15.75 19.5 8.25 12l7.5-7.5"
+//       />
+//     </svg>
+//   </div>
+// );
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
   title,
