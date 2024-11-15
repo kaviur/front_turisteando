@@ -64,7 +64,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
       return tour.category.name === "Tours";
     }
     if (activeTab === 3) {
-      return tour.category.name === "Actividades";
+      return tour.category.name === "Activity";
     }
     return true;
   });
