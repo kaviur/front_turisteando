@@ -41,7 +41,7 @@ const CategoriesPage = () => {
     router.push(`/admin/editcategory/${id}`);
   };
 
-  // Método para eliminar una categoría
+  // Método para eliminar una categoría existente
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm("¿Estás seguro de que deseas eliminar esta categoría?");
     if (confirmed && session) {
