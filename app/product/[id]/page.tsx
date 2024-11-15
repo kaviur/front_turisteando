@@ -11,6 +11,7 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Testimonial from "@/components/Testimonial";
+import Link from "next/link";
 
 interface Product {
   id: number;
@@ -32,10 +33,7 @@ interface Product {
     description: string;
     image: string;
   };
-  images: {
-    id: number;
-    imageUrl: string;
-  }[];
+  images: { id: number; imageUrl: string }[];
   availabilityStartDate: string;
   availabilityEndDate: string;
   capacity: number;
@@ -58,7 +56,7 @@ export default function ProductPage() {
         try {
           const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`);
           const data = await response.json();
-          
+          console.log(data);
           if (data.success && data.data) {
             setProduct(data.data);
           } else {
@@ -76,17 +74,17 @@ export default function ProductPage() {
   if (!product) return <div>Loading...</div>;
 
   return (
-    <div className="mt-28">
+    <div className="md:mt-28">
       <Navbar />
 
       <ProductDetails
-        title={product.title}
+        title={product?.title}
         rating={4} // Puedes ajustar la lógica de rating según tu respuesta o datos adicionales
-        imageSrc={product.images[0].imageUrl}
-        location={`${product.city.name}, ${product.city.country.name}`}
-        description={product.description}
-        people={`Capacidad: ${product.capacity}`}
-        duration={`Duración: ${product.duration}`}
+        images={product?.images}
+        location={`${product?.city?.name}, ${product?.city?.country?.name}`}
+        description={product?.description}
+        people={`Capacidad: ${product?.capacity}`}
+        duration={`Duración: ${product?.duration}`}
         peopleOptions={["1-2 personas", "3-4 personas", "5-6 personas"]} // Personaliza según tus necesidades
         scheduleOptions={[
           "10:00 AM - 12:00 PM",
@@ -123,14 +121,37 @@ export default function ProductPage() {
               reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
             />
           </SwiperSlide>
+          <SwiperSlide>
+            <Testimonial
+              userImage="/juanuser.jpg"
+              userName="Juan Pérez"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Testimonial
+              userImage="/juanuser.jpg"
+              userName="Juan Pérez"
+              city="Bogotá"
+              country="Colombia"
+              date="mayo 2024"
+              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+            />
+          </SwiperSlide>
           {/* Otros testimonios */}
         </Swiper>
       </section>
 
-      
+      <Link href={"/categories"} className="my-8 mx-auto block w-fit text-center">
       <button className="btn btn-secondary text-white my-8. btn-wide mx-auto block rounded-3xl ">
         Explora más Opciones
       </button>
+      </Link>
+
+
       <Footer />
     </div>
   );

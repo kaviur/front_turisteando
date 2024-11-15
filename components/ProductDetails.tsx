@@ -5,19 +5,18 @@ import DatePicker from "react-datepicker";
 import { LuClock } from "react-icons/lu";
 import { TiGroup } from "react-icons/ti";
 import { FaLocationDot } from "react-icons/fa6";
-// Import Swiper React components
-import { Swiper, SwiperSlide } from "swiper/react";
-// import required modules
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-// Import Swiper styles
-import "swiper/css";
-import "swiper/css/free-mode";
-import "swiper/css/pagination";
+import ImageGallery from "react-image-gallery";
+// import stylesheet if you're not already using CSS @import
+import "react-image-gallery/styles/css/image-gallery.css";
+import { FaArrowLeft } from "react-icons/fa";
 
 interface ProductDetailsProps {
   title: string;
   rating: number;
-  imageSrc: string;
+  images: {
+    id: number;
+    imageUrl: string;
+  }[];
   location: string;
   description: string;
   duration: string;
@@ -44,29 +43,10 @@ const CustomPrevArrow = () => (
   </div>
 );
 
-const CustomNextArrow = () => (
-  <div className="custom-next-arrow">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={1.5}
-      stroke="currentColor"
-      className="size-6"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m8.25 4.5 7.5 7.5-7.5 7.5"
-      />
-    </svg>
-  </div>
-);
-
 const ProductDetails: React.FC<ProductDetailsProps> = ({
   title,
   rating,
-  imageSrc,
+  images,
   location,
   description,
   duration,
@@ -78,21 +58,42 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const [selectedSchedule, setSelectedSchedule] = useState<string>("");
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
 
+  const imagesGallery = [
+    {
+      original: "https://picsum.photos/id/1018/1000/600/",
+      thumbnail: "https://picsum.photos/id/1018/250/150/",
+    },
+    {
+      original: "https://picsum.photos/id/1015/1000/600/",
+      thumbnail: "https://picsum.photos/id/1015/250/150/",
+    },
+    {
+      original: "https://picsum.photos/id/1019/1000/600/",
+      thumbnail: "https://picsum.photos/id/1019/250/150/",
+    },
+    {
+      original: images[0].imageUrl,
+      thumbnail: images[0].imageUrl,
+    },
+  ];
+
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
       {/* Título y enlace de regreso */}
-      <div className="flex justify-between items-center">
+      <div className="pt-12 flex justify-between items-center">
         <h1 className="text-4xl font-bold text-primary">{title}</h1>
+
         <button
           onClick={() => router.back()}
-          className="text-gray-600 hover:text-primary cursor-pointer"
+          className="text-primary text-lg font-semibold flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white"
         >
+          <FaArrowLeft />
           Volver atrás
         </button>
       </div>
 
       {/* Estrellas de calificación */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2 ">
         {[...Array(5)].map((_, index) => (
           <svg
             key={index}
@@ -110,109 +111,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
       {/* Imagen, calendario, selección de horario y cantidad de personas */}
 
-      
-      <div className="flex flex-row justify-between gap-4">
-        <div className="max-w-xl mr-auto">
-        {/* <div className="relative"> */}
-      {/* Flechas de navegación personalizadas */}
-
-      {/* <Swiper
-        slidesPerView={1}
-        spaceBetween={2}
-        loop={true}
-        autoplay={{
-          delay: 5000,
-          disableOnInteraction: false,
-        }}
-        navigation={{
-          enabled: true,
-          prevEl: ".custom-prev-arrow",
-          nextEl: ".custom-next-arrow",
-        }}
-        modules={[Autoplay, Navigation]}
-        className="mySwiper"
-      >
-        <SwiperSlide>
-          <Image
-            src={imageSrc}
-            alt={title}
-            width={500}
-            height={400}
-            className="rounded-lg shadow-lg bg-cover"
+      <div className="pt-12 -z-10 flex flex-row flex-wrap md:justify-between justify-center gap-4">
+        <div className="md:max-w-lg lg:max-w-2xl xl:max-w-4xl max-w-md mr-auto space-y-4">
+          <ImageGallery
+            showBullets={false}
+            showPlayButton={false}
+            showNav={false}
+            thumbnailPosition="right"
+            lazyLoad={true}
+            items={imagesGallery}
           />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image
-            src={imageSrc}
-            alt={title}
-            width={500}
-            height={400}
-            className="rounded-lg shadow-lg bg-cover"
-          />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Image
-            src={imageSrc}
-            alt={title}
-            width={500}
-            height={400}
-            className="rounded-lg shadow-lg bg-cover"
-          />
-        </SwiperSlide>
-      </Swiper>
-
-    </div> */}
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={2}
-            loop={true}
-                // autoplay={{
-                //   delay: 5000,
-                //   disableOnInteraction: false,
-                // }}
-            // pagination={{
-            //   clickable: true,
-            // }}
-            navigation={{
-              enabled: true,
-              // prevEl: ".custom-prev-arrow",
-              // nextEl: ".custom-next-arrow",
-            }}
-            modules={[Autoplay, Navigation, Pagination]}
-            className="mySwiper"
-          >
-            <SwiperSlide>
-              <Image
-                src={imageSrc}
-                alt={title}
-                width={100}
-                height={400}
-                className="rounded-lg shadow-lg bg-cover"
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Image
-                src={imageSrc}
-                alt={title}
-                width={500}
-                height={400}
-                className="rounded-lg shadow-lg bg-cover"
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Image
-                src={imageSrc}
-                alt={title}
-                width={500}
-                height={400}
-                className="rounded-lg shadow-lg bg-cover"
-              />
-            </SwiperSlide>
-          </Swiper>
-          <CustomPrevArrow />
-          <CustomNextArrow />
         </div>
-       
+
         <div className="flex flex-col bg-white  rounded-lg shadow-lg space-y-4 min-w-60 w-64">
           <DatePicker
             inline
@@ -242,7 +152,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           </div>
 
           <div className="flex gap-2 items-center justify-between px-4 pb-4">
-            <label className="text-lg font-semibold text-secondary"> 
+            <label className="text-lg font-semibold text-secondary">
               <TiGroup />
             </label>
             <input
