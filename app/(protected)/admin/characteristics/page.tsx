@@ -4,9 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-
 import ReusableTable from "@/components/ReusableTable/ReusableTable";
-import { Category } from "@/types/category";
 import { Characteristics } from "@/types/characteristics";
 
 const CharacteristicsPage = () => {
