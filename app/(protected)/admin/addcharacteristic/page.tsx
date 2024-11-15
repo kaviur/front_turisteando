@@ -55,6 +55,7 @@ export default function Home() {
           setDescription={setDescription}
           onSubmit={handleSubmit}
           isPending={isPending}  // Pasar isPending al formulario
+          isEditing={false}
         />
       </div>
     </>
