@@ -12,6 +12,7 @@ interface ReusableSmallFormProps {
   setDescription?: (value: string) => void;
   onSubmit: (event: React.FormEvent) => void;
   isPending: boolean; // Pasar el estado isPending al formulario
+  isEditing: boolean;
 }
 
 const ReusableSmallForm = ({
@@ -23,14 +24,14 @@ const ReusableSmallForm = ({
   description,
   setDescription,
   onSubmit,
-  isPending
+  isPending,
+  isEditing,
 }: ReusableSmallFormProps) => {
-  const isCategory = entityType === "categoría";
-  const title = isCategory ? "Crear Categoría" : "Crear Característica";
-  const placeholderName = isCategory
-    ? "Ingresar nombre de la categoría"
-    : "Ingresar nombre de la característica";
-  const buttonText = isCategory ? "Crear Categoría" : "Crear Característica";
+  const title = isEditing
+  ? `Editar ${entityType === "categoría" ? "Categoría" : "Característica"}`
+  : `Crear ${entityType === "categoría" ? "Categoría" : "Característica"}`;
+  const placeholderName = `Ingresa el nombre de la ${entityType}`;
+  const buttonText = isEditing ? "Guardar Cambios" : `Crear ${entityType}`;
 
   return (
     <div className="grid grid-cols-1 gap-9 sm:grid-cols-2">

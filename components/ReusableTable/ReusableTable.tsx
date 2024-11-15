@@ -71,11 +71,12 @@ const ReusableTable = ({ items, entityType, onEdit, onDelete }: ReusableTablePro
           )}
 
           <div className="col-span-1 flex items-center justify-end gap-4">
-            <button
-              onClick={() => onEdit(item.id)}
-              className="p-2 rounded-md"
-              style={{ backgroundColor: "#010971" }}
-            >
+          <button
+            onClick={() => item.id && onEdit(item.id)}
+            className="p-2 rounded-md"
+            style={{ backgroundColor: "#010971" }}
+            disabled={!item.id} // Opcional: deshabilitar el botón si falta id
+          >
               <FaRegEdit color="white" size={16} />
             </button>
             <button

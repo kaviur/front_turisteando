@@ -18,7 +18,6 @@ export const Navbar = () => {
 const accessToken = session?.accessToken;
 
 console.log(accessToken);  // Esto debería imprimir el token JWT
-console.log(session?.user.)
   
     console.log(session?.user  );
   
