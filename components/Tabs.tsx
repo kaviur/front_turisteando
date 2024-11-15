@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BiCategoryAlt } from "react-icons/bi";
 import { LiaTreeSolid } from "react-icons/lia";
 import { PiMountainsFill } from "react-icons/pi";
@@ -12,8 +12,68 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Card from "./Card";
 
+// Definir el tipo para los tours (puedes adaptarlo si los datos son distintos)
+type Tour = {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  seller: string;
+  city: {
+    id: number;
+    name: string;
+    country: {
+      id: number;
+      name: string;
+    };
+  };
+  category: {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+  };
+  images: {
+    id: number;
+    imageUrl: string;
+  }[];
+  availabilityStartDate: string;
+  availabilityEndDate: string;
+  capacity: number;
+  duration: string;
+  characteristic: {
+    id: number;
+    name: string;
+    icon: string;
+  }[];
+  active: boolean;
+};
+
 export const Tabs = () => {
   const [activeTab, setActiveTab] = useState(1);
+
+  // Estado para almacenar los tours
+  const [tours, setTours] = useState<Tour[]>([]);
+
+  useEffect(() => {
+    const fetchTours = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`);
+        const data = await response.json();
+
+        // Verificamos que 'data' sea un objeto y tenga la propiedad 'data' que es un array
+        if (data && Array.isArray(data.data)) {
+          setTours(data.data); // Asignamos el array de tours
+        } else {
+          console.error("La respuesta de la API no contiene un array de tours:", data);
+        }
+      } catch (error) {
+        console.error("Error al obtener los datos:", error);
+      }
+    };
+
+    fetchTours();
+  }, []);
 
   const renderContent = () => {
     switch (activeTab) {
@@ -30,141 +90,48 @@ export const Tabs = () => {
             modules={[FreeMode, Pagination]}
             className="mySwiper"
           >
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/SELVA_AMAZONICA.jpg"
-                title="Exploración de la Selva Amazónica"
-                mobileTitle="Selva Amazónica"
-                isPrimary={false}
-                description="Vive la experiencia de explorar la selva amazónica peruana desde Iquitos o Puerto Maldonado. Puedes realizar caminatas por la selva, avistamiento de fauna y paseos en bote por ríos llenos de vida."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/SELVA_AMAZONICA.jpg"
-                title="Exploración de la Selva Amazónica"
-                mobileTitle="Selva Amazónica"
-                isPrimary={false}
-                description="Vive la experiencia de explorar la selva amazónica peruana desde Iquitos o Puerto Maldonado. Puedes realizar caminatas por la selva, avistamiento de fauna y paseos en bote por ríos llenos de vida."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
+            {tours.map((tour) => (
+              <SwiperSlide key={tour.id}>
+                <Card
+                  id={tour.id}
+                  mobileTitle={tour.title}
+                  isMobile={false}
+                  imageSrc={tour.images[0]?.imageUrl}
+                  title={tour.title}
+                  isPrimary={tour.category?.name === "Tours"}
+                  description={tour.description}
+                />
+              </SwiperSlide>
+            ))}
           </Swiper>
         );
       case 2:
         return (
           <Swiper
-            slidesPerView={2}
-            spaceBetween={4}
-            freeMode={true}
-            pagination={{
-              clickable: true,
-            }}
-            modules={[FreeMode, Pagination]}
-            className="mySwiper "
-          >
-            <SwiperSlide>
+          slidesPerView={2}
+          spaceBetween={4}
+          freeMode={true}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          modules={[FreeMode, Pagination]}
+          className="mySwiper"
+        >
+          {tours.map((tour) => (
+            <SwiperSlide key={tour.id}>
               <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
+                id={tour.id}
+                mobileTitle={tour.title}
+                isMobile={false}
+                imageSrc={tour.images[0]?.imageUrl}
+                title={tour.title}
+                isPrimary={tour.category?.name === "Tours"}
+                description={tour.description}
               />
             </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
-          </Swiper>
+          ))}
+        </Swiper>
         );
       case 3:
         return (
@@ -174,70 +141,24 @@ export const Tabs = () => {
             freeMode={true}
             pagination={{
               clickable: true,
+              dynamicBullets: true,
             }}
             modules={[FreeMode, Pagination]}
-            className="mySwiper "
+            className="mySwiper"
           >
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/MONTAÑA_7_COLORES.jpg"
-                title="Trekking en la Montaña de 7 Colores"
-                mobileTitle="Montaña 7 Colores"
-                isPrimary={false}
-                description="Realiza una caminata hacia la famosa Montaña de los Siete Colores, cerca de Cusco. Este destino es conocido por sus impresionantes colores naturales debido a los minerales presentes en la tierra."
-              />
-            </SwiperSlide>
-            <SwiperSlide>
-              <Card
-                isMobile={true}
-                imageSrc="/HUACACHINA.png"
-                title="Sandboarding en Huacachina"
-                mobileTitle="Huacachina"
-                isPrimary={false}
-                description="Deslízate por las dunas de arena de Huacachina, cerca de Ica. El sandboarding es una actividad emocionante, y también puedes hacer recorridos en buggies por el desierto."
-              />
-            </SwiperSlide>
+            {tours.map((tour) => (
+              <SwiperSlide key={tour.id}>
+                <Card
+                  id={tour.id}
+                  mobileTitle={tour.title}
+                  isMobile={false}
+                  imageSrc={tour.images[0]?.imageUrl}
+                  title={tour.title}
+                  isPrimary={tour.category?.name === "Tours"}
+                  description={tour.description}
+                />
+              </SwiperSlide>
+            ))}
           </Swiper>
         );
       default:
@@ -254,7 +175,7 @@ export const Tabs = () => {
     <div>
       <div
         role="tablist"
-        className="flex justify-start items-center gap-4 bg-base-100"
+        className="flex flex-wrap justify-start items-center gap-4 bg-base-100"
       >
         <a
           role="tab"

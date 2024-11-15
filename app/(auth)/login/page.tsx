@@ -97,14 +97,14 @@ export default function Login() {
         <h2 className="text-3xl font-bold mt-2 mb-4 text-start">
           Bienvenido! 👋
         </h2>
-        <p className="text-[14px] text-[#828F9C] mt-2 mb-6 text-star">
+        <p className="text-[14px] text-[#828F9C] mt-2 mb-8 text-star">
           Estamos felices de verte de nuevo! Por favor ingresa tu mail y
           contraseña para iniciar sesión en tu cuenta.
         </p>
 
         {/* Campo de Email */}
         <div className="mb-4">
-          <label className="input input-bordered flex items-center gap-2 mb-4">
+          <label className="input input-bordered rounded-3xl flex items-center gap-2 mb-1">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -125,13 +125,13 @@ export default function Login() {
             />
           </label>
           {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            <p className="text-red-500 text-sm pl-3">{errors.email}</p>
           )}
         </div>
 
         {/* Campo de Contraseña */}
         <div className="mb-4">
-          <label className="input input-bordered flex items-center gap-2 mb-4">
+          <label className="input input-bordered rounded-3xl flex items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -155,7 +155,7 @@ export default function Login() {
             />
           </label>
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            <p className="text-red-500 text-sm pl-3">{errors.password}</p>
           )}
         </div>
 
@@ -163,12 +163,12 @@ export default function Login() {
         <button
           type="submit"
           disabled={isPending}
-          className="btn btn-primary w-full font-bold text-[16px] text-white"
+          className="btn btn-primary w-full rounded-3xl font-bold text-[16px] text-white mt-4"
         >
           {isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
         </button>
 
-        <div className="flex items-center justify-center gap-2 my-6">
+        <div className="flex items-center justify-center gap-2 my-3">
           <hr className="flex-1 border-t border-gray-300" />
           <span className="text-gray-700">O</span>
           <hr className="flex-1 border-t border-gray-300" />
@@ -178,7 +178,7 @@ export default function Login() {
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="w-full py-2 px-4 bg-white border-2 border-gray-300 text-gray-700 rounded-md flex items-center justify-center gap-4 hover:bg-gray-100"
+          className="w-full py-3 px-4 bg-white border-2 border-gray-300 text-gray-700 rounded-3xl flex items-center justify-center gap-4 hover:bg-gray-100"
         >
           {/* Logo de Google con los colores */}
           <svg

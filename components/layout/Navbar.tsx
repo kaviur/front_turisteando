@@ -7,6 +7,7 @@ import SecondaryButton from "../ui/SecondaryButton";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { FaRegCalendarDays } from "react-icons/fa6";
+import { AiOutlineSetting } from 'react-icons/ai';
 
 export const Navbar = () => {
   const { data: session } = useSession();
@@ -110,10 +111,10 @@ export const Navbar = () => {
                   <div className="w-10 rounded-full">
                     <div className="bg-secondary w-full h-full flex justify-center items-center">
                       <p className="text-white font-semibold text-base">
-                        {user?.name?.charAt(0)}
+                        {user?.name?.charAt(0).toUpperCase()}
                         {/*  @ts-expect-error
                          */}
-                        {user?.lastName?.charAt(0)}
+                        {user?.lastName?.charAt(0).toUpperCase()}
                       </p>
                     </div>
                   </div>
@@ -139,6 +140,14 @@ export const Navbar = () => {
                     Perfil
                   </Link>
                 </li>
+                {user?.role === "ADMIN" && (
+                  <li>
+                    <Link className="py-4" href={"/admin"}>
+                      <AiOutlineSetting className="mr-2" />
+                      Dashboard
+                    </Link>
+                  </li>
+                )}
                 <div className="divider my-0"></div>
                 <li>
                   <button
