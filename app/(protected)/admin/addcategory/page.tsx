@@ -70,6 +70,7 @@ export default function CreateCategory() {
           setIcono={setIcono}
           onSubmit={handleSubmit}
           isPending={isPending}
+          isEditing={false}
         />
       </div>
     </>

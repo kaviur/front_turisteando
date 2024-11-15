@@ -27,9 +27,11 @@ const ReusableSmallForm = ({
   isPending,
   isEditing,
 }: ReusableSmallFormProps) => {
+  const isCategory = entityType === "categoría"; // Determinamos si es categoría
   const title = isEditing
-  ? `Editar ${entityType === "categoría" ? "Categoría" : "Característica"}`
-  : `Crear ${entityType === "categoría" ? "Categoría" : "Característica"}`;
+    ? `Editar ${isCategory ? "Categoría" : "Característica"}`
+    : `Crear ${isCategory ? "Categoría" : "Característica"}`;
+  
   const placeholderName = `Ingresa el nombre de la ${entityType}`;
   const buttonText = isEditing ? "Guardar Cambios" : `Crear ${entityType}`;
 
