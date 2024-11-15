@@ -12,20 +12,21 @@ export default function CreateCategory() {
   const [icono, setIcono] = useState<File | null>(null);
   const [isPending, setIsPending] = useState(false);
 
+  
   // Función para crear una categoría
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsPending(true);
-
+    
     if (!session) {
       toast.error("No se encontró la sesión.");
       setIsPending(false);
       return;
     }
-
+    
     // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
-    const token = session.accessToken; 
-
+     const token = session?.user?.accessToken;
+    
     const formData = new FormData();
     const category = JSON.stringify({
       name,
