@@ -14,7 +14,7 @@ export const Navbar = () => {
   //@ts-expect-error: Error en la validación de tipos
   const user = session?.user?.user;
   return (
-    <div className="z-10 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
+    <div className="z-20 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
       <div className="flex justify-between items-center p-4 max-w-screen-2xl mx-auto">
         <div className=" ">
           <Link className="btn btn-ghost text-xl hidden md:block" href="/">
@@ -22,7 +22,7 @@ export const Navbar = () => {
           </Link>
 
           {/* Mobile Menu hamburger */}
-          <div className="dropdown">
+          <div className="dropdown z-50">
             <div tabIndex={0} role="button" className="btn btn-ghost md:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +41,7 @@ export const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              className="menu z-50 menu-sm dropdown-content bg-base-100 rounded-box  mt-3 w-52 p-2 shadow"
             >
               <li>
                 <Link href={"/tours"} className="px-2 py-4">
