@@ -175,7 +175,7 @@ export const Tabs = () => {
     <div>
       <div
         role="tablist"
-        className="flex justify-start items-center gap-4 bg-base-100"
+        className="flex flex-wrap justify-start items-center gap-4 bg-base-100"
       >
         <a
           role="tab"

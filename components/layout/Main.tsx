@@ -51,7 +51,7 @@ type Tour = {
   active: boolean;
 };
 
-export const Main = () => {
+export const  Main = () => {
   // Tipar el estado 'tours' como un array de 'Tour'
   const [tours, setTours] = useState<Tour[]>([]);
 
