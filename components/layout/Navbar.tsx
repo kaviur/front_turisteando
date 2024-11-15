@@ -14,8 +14,13 @@ export const Navbar = () => {
   //@ts-expect-error: Error en la validación de tipos
   const user = session?.user?.user;
 
+// Acceder al accessToken
+const accessToken = session?.accessToken;
+
+console.log(accessToken);  // Esto debería imprimir el token JWT
+console.log(session?.user.)
   
-    console.log(session?.user);
+    console.log(session?.user  );
   
   return (
     <div className="z-10 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
