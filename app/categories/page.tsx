@@ -1,8 +1,6 @@
 "use client";
 import { Footer } from "@/components/layout/Footer";
-import { Main } from "@/components/layout/Main";
 import { Navbar } from "@/components/layout/Navbar";
-import { Tabs } from "@/components/Tabs";
 import { TabsPagination } from "@/components/TabsPagination";
 
 export default function Home() {

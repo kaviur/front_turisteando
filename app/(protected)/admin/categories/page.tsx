@@ -73,7 +73,7 @@ const CategoriesPage = () => {
   };
 
   return (
-    <div>
+    <div className="ml-60">
       <h1 className="text-2xl font-bold mb-4">Categorías</h1>
       <ReusableTable
         items={categories}

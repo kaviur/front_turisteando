@@ -13,6 +13,7 @@ const hostnames = [
   "andinoperu.b-cdn.net",
   "www.wayraqperu.com",
   "www.lorenzoexpeditions.com",
+  "www.rumbosdelperu.com",
 ];
 
 const remotePatternsList: RemotePattern[] = hostnames.map((hostname) => ({
