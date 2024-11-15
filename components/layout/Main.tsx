@@ -51,21 +51,22 @@ type Tour = {
   active: boolean;
 };
 
-export const  Main = () => {
+export const Main = () => {
   // Tipar el estado 'tours' como un array de 'Tour'
   const [tours, setTours] = useState<Tour[]>([]);
+  const [loading, setLoading] = useState(true); // Nuevo estado de carga
 
   useEffect(() => {
     const fetchTours = async () => {
+      setLoading(true); // Inicia la carga
       try {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
         );
         const data = await response.json();
 
-        // Verificamos que 'data' sea un objeto y tenga la propiedad 'data' que es un array
         if (data && Array.isArray(data.data)) {
-          setTours(data.data); // Asignamos el array de tours
+          setTours(data.data);
         } else {
           console.error(
             "La respuesta de la API no contiene un array de tours:",
@@ -75,6 +76,7 @@ export const  Main = () => {
       } catch (error) {
         console.error("Error al obtener los datos:", error);
       }
+      setLoading(false); // Termina la carga
     };
 
     fetchTours();
@@ -100,7 +102,6 @@ export const  Main = () => {
           <h1 className="font-bold md:text-5xl">
             Descubre los mejores lugares para visitar en tus vacaciones 😍
           </h1>
-          
 
           {/* Buscador */}
           <div className="flex items-center gap-2 bg-white rounded-full shadow-lg p-2">
@@ -117,7 +118,6 @@ export const  Main = () => {
           </div>
         </div>
       </section>
-      
 
       {/* Responsive mobile section  */}
       <section className="flex items-center justify-center text-white md:hidden mt-18 w-full max-w-3xl">
@@ -136,43 +136,22 @@ export const  Main = () => {
         </div>
       </section>
 
-      {/* Responsive mobile section  */}
-      <section className="px-8 py-12 md:hidden mt-18 w-full max-w-3xl">
-        {/* Encabezado */}
-        {/* Títulos a la izquierda */}
-        <h2 className="text-3xl font-bold  mb-6">Descubre Lugares</h2>
-
-        <Tabs />
-      </section>
-
-
-
-
-      {/* Tours */}
+      {/* Tours desktop */}
       <section className="px-8 py-12 hidden md:block max-w-screen-2xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-                   {/* Títulos a la izquierda */}
-                   <div className="">
-            <h2 className="text-3xl font-bold text-primary">
-              Descubre nuestros Tours
-            </h2>
-            <p className="text-lg text-gray-500">
-              Encuentra tus próximas{" "}
-              <span className="text-primary font-semibold">aventuras</span>
-            </p>
-          </div>
-
-          {/* Link a la derecha */}
-
+          {/* Títulos */}
+          <h2 className="text-3xl font-bold text-primary">
+            Descubre nuestros Tours
+          </h2>
           <Link
-            href="/tours"
+            href="/categories"
             className="text-primary flex items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white"
           >
-            Ver todos <FaArrowRight size={22} />
+            Ver todos
           </Link>
         </div>
 
-        {/* Cards Swiper Component */}
+        {/* Swiper con Condición de Carga */}
         <Swiper
           slidesPerView={3}
           spaceBetween={12}
@@ -181,22 +160,48 @@ export const  Main = () => {
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          {tours.map((tour) => (
-            <SwiperSlide key={tour?.id}>
-              <Card
-                id={tour.id} // Asegurarse de que el tipo de `id` sea string
-                mobileTitle={tour.title} // Aquí lo corregí para usar `title`
-                isMobile={false}
-                imageSrc={tour.images[0]?.imageUrl} // Asegúrate de acceder a la imagen
-                title={tour.title}
-                isPrimary={tour.category?.name === "Tours"} // Ejemplo para el valor de isPrimary
-                description={tour.description}
-              />
-            </SwiperSlide>
-          ))}
+          {loading
+            ? // Renderizar esqueleto mientras se cargan los datos
+              Array.from({ length: 3 }).map((_, index) => (
+                <SwiperSlide key={index}>
+                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                    <div className="skeleton h-52 w-full"></div>
+                    <div className="skeleton h-4 w-36"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                  </div>
+                </SwiperSlide>
+              ))
+            : // Renderizar tours cuando la carga haya terminado
+              tours.map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    isPrimary={true}
+                    id={tour.id}
+                    mobileTitle={tour.title}
+                    isMobile={false}
+                    imageSrc={tour.images[0]?.imageUrl}
+                    title={tour.title}
+                    description={tour.description}
+                  />
+                </SwiperSlide>
+              ))}
         </Swiper>
       </section>
-      
+
+      {/* Responsive mobile section  */}
+      <section className="px-8 py-12 md:hidden mt-18 w-full max-w-3xl">
+        {/* Encabezado */}
+        {/* Títulos a la izquierda */}
+        <h2 className="text-3xl font-bold  mb-6">Descubre Lugares</h2>
+        {/* //@ts-ignore */}
+        <Tabs isMobile={true}/>
+        
+      </section>
+
       {/* Responsive mobile section  */}
       <section className="px-8 py-12 md:hidden ">
         {/* Encabezado */}
@@ -237,7 +242,7 @@ export const  Main = () => {
 
           {/* Link a la derecha */}
           <Link
-            href="/tours"
+            href="/categories"
             className="text-secondary flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-secondary hover:text-white "
           >
             Ver todos <FaArrowRight size={24} />
@@ -256,25 +261,46 @@ export const  Main = () => {
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          {tours.map((tour) => (
-            <SwiperSlide key={tour?.id}>
-              <Card
-                id={tour.id} // Asegurarse de que el tipo de `id` sea string
-                mobileTitle={tour.title} // Aquí lo corregí para usar `title`
-                isMobile={false}
-                imageSrc={tour.images[0]?.imageUrl} // Asegúrate de acceder a la imagen
-                title={tour.title}
-                isPrimary={tour.category?.name === "Tours"} // Ejemplo para el valor de isPrimary
-                description={tour.description}
-              />
-            </SwiperSlide>
-          ))}
+          {loading
+            ? // Renderizar esqueleto mientras se cargan los datos
+              Array.from({ length: 3 }).map((_, index) => (
+                <SwiperSlide key={index}>
+                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                    <div className="skeleton h-52 w-full"></div>
+                    <div className="skeleton h-4 w-36"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                  </div>
+                </SwiperSlide>
+              ))
+            : // Renderizar tours cuando la carga haya terminado
+              tours.map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    isPrimary={false}
+                    id={tour.id}
+                    mobileTitle={tour.title}
+                    isMobile={false}
+                    imageSrc={tour.images[0]?.imageUrl}
+                    title={tour.title}
+                    description={tour.description}
+                  />
+                </SwiperSlide>
+              ))}
         </Swiper>
       </section>
 
-      <button className="btn btn-primary text-white my-8 btn-wide mx-auto rounded-3xl hidden md:block">
-        Explora mas Opciones
-      </button>
+      <Link
+        href={"/categories"}
+        className="my-8 mx-auto block w-fit text-center"
+      >
+        <button className="btn btn-primary text-white btn-wide rounded-3xl hidden md:block">
+          Explora mas Opciones
+        </button>
+      </Link>
 
       <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto">
         {/* Encabezado */}
@@ -351,8 +377,6 @@ export const  Main = () => {
           </SwiperSlide>
         </Swiper>
       </section>
-
-      {/* Resto del código permanece igual */}
     </>
   );
 };
