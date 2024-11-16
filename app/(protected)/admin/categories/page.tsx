@@ -41,7 +41,7 @@ const CategoriesPage = () => {
     router.push(`/admin/editcategory/${id}`);
   };
 
-  // Método para eliminar una categoría
+  // Método para eliminar una categoría existente
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm("¿Estás seguro de que deseas eliminar esta categoría?");
     if (confirmed && session) {
@@ -73,7 +73,7 @@ const CategoriesPage = () => {
   };
 
   return (
-    <div>
+    <div className="ml-60">
       <h1 className="text-2xl font-bold mb-4">Categorías</h1>
       <ReusableTable
         items={categories}

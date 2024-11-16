@@ -197,7 +197,7 @@ export const Main = () => {
         {/* Encabezado */}
         {/* Títulos a la izquierda */}
         <h2 className="text-3xl font-bold  mb-6">Descubre Lugares</h2>
-        {/* //@ts-ignore */}
+        {/* //@ts-expect-error Ignorando error*/}
         <Tabs isMobile={true}/>
         
       </section>

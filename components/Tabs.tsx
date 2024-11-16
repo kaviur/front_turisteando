@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import { BiCategoryAlt } from "react-icons/bi";
 import { LiaTreeSolid } from "react-icons/lia";
 import { PiMountainsFill } from "react-icons/pi";
@@ -55,7 +55,8 @@ export const Tabs: React.FC<TabsProps> = ({isMobile = false }) => {
     fetchTours();
   }, []);
 
-  const renderContent = (tabId: number) => (
+  const renderContent = () => (
+    
     <Swiper
       slidesPerView={2}
       spaceBetween={4}
@@ -84,6 +85,7 @@ export const Tabs: React.FC<TabsProps> = ({isMobile = false }) => {
     "tab-active": "bg-primary text-white",
     "": "text-gray-500 outline outline-2 outline-gray-200 hover:outline-none",
   };
+  
 
   return (
     <div>
@@ -118,9 +120,9 @@ export const Tabs: React.FC<TabsProps> = ({isMobile = false }) => {
         </a>
       </div>
       <div className="p-4 mt-4 bg-gray-100 rounded-lg">
-        {activeTab === 1 && renderContent(1)}
-        {activeTab === 2 && renderContent(2)}
-        {activeTab === 3 && renderContent(3)}
+        {activeTab === 1 && renderContent()}
+        {activeTab === 2 && renderContent()}
+        {activeTab === 3 && renderContent()}
       </div>
     </div>
   );
