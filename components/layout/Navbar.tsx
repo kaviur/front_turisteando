@@ -32,8 +32,8 @@ export const Navbar = () => {
           </Link>
 
           {/* Mobile Menu hamburger */}
-          <div className="dropdown z-50">
-            <div tabIndex={0} role="button" className="btn btn-ghost md:hidden">
+          <div className="dropdown z-20">
+            <div tabIndex={0} role="button" className="btn btn-ghost md:hidden z-20">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -68,11 +68,11 @@ export const Navbar = () => {
                   Novedades
                 </Link>
               </li>
-              <li>
+              <li className="z-20">
                 <Link href={"/favorites"} className="px-2 py-4">
                   Favoritos
                 </Link>
-              </li>
+              </li >
             </ul>
           </div>
         </div>
