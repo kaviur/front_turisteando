@@ -31,7 +31,7 @@ const ReusableSmallForm = ({
   const title = isEditing
     ? `Editar ${isCategory ? "Categoría" : "Característica"}`
     : `Crear ${isCategory ? "Categoría" : "Característica"}`;
-  
+
   const placeholderName = `Ingresa el nombre de la ${entityType}`;
   const buttonText = isEditing ? "Guardar Cambios" : `Crear ${entityType}`;
 
@@ -75,7 +75,9 @@ const ReusableSmallForm = ({
               )}
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-black mb-2">Ícono</label>
+                <label className="block text-sm font-medium text-black mb-2">
+                  Ícono
+                </label>
                 <div className="flex items-center border border-gray-300 rounded overflow-hidden">
                   <label className="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
                     Selecciona el archivo
@@ -87,23 +89,23 @@ const ReusableSmallForm = ({
                   </label>
                   <input
                     type="text"
-                    value={icono ? icono.name : "Ningún archivo ha sido seleccionado"}
+                    value={
+                      icono ? icono.name : "Ningún archivo ha sido seleccionado"
+                    }
                     className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
                     readOnly
                   />
                 </div>
               </div>
             </div>
-           
           </form>
-          
         </div>
         <div className="flex justify-center mt-2">
-              <PrimaryButton
-                text={isPending ? "Guardando..." : buttonText} // Condicionamos el texto
-                style="px-14"
-             
-              />
+          <PrimaryButton
+            text={isPending ? "Guardando..." : buttonText} // Condicionamos el texto
+            style="px-14"
+            onClick={onSubmit} // Mantenemos el controlador de eventos original
+          />
         </div>
       </div>
     </div>

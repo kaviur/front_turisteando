@@ -11,7 +11,12 @@ type ReusableTableProps = {
   onDelete: (id: string) => void;
 };
 
-const ReusableTable = ({ items, entityType, onEdit, onDelete }: ReusableTableProps) => {
+const ReusableTable = ({
+  items,
+  entityType,
+  onEdit,
+  onDelete,
+}: ReusableTableProps) => {
   const isCategory = entityType === "categoría";
 
   return (
@@ -22,15 +27,23 @@ const ReusableTable = ({ items, entityType, onEdit, onDelete }: ReusableTablePro
         </h4>
       </div>
 
-      <div className="grid grid-cols-4 border-t border-stroke px-4 py-4 sm:grid-cols-5 md:px-6 2xl:px-7">
+      <div
+        className={`grid grid-cols-5 border-t border-stroke px-4 py-4 md:px-6 2xl:px-7`}
+      >
         <div className="col-span-1 flex items-center">
           <p className="font-medium py-2">Ícono</p>
         </div>
-        <div className="col-span-1 flex items-center">
-          <p className="font-medium py-2">Nombre</p>
+        <div
+          className={`${
+            isCategory ? "col-span-1" : "col-span-3"
+          } flex "items-center"`}
+        >
+          <p className="font-medium py-2">
+            {isCategory ? "Categorías" : "Características"}
+          </p>
         </div>
         {isCategory && (
-          <div className="col-span-1 flex items-center">
+          <div className="col-span-2 flex items-center flex-grow">
             <p className="font-medium py-2">Descripción</p>
           </div>
         )}
@@ -41,13 +54,13 @@ const ReusableTable = ({ items, entityType, onEdit, onDelete }: ReusableTablePro
 
       {items.map((item, key) => (
         <div
-          className="grid grid-cols-4 border-t border-stroke px-4 py-4 sm:grid-cols-5 md:px-6 2xl:px-7"
+          className={`grid grid-cols-5 border-t border-stroke px-4 py-4 md:px-6 2xl:px-7`}
           key={key}
         >
           <div className="col-span-1 flex items-center">
-            {item.iconUrl ? (
+            {item.image ? (
               <Image
-                src={item.iconUrl}
+                src={item.image.imageUrl}
                 width={60}
                 height={50}
                 alt="Icono"
@@ -60,23 +73,29 @@ const ReusableTable = ({ items, entityType, onEdit, onDelete }: ReusableTablePro
             )}
           </div>
 
-          <div className="col-span-1 flex items-center">
+          <div
+            className={`${
+              isCategory ? "col-span-1" : "col-span-3"
+            } flex items-center`}
+          >
             <p className="text-sm text-black italic">{item.name}</p>
           </div>
 
           {isCategory && (
-            <div className="col-span-1 flex items-center">
-              <p className="text-sm text-black">{(item as Category).description || "Sin descripción"}</p>
+            <div className="col-span-2 flex items-center">
+              <p className="text-sm text-black">
+                {(item as Category).description || "Sin descripción"}
+              </p>
             </div>
           )}
 
           <div className="col-span-1 flex items-center justify-end gap-4">
-          <button
-            onClick={() => item.id && onEdit(item.id)}
-            className="p-2 rounded-md"
-            style={{ backgroundColor: "#010971" }}
-            disabled={!item.id} // Opcional: deshabilitar el botón si falta id
-          >
+            <button
+              onClick={() => item.id && onEdit(item.id)}
+              className="p-2 rounded-md"
+              style={{ backgroundColor: "#010971" }}
+              disabled={!item.id} // Opcional: deshabilitar el botón si falta id
+            >
               <FaRegEdit color="white" size={16} />
             </button>
             <button

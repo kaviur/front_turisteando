@@ -1,8 +1,10 @@
 "use client";
 
+import React from "react";
+
 interface PrimaryButtonProps {
   text: string;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   style?: string;
   children?: React.ReactNode;
 }
@@ -11,7 +13,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   text,
   style,
   onClick,
-  children
+  children,
 }) => {
   return (
     <button
