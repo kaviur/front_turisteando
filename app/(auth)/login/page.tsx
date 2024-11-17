@@ -9,6 +9,7 @@ import { loginInitialState } from "@/lib/state";
 
 
 export default function Login() {
+  //@ts-expect-error: Use form actions on this login page
   const [errorMessage, formAction, isPending] = useActionState(login, loginInitialState);
 
   const [form, setForm] = useState({

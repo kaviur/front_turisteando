@@ -29,8 +29,9 @@ export async function login(prevState: FormState, formData: FormData) {
       password: password,
       redirectTo: "/",
     });
-
+      // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
     if (result?.error) {
+      // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
       throw new Error(result.error);
     }
 

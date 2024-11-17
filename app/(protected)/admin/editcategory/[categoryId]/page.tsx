@@ -29,7 +29,7 @@ const EditCategory = () => {
     }
 
     try {
-      //@ts-ignore
+      // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it.
       const token = session?.user?.accessToken;
 
       const response = await fetch(
@@ -83,7 +83,7 @@ const EditCategory = () => {
     ); // Agregar el JSON en el campo "category"
     if (icono) formData.append("image", icono); // Agregar el archivo en el campo "image"
 
-    //@ts-ignore
+    // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it.
     const token = session?.user?.accessToken;
 
     try {

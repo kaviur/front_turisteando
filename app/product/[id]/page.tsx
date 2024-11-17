@@ -47,7 +47,6 @@ export default function ProductPage() {
 
       <ProductDetails
         title={product?.title}
-        rating={4} // Puedes ajustar la lógica de rating según tu respuesta o datos adicionales
         images={product?.images}
         location={`${product?.city?.name}, ${product?.city?.country?.name}`}
         description={product?.description}

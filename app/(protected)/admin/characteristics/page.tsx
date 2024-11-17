@@ -14,11 +14,7 @@ const CharacteristicsPage = () => {
 
   useEffect(() => {
     if (session) {
-      // Obtener el token de sesión
-      // {
-      //   /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      // }
-      //@ts-ignore
+      // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
       const token: string = session?.user?.accessToken;
 
       const fetchCategories = async () => {
@@ -52,10 +48,12 @@ const CharacteristicsPage = () => {
 
   // Método para eliminar una caracteristica
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("¿Estás seguro de que deseas eliminar esta característica?");
+    const confirmed = window.confirm(
+      "¿Estás seguro de que deseas eliminar esta característica?"
+    );
     if (confirmed && session) {
       try {
-        {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
+        //  @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
         const token = session.accessToken;
 
         await toast.promise(
@@ -66,8 +64,13 @@ const CharacteristicsPage = () => {
               Authorization: `Bearer ${token}`,
             },
           }).then((response) => {
-            if (!response.ok) throw new Error("Error al eliminar la característica");
-            setCharacteristics(characteristics.filter((characteristic) => characteristic.id !== id));
+            if (!response.ok)
+              throw new Error("Error al eliminar la característica");
+            setCharacteristics(
+              characteristics.filter(
+                (characteristic) => characteristic.id !== id
+              )
+            );
           }),
           {
             loading: "Eliminando caracteristica...",
