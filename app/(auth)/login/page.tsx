@@ -1,16 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import Image from "next/image";
+import { login } from "@/lib/actions";
+import { loginInitialState } from "@/lib/state";
+
+
 
 export default function Login() {
+  const [errorMessage, formAction, isPending] = useActionState(login, loginInitialState);
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-  const [isPending, setIsPending] = useState(false);
+  // const [isPending, setIsPending] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
 
@@ -35,48 +40,14 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Función de inicio de sesión con Google (simulada)
   const handleGoogleLogin = () => {
-    toast.success("Iniciado sesión con Google");
-    router.push("/"); // Redirige a la página de inicio después de Google login
+    const loadingToast = toast.loading("Iniciando sesión con Google...");
+    setTimeout(() => {
+      toast.success("Iniciado sesión con Google", { id: loadingToast });
+      router.push("/");
+    }, 2000);
   };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    const { email, password } = form;
-
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return toast.error("Error en el formulario. Revisa los campos.");
-    }
-
-    setIsPending(true);
-
-    // Implementación de toast.promise para manejar éxito y error en una sola promesa
-    await toast
-      .promise(
-        signIn("credentials", {
-          email,
-          password,
-          redirect: false,
-        }).then((result) => {
-          setIsPending(false);
-          if (result?.error) {
-            throw new Error(result.error); // Manejo de error para activar el mensaje de error en el toast
-          } else {
-            router.push("/"); // Redirige a home en caso de éxito
-          }
-        }),
-        {
-          loading: "Iniciando sesión...",
-          success: "Inicio de sesión exitoso",
-          error: "Error al iniciar sesión",
-        }
-      )
-      .catch(() => {
-        setIsPending(false);
-      });
-  };
+  console.log(errorMessage);  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
@@ -89,9 +60,9 @@ export default function Login() {
           className="w-32"
         />
       </div>
-      <Toaster />
       <form
-        onSubmit={handleSubmit}
+        action={formAction}
+        onSubmit={validateForm}
         className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md mt-14"
       >
         <h2 className="text-3xl font-bold mt-2 mb-4 text-start">
@@ -168,11 +139,8 @@ export default function Login() {
           {isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
         </button>
 
-        <div className="flex items-center justify-center gap-2 my-3">
-          <hr className="flex-1 border-t border-gray-300" />
-          <span className="text-gray-700">O</span>
-          <hr className="flex-1 border-t border-gray-300" />
-        </div>
+        <div className="divider">O</div>
+
 
         {/* Botón de Iniciar sesión con Google */}
         <button
