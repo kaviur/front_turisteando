@@ -11,7 +11,6 @@ import { FaArrowLeft } from "react-icons/fa";
 
 interface ProductDetailsProps {
   title: string;
-  rating: number;
   images: {
     id: number;
     imageUrl: string;
@@ -23,28 +22,9 @@ interface ProductDetailsProps {
   peopleOptions: string[];
   scheduleOptions: string[];
 }
-// const CustomPrevArrow = () => (
-//   <div className="custom-prev-arrow">
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       fill="none"
-//       viewBox="0 0 24 24"
-//       strokeWidth={1.5}
-//       stroke="currentColor"
-//       className="size-6"
-//     >
-//       <path
-//         strokeLinecap="round"
-//         strokeLinejoin="round"
-//         d="M15.75 19.5 8.25 12l7.5-7.5"
-//       />
-//     </svg>
-//   </div>
-// );
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
   title,
-  rating,
   images,
   location,
   description,
@@ -53,6 +33,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   scheduleOptions,
 }) => {
   const router = useRouter();
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedSchedule, setSelectedSchedule] = useState<string>("");
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
@@ -92,7 +73,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
 
       {/* Estrellas de calificación */}
-      <div className="flex items-center gap-2 ">
+      {/* <div className="flex items-center gap-2 ">
         {[...Array(5)].map((_, index) => (
           <svg
             key={index}
@@ -106,13 +87,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
           </svg>
         ))}
-      </div>
+      </div> */}
 
       {/* Imagen, calendario, selección de horario y cantidad de personas */}
 
       <div className="pt-12 -z-10 flex flex-row flex-wrap md:justify-between justify-center gap-4">
-        <div className="md:max-w-lg lg:max-w-2xl xl:max-w-4xl max-w-md mr-auto space-y-4">
+        <div className="md:max-w-lg lg:max-w-2xl xl:max-w-4xl max-w-md mx-auto space-y-4">
           <ImageGallery
+            additionalClass="z-10"
             showBullets={false}
             showPlayButton={false}
             showNav={false}
