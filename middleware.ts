@@ -14,11 +14,6 @@ export default auth((req) => {
   //@ts-ignore
   const isAdmin = req.auth?.user?.role === 'ADMIN';
 
-  // Si está en una ruta pública y autenticado, redirige al DEFAULT_REDIRECT
-  if (isPublicRoute && isAuthenticated) {
-    return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
-  }
-
   // Si no está autenticado y la ruta no es pública, redirige a ROOT
   if (!isAuthenticated && !isPublicRoute) {
     return Response.redirect(new URL(ROOT, nextUrl));
@@ -31,5 +26,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin','/admin/:path*'],
 };
