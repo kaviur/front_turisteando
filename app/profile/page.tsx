@@ -2,7 +2,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { FaUser, FaEnvelope, FaUserTag } from "react-icons/fa";
 
 const Profile = () => {
@@ -23,8 +22,7 @@ const Profile = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold">{user?.name}</h2>
-              {/* @ts-ignore */}
-
+              {/* @ts-expect-error: Error en la validación de tipos */} 
               <p className="text-sm text-gray-500">{user?.role}</p>
             </div>
           </div>
@@ -32,7 +30,7 @@ const Profile = () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <FaUserTag />
-              {/* @ts-ignore */}
+              {/* @ts-expect-error: Error en la validación de tipos */} 
               <p>{user?.role}</p>
             </div>
 
@@ -42,7 +40,7 @@ const Profile = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* @ts-ignore */}
+              {/* @ts-expect-error: Error en la validación de tipos */} 
               <p>Status: {user?.isActive ? "Activo" : "Inactivo"}</p>
             </div>
           </div>
