@@ -2,13 +2,14 @@
 
 import ReusableSmallForm from "@/components/ReusableSmallForm/ReusableSmallForm";
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
 import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
 
-export default function EditCategory() {
-  const router = useRouter();
-  const { categoryId } = router.query; // Obtener el ID de la URL dinámicamente
+const EditCategory = () => {
+  const router = useRouter(); // Router para el redireccionamiento
+  const pathname = usePathname();
+  const categoryId = pathname.split("/").pop(); //  Obtener el ID de la URL dinámicamente
   const { data: session } = useSession(); // Obtener la sesión y el token
 
   const [name, setName] = useState("");
@@ -18,11 +19,19 @@ export default function EditCategory() {
 
   // Fetch de la categoría
   const fetchCategory = useCallback(async () => {
-    if (!categoryId || !session) return;
+    if (!categoryId) {
+      console.warn("No category ID provided");
+      return;
+    }
+    if (!session) {
+      console.warn("No session available");
+      return;
+    }
+
     try {
-      {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
-      const token = session.accessToken;
-  
+      //@ts-ignore
+      const token = session?.user?.accessToken;
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/categories/${categoryId}`,
         {
@@ -31,16 +40,22 @@ export default function EditCategory() {
           },
         }
       );
-      if (!response.ok) throw new Error("Error al obtener la categoría");
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error fetching category:", errorData);
+        throw new Error(errorData.message || "Error al obtener la categoría");
+      }
+
       const data = await response.json();
-      setName(data.name);
-      setDescription(data.description);
+      setName(data.data.name);
+      setDescription(data.data.description);
     } catch (error) {
       console.error("Error fetching category:", error);
       toast.error("Error al cargar los datos de la categoría");
     }
   }, [categoryId, session]);
-  
+
   useEffect(() => {
     fetchCategory();
   }, [fetchCategory]);
@@ -62,33 +77,45 @@ export default function EditCategory() {
       name,
       description,
     });
-    formData.append("category", category); // Agregar el JSON en el campo "category"
+    formData.append(
+      "category",
+      new Blob([category], { type: "application/json" })
+    ); // Agregar el JSON en el campo "category"
     if (icono) formData.append("image", icono); // Agregar el archivo en el campo "image"
 
-    {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
-    const token = session.accessToken;
+    //@ts-ignore
+    const token = session?.user?.accessToken;
 
-    await toast
-      .promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/update/${categoryId}`, {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/categories/update/${categoryId}`,
+        {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: formData,
-        }).then((response) => {
-          if (!response.ok) throw new Error("Error al actualizar la categoría");
-        }),
-        {
-          loading: "Actualizando...",
-          success: "Actualización exitosa",
-          error: "Error al actualizar la categoría",
         }
-      )
-      .finally(() => {
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.log(errorData);
+        throw new Error("Error al crear la categoría");
+      }
+
+      toast.success("Categoría actualizada exitosamente");
+
+      setTimeout(() => {
         setIsPending(false);
-        router.push("/categories"); // Redirigir al listado tras actualizar
-      });
+        router.push("/admin/categories");
+      }, 1500);
+    } catch (error) {
+      console.error("Error updating category:", error);
+      toast.error("Error al actualizar la categoría");
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -110,4 +137,6 @@ export default function EditCategory() {
       </div>
     </>
   );
-}
+};
+
+export default EditCategory;

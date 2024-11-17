@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 
 import ReusableTable from "@/components/ReusableTable/ReusableTable";
 import { Category } from "@/types/category";
@@ -13,26 +13,68 @@ const CategoriesPage = () => {
   const { data: session } = useSession();
   const router = useRouter();
 
+  const confirmDelete = async () => {
+    return new Promise<boolean>((resolve) => {
+      toast(
+        (t) => (
+          <div>
+            <p>¿Estás seguro de que deseas eliminar esta categoría?</p>
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(true);
+                }}
+              >
+                Sí, eliminar
+              </button>
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(false);
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ),
+        { duration: Infinity } // Evita que el toast desaparezca automáticamente
+      );
+    });
+  };
+
   useEffect(() => {
     if (session) {
       // Obtener el token de sesión
-      {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
-      const token = session.accessToken;
+      // {
+      //   /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+      // }
+      //@ts-ignore
+      const token: string = session?.user?.accessToken;
 
-      // Fetch para obtener las categorías
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Datos recibidos:", data);
-          setCategories(data);
-        })
-        .catch((error) => console.error("Error fetching categories:", error));
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await response.json();
+          setCategories(data.data);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+
+      fetchCategories();
     }
   }, [session]);
 
@@ -43,37 +85,38 @@ const CategoriesPage = () => {
 
   // Método para eliminar una categoría existente
   const handleDelete = async (id: string) => {
-    const confirmed = window.confirm("¿Estás seguro de que deseas eliminar esta categoría?");
-    if (confirmed && session) {
-      try {
-        {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
-        const token = session.accessToken;
+    const confirmed = await confirmDelete();
+    if (!confirmed || !session) return;
 
-        await toast.promise(
-          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/${id}`, {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }).then((response) => {
-            if (!response.ok) throw new Error("Error al eliminar la categoría");
-            setCategories(categories.filter((category) => category.id !== id));
-          }),
-          {
-            loading: "Eliminando categoría...",
-            success: "Categoría eliminada exitosamente",
-            error: "Error al eliminar la categoría",
-          }
-        );
-      } catch (error) {
-        console.error("Error deleting category:", error);
-      }
+    //@ts-ignore
+    const token = session?.user?.accessToken;
+
+    try {
+      await toast.promise(
+        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/delete/${id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }).then((response) => {
+          if (!response.ok) throw new Error("Error al eliminar la categoría");
+          setCategories(categories.filter((category) => category.id !== id));
+        }),
+        {
+          loading: "Eliminando categoría...",
+          success: "Categoría eliminada exitosamente",
+          error: "Error al eliminar la categoría",
+        }
+      );
+    } catch (error) {
+      console.error("Error deleting category:", error);
     }
   };
 
   return (
     <div className="ml-60">
+      <Toaster position="top-center" />
       <h1 className="text-2xl font-bold mb-4">Categorías</h1>
       <ReusableTable
         items={categories}

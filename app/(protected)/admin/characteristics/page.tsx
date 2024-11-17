@@ -15,23 +15,33 @@ const CharacteristicsPage = () => {
   useEffect(() => {
     if (session) {
       // Obtener el token de sesión
-      {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
-      const token = session.accessToken;
+      // {
+      //   /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+      // }
+      //@ts-ignore
+      const token: string = session?.user?.accessToken;
 
-      // Fetch para obtener las categorías
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/all`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Datos recibidos:", data);
-          setCharacteristics(data);
-        })
-        .catch((error) => console.error("Error fetching characteristics:", error));
+      const fetchCategories = async () => {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/all`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await response.json();
+          console.log(data);
+          setCharacteristics(data.data);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      };
+
+      fetchCategories();
     }
   }, [session]);
 
@@ -73,7 +83,7 @@ const CharacteristicsPage = () => {
 
   return (
     <div className="ml-60">
-      <h1 className="text-2xl font-bold mb-4">CRacateristicas</h1>
+      <h1 className="text-2xl font-bold mb-4">Características</h1>
       <ReusableTable
         items={characteristics}
         entityType="característica"
