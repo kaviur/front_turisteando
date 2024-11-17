@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
+import { Category } from "@/types/category";
 
 const EditCategory = () => {
   const router = useRouter(); // Router para el redireccionamiento
@@ -12,12 +13,52 @@ const EditCategory = () => {
   const categoryId = pathname.split("/").pop(); //  Obtener el ID de la URL dinámicamente
   const { data: session } = useSession(); // Obtener la sesión y el token
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [icono, setIcono] = useState<File | null>(null);
+  const [form, setForm] = useState<Category>({
+    name: "",
+    description: "",
+    image: {
+      id: "",
+      imageUrl: "",
+    },
+  });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, setIsPending] = useState(false);
 
-  // Fetch de la categoría
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚ0-9\s]{3,50}$/.test(form.name)) {
+      newErrors.name =
+        "El nombre debe tener entre 3 y 50 caracteres y solo puede contener letras y números.";
+    }
+
+    if (form.description && !/^.{3,255}$/.test(form.description)) {
+      newErrors.description =
+        "La descripción debe tener entre 3 y 255 caracteres.";
+    }
+    
+    if (
+      form.image instanceof File &&
+      !/\.(jpg|jpeg|png|gif|webp)$/.test(form.image.name)
+    ) {
+      newErrors.image =
+        "El archivo debe ser una imagen válida (jpg, jpeg, png, gif, webp).";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Fetch para obtener la categoría por ID
   const fetchCategory = useCallback(async () => {
     if (!categoryId) {
       console.warn("No category ID provided");
@@ -48,8 +89,11 @@ const EditCategory = () => {
       }
 
       const data = await response.json();
-      setName(data.data.name);
-      setDescription(data.data.description);
+      setForm({
+        name: data.data.name,
+        description: data.data.description,
+        image: data.data.image,
+      });
     } catch (error) {
       console.error("Error fetching category:", error);
       toast.error("Error al cargar los datos de la categoría");
@@ -62,6 +106,12 @@ const EditCategory = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!validateForm()) {
+      toast.error("Por favor, corrige los errores en el formulario.");
+      return;
+    }
+
     setIsPending(true);
 
     if (!session) {
@@ -73,15 +123,14 @@ const EditCategory = () => {
     const formData = new FormData();
 
     // Estructurar los datos según lo esperado por el servidor
-    const category = JSON.stringify({
-      name,
-      description,
-    });
+    const category = JSON.stringify(form);
+    const image = form.image;
+    delete form.image;
     formData.append(
       "category",
       new Blob([category], { type: "application/json" })
     ); // Agregar el JSON en el campo "category"
-    if (icono) formData.append("image", icono); // Agregar el archivo en el campo "image"
+    if (image) formData.append("image", image as File); // Agregar el archivo en el campo "image"
 
     //@ts-ignore
     const token = session?.user?.accessToken;
@@ -124,13 +173,11 @@ const EditCategory = () => {
         <Toaster position="top-center" />
         <ReusableSmallForm
           entityType="categoría"
-          name={name}
-          setName={setName}
-          description={description}
-          setDescription={setDescription}
-          icono={icono}
-          setIcono={setIcono}
+          form={form}
+          setForm={setForm}
           onSubmit={handleSubmit}
+          handleChange={handleChange}
+          errors={errors}
           isPending={isPending}
           isEditing={true}
         />

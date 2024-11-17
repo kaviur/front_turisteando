@@ -18,7 +18,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith(protectedPath)) {
     // Obtener la sesión del usuario a través del token de NextAuth
     const session = await getToken({ req: request, secret });
-    console.log(JSON.stringify(session, null, 2)); // convierte el objeto a una cadena legible
+    // console.log(JSON.stringify(session, null, 2)); // convierte el objeto a una cadena legible
 
     // Si no hay sesión, redirigir al usuario a la página de login
     if (!session) {

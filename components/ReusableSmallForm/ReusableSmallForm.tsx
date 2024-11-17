@@ -1,15 +1,16 @@
 "use client";
 
+import { Category } from "@/types/category";
 import PrimaryButton from "../ui/PrimaryButton";
 
 interface ReusableSmallFormProps {
   entityType: "categoría" | "característica";
-  name: string;
-  setName: (value: string) => void;
-  icono: File | null;
-  setIcono: (file: File | null) => void;
-  description?: string;
-  setDescription?: (value: string) => void;
+  form: Category;
+  setForm: React.Dispatch<React.SetStateAction<Category>>;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  errors: { [key: string]: string };
   onSubmit: (event: React.FormEvent) => void;
   isPending: boolean; // Pasar el estado isPending al formulario
   isEditing: boolean;
@@ -17,12 +18,10 @@ interface ReusableSmallFormProps {
 
 const ReusableSmallForm = ({
   entityType,
-  name,
-  setName,
-  icono,
-  setIcono,
-  description,
-  setDescription,
+  form,
+  setForm,
+  handleChange,
+  errors,
   onSubmit,
   isPending,
   isEditing,
@@ -51,11 +50,15 @@ const ReusableSmallForm = ({
                   </label>
                   <input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={form.name}
+                    name="name"
+                    onChange={handleChange}
                     placeholder={placeholderName}
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   />
+                  {errors.name && (
+                    <div className="text-red-500 text-sm">{errors.name}</div>
+                  )}
                 </div>
               </div>
 
@@ -66,11 +69,17 @@ const ReusableSmallForm = ({
                   </label>
                   <textarea
                     rows={6}
-                    value={description}
-                    onChange={(e) => setDescription?.(e.target.value)}
+                    value={form.description}
+                    name="description"
+                    onChange={handleChange}
                     placeholder="Ingresa la descripción de la categoría"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   ></textarea>
+                  {errors.description && (
+                    <div className="text-red-500 text-sm">
+                      {errors.description}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -84,18 +93,26 @@ const ReusableSmallForm = ({
                     <input
                       type="file"
                       className="hidden"
-                      onChange={(e) => setIcono(e.target.files?.[0] || null)}
+                      accept="image/*"
+                      onChange={(e) =>
+                        setForm({ ...form, image: e.target.files?.[0] })
+                      }
                     />
                   </label>
                   <input
                     type="text"
                     value={
-                      icono ? icono.name : "Ningún archivo ha sido seleccionado"
+                      form.image
+                        ? (form.image as File).name
+                        : "Ningún archivo ha sido seleccionado"
                     }
                     className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
                     readOnly
                   />
                 </div>
+                {errors.image && (
+                  <div className="text-red-500 text-sm">{errors.image}</div>
+                )}
               </div>
             </div>
           </form>
