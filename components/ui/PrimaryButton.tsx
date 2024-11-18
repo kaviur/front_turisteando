@@ -4,8 +4,8 @@ import React from "react";
 
 interface PrimaryButtonProps {
   text: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-  style?: string;
+  onClick?: (() => void) | ((e: React.FormEvent<HTMLButtonElement>) => void);
+  style?: string | React.CSSProperties;
   children?: React.ReactNode;
 }
 
