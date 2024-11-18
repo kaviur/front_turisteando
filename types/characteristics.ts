@@ -1,8 +1,8 @@
 export interface Characteristics {
-  id: string;
+  id?: string;
   name: string;
-  image: {
-    id: number;
+  image?: {
+    id: string;
     imageUrl: string;
-  };
+  } | File;
 }
