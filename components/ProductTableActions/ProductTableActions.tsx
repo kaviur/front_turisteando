@@ -1,6 +1,7 @@
 import { TouristPlan } from "@/types/touristPlan";
 import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
+import Link from "next/link";
 
 const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
     return (
@@ -69,7 +70,9 @@ const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
                         <p className="text-sm text-black">$ {product.price}</p>
                     </div>
                     <div className="col-span-1 flex items-center ml-6 justify-end space-x-4">
+                    <Link href={`/product/${product.id}`}>
                         <button className="text-[#ff5b03] text-xs border-[1px] border-[#ff5b03] bg-white rounded-[48px] px-2 py-1 hover:bg-orange-600 hover:text-white transition-colors duration-300">Detalles</button>
+                        </Link>
                         <button
                             className="text-blue-500 hover:text-blue-700"
                             aria-label="Editar producto"
