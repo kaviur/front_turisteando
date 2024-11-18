@@ -47,7 +47,7 @@ const EditCategory = () => {
 
     try {
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token = session?.user?.accessToken;
+      const token = session?.accessToken;
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/categories/${categoryId}`,
@@ -110,7 +110,7 @@ const EditCategory = () => {
     } // Agregar el archivo en el campo "image"
 
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.user?.accessToken;
+    const token = session?.accessToken;
 
     try {
       const response = await fetch(
