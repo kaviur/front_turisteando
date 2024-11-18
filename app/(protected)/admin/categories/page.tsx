@@ -51,7 +51,7 @@ const CategoriesPage = () => {
   useEffect(() => {
     if (session) {
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token: string = session?.user?.accessToken;
+      const token: string = session?.accessToken;
 
       const fetchCategories = async () => {
         try {
@@ -94,7 +94,7 @@ const CategoriesPage = () => {
     if (!confirmed || !session) return;
 
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.user?.accessToken;
+    const token = session?.accessToken;
 
     try {
       await toast.promise(
