@@ -11,7 +11,10 @@ interface CardProps {
   isMobile?: boolean;
   mobileTitle: string;
 }
-
+const imageStyle = {
+  width: 'auto',
+  height: 'auto', // Puedes ajustar ambos valores aquí si es necesario
+};  
 export default function Card({
   id,  // Asegurarse de recibir el id aquí
   imageSrc,
@@ -25,6 +28,8 @@ export default function Card({
     return (
       <Link href={`/product/${id}`} className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6">
         <Image
+          loading="lazy"
+          style={imageStyle}
           className="w-full h-full object-cover"
           src={imageSrc}
           alt={title}

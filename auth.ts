@@ -1,57 +1,58 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { AdapterUser } from "next-auth/adapters";
+import { authConfig } from "./auth.config";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+async function getUser(email: string, password: string): Promise<any> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) throw new Error("Failed to fetch user");
+    const userJson = await res.json();
+    return userJson.data;
+  } catch (error) {
+    console.error("Error fetching user from API:", error);
+    return null;
+  }
+}
+
+export const {
+  auth,
+  signIn,
+  signOut,
+  handlers: { GET, POST },
+} = NextAuth({
+  ...authConfig,
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: {
-          label: "email",
-          type: "email",
-        },
-        password: { label: "password", type: "password" },
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
       },
-
-      async authorize(credentials, req) {
-        const payload = {
-          email: credentials.email,
-          password: credentials.password,
-        };
-
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-          {
-            method: "POST",
-            body: JSON.stringify(payload),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+      async authorize(credentials) {
+        if (!credentials) return null;
+        const result = await getUser(
+          credentials.email as string,
+          credentials.password as string
         );
-
-        const userJson = await res.json();
-        const user = userJson.data;
-        return user;
+        console.log(result);
+        return result && result.user
+          ? {
+              id: result.user.id,
+              name: result.user.name,
+              lastName: result.user.lastName,
+              email: result.user.email,
+              role: result.user.role,
+              accessToken: result.accessToken,
+              isActive: result.user.isActive,
+            }
+          : null;
       },
     }),
   ],
-  secret: process.env.AUTH_SECRET,
-  pages: {
-    signIn: "/login",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.user = user;
-      }
-      return token;
-    },
-    // @ts-ignore
-    async session({ session, token }) {
-      session.user = token.user as AdapterUser & { id: string; email: string };
-      return session;
-    },
-  },
 });

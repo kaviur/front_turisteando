@@ -76,7 +76,7 @@ const CharacteristicsPage = () => {
           setLoading(false);
         }
       };
-
+      
       fetchCharacteristic();
     }
   }, [session]);

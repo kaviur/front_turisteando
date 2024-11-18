@@ -3,19 +3,27 @@ import { FaTwitter } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
 import { FaFacebookSquare } from "react-icons/fa";
 import Link from "next/link";
-
+const imageStyle = {
+  width: "auto",
+};
 export const Footer = () => {
   return (
     <footer className="bg-base-100 text-base-content p-10 max-w-screen-2xl	 mx-auto">
       {/* Logo y navegación */}
       <div className="divider mb-8"></div>
       <div className="footer flex flex-row justify-around items-center md:items-start gap-6">
-        <aside className="mb-4 md:mb-0">
-          <Image src="/logo.png" alt="Logo" width={160} height={160} />
+        <aside className="mb-4 md:mb-0 ">
+          <Image
+            style={imageStyle}
+            src="/logo.png"
+            alt="Logo"
+            width={160}
+            height={160}
+          />
         </aside>
 
         {/* Secciones */}
-        <div className="hidden md:flex lg:gap-6 gap-2 justify-around text-gray-500">
+        <div className="hidden md:flex lg:gap-6 gap-4 justify-around text-gray-500">
           <nav className="flex flex-col gap-4">
             <h6 className="footer-title font-bold text-gray-800 text-lg">
               Sobre Nosotros
@@ -43,20 +51,22 @@ export const Footer = () => {
             <a className="link link-hover">Turisteando para IOS</a>
             <a className="link link-hover">Sitio web</a>
 
-            <div className="flex flex-col justify-center  gap-2 mt-2">
+            <div className="flex flex-col h-24 gap-2 ">
               <Image
-                className="cursor-pointer"
+                className="cursor-pointer max-w-24"
+                style={imageStyle}
                 src="/appstore.png"
                 alt="App Store"
                 width={120}
                 height={40}
               />
               <Image
-                className="cursor-pointer"
+                className="cursor-pointer max-w-24"
+                style={imageStyle}
                 src="/googleplay.png"
                 alt="Google Play"
                 width={120}
-                height={40}
+                height={20}
               />
             </div>
           </nav>

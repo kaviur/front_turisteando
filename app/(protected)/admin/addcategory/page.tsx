@@ -30,7 +30,7 @@ export default function CreateCategory() {
     }));
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
-
+    
   // Función para crear una categoría
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
