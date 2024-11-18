@@ -1,5 +1,8 @@
 export interface Characteristics {
+  id?: string;
+  name: string;
+  image?: {
     id: string;
-    name: string;
-    iconUrl?: string;
+    imageUrl: string;
+  } | File;
 }

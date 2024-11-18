@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 interface PrimaryButtonProps {
   text: string;
   onClick?: (() => void) | ((e: React.FormEvent<HTMLButtonElement>) => void);
@@ -11,7 +13,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   text,
   style,
   onClick,
-  children
+  children,
 }) => {
   return (
     <button

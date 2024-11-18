@@ -11,41 +11,10 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Testimonial from "@/components/Testimonial";
 import Link from "next/link";
-
-interface Product {
-  id: number;
-  title: string;
-  description: string;
-  price: number;
-  seller: string;
-  city: {
-    id: number;
-    name: string;
-    country: {
-      id: number;
-      name: string;
-    };
-  };
-  category: {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-  };
-  images: { id: number; imageUrl: string }[];
-  availabilityStartDate: string;
-  availabilityEndDate: string;
-  capacity: number;
-  duration: string;
-  foodIncluded: boolean;
-  wifiIncluded: boolean;
-  petsFriendly: boolean;
-  disabilityAccess: boolean;
-  active: boolean;
-}
+import { TouristPlan } from "@/types/touristPlan";
 
 export default function ProductPage() {
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<TouristPlan | null>(null);
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
 
@@ -70,7 +39,7 @@ export default function ProductPage() {
     }
   }, [productId]);
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return ;
 
   return (
     <div className="md:mt-28">
@@ -78,7 +47,6 @@ export default function ProductPage() {
 
       <ProductDetails
         title={product?.title}
-        rating={4} // Puedes ajustar la lógica de rating según tu respuesta o datos adicionales
         images={product?.images}
         location={`${product?.city?.name}, ${product?.city?.country?.name}`}
         description={product?.description}
