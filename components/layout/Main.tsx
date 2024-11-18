@@ -91,7 +91,6 @@ export const Main = () => {
             src="/MACHU_PICCHU.png"
             alt="Background Image"
             fill={true}
-            priority={true}
             style={{ objectFit: "cover", objectPosition: "center" }}
             className="brightness-75"
           />

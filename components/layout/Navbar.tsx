@@ -1,37 +1,39 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
 import PrimaryButton from "../ui/PrimaryButton";
 import SecondaryButton from "../ui/SecondaryButton";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FaUser } from "react-icons/fa";
 import { FaRegCalendarDays } from "react-icons/fa6";
-import { AiOutlineSetting } from 'react-icons/ai';
+import { AiOutlineSetting } from "react-icons/ai";
+import { useSession } from "next-auth/react";
+import { logout } from "@/lib/actions";
+const imageStyle = {
+  width: "auto",
+  height: "auto",
+};
 
 export const Navbar = () => {
   const { data: session } = useSession();
-  //@ts-expect-error: Error en la validación de tipos
-  const user = session?.user?.user;
-
-// @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
-const accessToken = session?.accessToken;
-
-console.log(accessToken);  // Esto debería imprimir el token JWT
-  
-    console.log(session?.user  );
-  
+  const user = session?.user;
   return (
     <div className="z-20 bg-opacity-90 backdrop-blur-lg block md:fixed top-0 left-0 w-full bg-base-100">
       <div className="flex justify-between items-center p-4 max-w-screen-2xl mx-auto">
         <div className=" ">
           <Link className="btn btn-ghost text-xl hidden md:block" href="/">
-            <Image src="/logo.png" alt="Logo" width={120} height={120} />
+            <Image
+              style={imageStyle}
+              src="/logo.png"
+              alt="Logo"
+              width={120}
+              height={120}
+            />
           </Link>
 
           {/* Mobile Menu hamburger */}
-          <div className="dropdown z-50">
-            <div tabIndex={0} role="button" className="btn btn-ghost md:hidden">
+          <div className="dropdown z-20">
+            <div tabIndex={0} role="button" className="btn btn-ghost md:hidden z-20">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -66,11 +68,11 @@ console.log(accessToken);  // Esto debería imprimir el token JWT
                   Novedades
                 </Link>
               </li>
-              <li>
+              <li className="z-20">
                 <Link href={"/favorites"} className="px-2 py-4">
                   Favoritos
                 </Link>
-              </li>
+              </li >
             </ul>
           </div>
         </div>
@@ -116,8 +118,7 @@ console.log(accessToken);  // Esto debería imprimir el token JWT
                     <div className="bg-secondary w-full h-full flex justify-center items-center">
                       <p className="text-white font-semibold text-base">
                         {user?.name?.charAt(0).toUpperCase()}
-                        {/*  @ts-expect-error
-                         */}
+                        {/*  @ts-expect-error: Error en la validación de tipos */}
                         {user?.lastName?.charAt(0).toUpperCase()}
                       </p>
                     </div>
@@ -144,6 +145,7 @@ console.log(accessToken);  // Esto debería imprimir el token JWT
                     Perfil
                   </Link>
                 </li>
+                {/*  @ts-expect-error: Error en la validación de tipos */}
                 {user?.role === "ADMIN" && (
                   <li>
                     <Link className="py-4" href={"/admin"}>
@@ -156,7 +158,7 @@ console.log(accessToken);  // Esto debería imprimir el token JWT
                 <li>
                   <button
                     className="py-4 text-accent justify-center"
-                    onClick={() => signOut()}
+                    onClick={() => logout()}
                   >
                     Cerrar sesión
                   </button>

@@ -67,7 +67,7 @@ const CharacteristicsPage = () => {
           console.error("Error fetching categories:", error);
         }
       };
-
+      
       fetchCharacteristic();
     }
   }, [session]);

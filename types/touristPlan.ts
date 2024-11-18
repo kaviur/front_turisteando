@@ -1,4 +1,3 @@
-// types/touristPlan.ts
 export interface TouristPlan {
   id: number;
   title: string;
@@ -33,3 +32,4 @@ export interface TouristPlan {
   disabilityAccess: boolean;
   active: boolean;
 }
+

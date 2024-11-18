@@ -13,6 +13,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onSkip }) => {
     <div className="flex flex-col items-center p-4 h-screen bg-base-100 gap-4">
        <div className="h-2/4 w-full">
        <Image
+        priority
         width={600}
         height={600}
         src="/onboarding.png"
@@ -44,7 +45,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onSkip }) => {
 
       <p className=" text-center text-gray-500 text-sm">
         No tienes una cuenta?{" "}
-        <Link className="font-bold text-black" href="/register">
+        <Link className="font-bold text-accent" href="/register">
           Regístrate
         </Link>
       </p>

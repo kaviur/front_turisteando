@@ -43,7 +43,7 @@ const ReusableTable = ({
           </p>
         </div>
         {isCategory && (
-          <div className="col-span-2 flex items-center">
+          <div className="col-span-2 flex items-center flex-grow">
             <p className="font-medium py-2">Descripción</p>
           </div>
         )}

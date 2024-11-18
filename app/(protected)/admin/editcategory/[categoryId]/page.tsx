@@ -46,7 +46,7 @@ const EditCategory = () => {
     }
 
     try {
-      //@ts-ignore
+      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it.*/
       const token = session?.user?.accessToken;
 
       const response = await fetch(
