@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import ProductForm from "@/components/ProductForm/ProductForm";
+import { toast, Toaster } from "react-hot-toast";
 
 export default function CreateProductPage() {
   // Estados para manejar los datos del formulario
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [categoryId, setCategoryId] = useState("");
+  const [categoryId, setCategoryId] = useState(""); 
   const [cityId, setCityId] = useState("");
   const [availabilityStartDate, setAvailabilityStartDate] = useState("");
   const [availabilityEndDate, setAvailabilityEndDate] = useState("");
@@ -24,54 +25,53 @@ export default function CreateProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
-
+  
     try {
       const formData = new FormData();
       const touristPlan = JSON.stringify({
         title,
         description,
-        price,
+        price: Number(price),
         seller: "admin", //TODO: CHANGE TO THE USER LOGGED
-        cityId,
-        categoryId,
+        cityId: Number(cityId),
+        categoryId: Number(categoryId),
         availabilityStartDate,
         availabilityEndDate,
-        capacity,
+        capacity: Number(capacity),
         duration,
-        characteristicIds
-      })
-
-      // const characteristicIds = features.map((feature) => Number(feature)); // Convertir a números si es necesario
-      // formData.append("characteristicIds", JSON.stringify(characteristicIds)); // Campo único con JSON
-
-      // characteristicIds.forEach((feature, index) => {
-      //   formData.append(`characteristicIds[${index}]`, feature);
-      // });
-
+        characteristicIds: characteristicIds.map((id) => Number(id)),
+      });
+  
       formData.append(
         "touristPlan",
-        new Blob([touristPlan], {type: "application/json"})
-      ); 
-
+        new Blob([touristPlan], { type: "application/json" })
+      );
+  
       if (images) {
         Array.from(images).forEach((image) => {
           formData.append("images", image);
         });
       }
-
-      console.log(formData)
-      console.log("algo")
-      console.log(touristPlan)
-
-      const response = await fetch("/tourist-plans/create", {
-        method: "POST",
-        body: formData,
-      });
-
+  
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/create`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+  
       if (!response.ok) {
-        throw new Error("Error al crear el producto");
+        const errorData = await response.json(); // Parseamos la respuesta del backend
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          // Iteramos sobre los errores y mostramos un toast por cada uno
+          errorData.errors.forEach((err: string) => {
+            toast.error(err); // Mostramos cada error como toast
+          });
+        }
+        throw new Error("Error al crear el producto.");
       }
-
+  
       // Resetea el formulario si la petición fue exitosa
       setTitle("");
       setDescription("");
@@ -84,8 +84,11 @@ export default function CreateProductPage() {
       setDuration("");
       setCharacteristicIds([]);
       setImages(null);
+  
+      toast.success("Producto creado exitosamente!"); // Mensaje de éxito
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Hubo un problema al crear el producto.");
     } finally {
       setIsPending(false);
     }
@@ -122,6 +125,7 @@ export default function CreateProductPage() {
   return (
     <>
       <div className="ml-96 flex justify-center">
+        <Toaster position="top-center" />
         <ProductForm {...productFormProps} />;
       </div>
     </>

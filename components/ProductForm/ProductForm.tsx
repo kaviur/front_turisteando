@@ -1,5 +1,6 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import PrimaryButton from '../ui/PrimaryButton';
+import CurrencyInput from 'react-currency-input-field';
 
 interface TouristPlanRequest {
   title: string;
@@ -36,6 +37,10 @@ const ProductForm = ({
   setDescription,
   price,
   setPrice,
+  cityId,
+  setCityId,
+  categoryId,
+  setCategoryId,
   availabilityStartDate,
   setAvailabilityStartDate,
   availabilityEndDate,
@@ -58,6 +63,45 @@ const ProductForm = ({
       setImages(files);
     }
   };
+
+  const [categories, setCategories] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [characteristics, setCharacteristics] = useState<{ id: number; name: string }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+
+  // Función para obtener categorías y ciudades
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesResponse, citiesResponse, characteristicsResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`),
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/cities/all`),
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/all`),
+        ]);
+  
+        if (!categoriesResponse.ok || !citiesResponse.ok || !characteristicsResponse.ok) {
+          throw new Error('Error en las solicitudes de categorías, ciudades o características.');
+        }
+  
+        const categoriesData = await categoriesResponse.json();
+        const citiesData = await citiesResponse.json();
+        const characteristicsData = await characteristicsResponse.json();
+  
+        setCategories(categoriesData.data);
+        setCities(citiesData.data);
+        setCharacteristics(characteristicsData.data);
+
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, []);
+
 
   return (
     <div className="grid grid-cols-1 gap-9 sm:grid-cols-2">
@@ -102,15 +146,24 @@ const ProductForm = ({
                 <label className="mb-3 block text-sm font-medium text-black">
                   Categoría
                 </label>
-                <select
+                <select 
+                  id="category" 
+                  name="category" 
+                  value={categoryId} 
+                  onChange={(e) => setCategoryId(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   defaultValue=""
+                  disabled={loading} // Deshabilitamos el select mientras carga
                 >
                   <option value="" disabled>
-                    Selecciona la categoría
+                    {loading ? "Cargando categorías..." : "Seleccione una categoría"}
                   </option>
-                  <option value="tour">Tour</option>
-                  <option value="actividad">Actividad</option>
+                  {!loading &&
+                    categories?.map((category: { id: number; name: string }) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
                 </select>
               </div>
 
@@ -119,26 +172,37 @@ const ProductForm = ({
                   Ciudad
                 </label>
                 <select
+                  id="city"
+                  name="city"
+                  value={cityId}
+                  onChange={(e) => setCityId(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   defaultValue=""
+                  disabled={loading}
                 >
                   <option value="" disabled>
-                    Selecciona la ciudad
+                    {loading ? "Cargando ciudades..." : "Selecciona la ciudad"}
                   </option>
-                  <option value="lima">Lima</option>
-                  <option value="cusco">Cusco</option>
+                  {!loading &&
+                    cities?.map((city: { id: number; name: string }) => (
+                      <option key={city.id} value={city.id}>
+                        {city.name}
+                      </option>
+                    ))}
                 </select>
+
               </div>
 
               <div className="mb-6">
                 <label className="mb-3 block text-sm font-medium text-black">
                   Precio
                 </label>
-                <input
-                  type="text"
-                  placeholder="Ingresar precio del producto"
+                <CurrencyInput
+                  placeholder="Ingresar precio del plan turístico"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onValueChange={(value) => setPrice(value || "")}
+                  decimalsLimit={2} // Máximo 2 decimales
+                  prefix="S/ " // Símbolo de moneda peruana
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                 />
               </div>
@@ -206,13 +270,17 @@ const ProductForm = ({
                 <select
                   multiple
                   value={characteristicIds}
-                  onChange={(e) => setCharacteristicIds(Array.from(e.target.selectedOptions, option => option.value))}
+                  onChange={(e) => {setCharacteristicIds(Array.from(e.target.selectedOptions, option => option.value))}}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
+                  disabled={loading} 
                 >
-                  <option value="atributo1">Atributo 1</option>
-                  <option value="atributo2">Atributo 2</option>
-                  <option value="atributo3">Atributo 3</option>
-                  <option value="atributo4">Atributo 4</option>
+                  <option disabled>{loading ? "Cargando características..." : "Selecciona los atributos"}</option>
+                  {!loading &&
+                    characteristics.map((characteristic: { id: number; name: string }) => (
+                      <option key={characteristic.id} value={characteristic.id}>
+                        {characteristic.name}
+                      </option>
+                    ))}
                 </select>
               </div>
 
