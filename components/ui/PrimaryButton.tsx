@@ -2,8 +2,8 @@
 
 interface PrimaryButtonProps {
   text: string;
-  onClick?: () => void;
-  style?: string;
+  onClick?: (() => void) | ((e: React.FormEvent<HTMLButtonElement>) => void);
+  style?: string | React.CSSProperties;
   children?: React.ReactNode;
 }
 

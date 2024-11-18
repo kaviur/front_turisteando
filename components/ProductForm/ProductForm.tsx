@@ -1,22 +1,27 @@
 import { useState, ChangeEvent } from 'react';
+import PrimaryButton from '../ui/PrimaryButton';
 
 interface TouristPlanRequest {
-  name: string;
-  setName: (name: string) => void;
+  title: string;
+  setTitle: (name: string) => void;
   description: string;
   setDescription: (description: string) => void;
   price: string;
   setPrice: (price: string) => void;
-  startDate: string;
-  setStartDate: (startDate: string) => void;
-  endDate: string;
-  setEndDate: (endDate: string) => void;
+  cityId: string;
+  setCityId: (cityId: string) => void;
+  categoryId: string;
+  setCategoryId: (categoryId: string) => void;
+  availabilityStartDate: string;
+  setAvailabilityStartDate: (availabilityStartDate: string) => void;
+  availabilityEndDate: string;
+  setAvailabilityEndDate: (availabilityEndDate: string) => void;
   capacity: string;
   setCapacity: (capacity: string) => void;
   duration: string;
   setDuration: (duration: string) => void;
-  features: string[];
-  setFeatures: (features: string[]) => void;
+  characteristicIds: string[];
+  setCharacteristicIds: (characteristicIds: string[]) => void;
   images: FileList | null;
   setImages: (images: FileList | null) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -25,22 +30,22 @@ interface TouristPlanRequest {
 }
 
 const ProductForm = ({
-  name,
-  setName,
+  title,
+  setTitle,
   description,
   setDescription,
   price,
   setPrice,
-  startDate,
-  setStartDate,
-  endDate,
-  setEndDate,
+  availabilityStartDate,
+  setAvailabilityStartDate,
+  availabilityEndDate,
+  setAvailabilityEndDate,
   capacity,
   setCapacity,
   duration,
   setDuration,
-  features,
-  setFeatures,
+  characteristicIds,
+  setCharacteristicIds,
   images,
   setImages,
   onSubmit,
@@ -60,10 +65,10 @@ const ProductForm = ({
         <div className="rounded-sm border border-stroke bg-white shadow">
           <div className="border-b border-stroke px-6 py-5">
             <h3 className="font-medium text-primary text-xl">
-              {isEditing ? `Tour guiado a ${name}` : 'Agregar Producto'}
+              {isEditing ? `Tour guiado a ${title}` : 'Agregar Producto'}
             </h3>
           </div>
-          <form onSubmit={onSubmit}>
+          <form id="product-form" onSubmit={onSubmit}>
             <div className="p-6">
               <div className="mb-6 flex flex-col gap-6 xl:flex-row">
                 <div className="w-full">
@@ -73,8 +78,8 @@ const ProductForm = ({
                   <input
                     type="text"
                     placeholder="Ingresar Nombre del Producto"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   />
                 </div>
@@ -91,6 +96,38 @@ const ProductForm = ({
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                 ></textarea>
+              </div>
+
+              <div className="mb-6">
+                <label className="mb-3 block text-sm font-medium text-black">
+                  Categoría
+                </label>
+                <select
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Selecciona la categoría
+                  </option>
+                  <option value="tour">Tour</option>
+                  <option value="actividad">Actividad</option>
+                </select>
+              </div>
+
+              <div className="mb-6">
+                <label className="mb-3 block text-sm font-medium text-black">
+                  Ciudad
+                </label>
+                <select
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Selecciona la ciudad
+                  </option>
+                  <option value="lima">Lima</option>
+                  <option value="cusco">Cusco</option>
+                </select>
               </div>
 
               <div className="mb-6">
@@ -113,8 +150,8 @@ const ProductForm = ({
                   </label>
                   <input
                     type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
+                    value={availabilityStartDate}
+                    onChange={(e) => setAvailabilityStartDate(e.target.value)}
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   />
                 </div>
@@ -125,8 +162,8 @@ const ProductForm = ({
                   </label>
                   <input
                     type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
+                    value={availabilityEndDate}
+                    onChange={(e) => setAvailabilityEndDate(e.target.value)}
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   />
                 </div>
@@ -168,8 +205,8 @@ const ProductForm = ({
                 </label>
                 <select
                   multiple
-                  value={features}
-                  onChange={(e) => setFeatures(Array.from(e.target.selectedOptions, option => option.value))}
+                  value={characteristicIds}
+                  onChange={(e) => setCharacteristicIds(Array.from(e.target.selectedOptions, option => option.value))}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                 >
                   <option value="atributo1">Atributo 1</option>
@@ -206,24 +243,14 @@ const ProductForm = ({
           </form>
         </div>
         <div className="flex justify-center mt-2">
-          <button
-            type="submit"
+          <PrimaryButton
+            text={isPending ? "Guardando..." : isEditing ? 'Guardar Cambios' : 'Crear Producto'} 
             style={{
               background: isEditing ? 'var(--Secondary, #FF5B03)' : 'var(--Primary, #FF0178)',
             }}
-            className="px-14 py-3 text-white rounded-md"
-            disabled={isPending} // Deshabilitar el botón si está en espera
-          >
-            {isPending ? (
-              <span className="flex justify-center items-center">
-                <div className="w-5 h-5 border-4 border-t-4 border-white rounded-full animate-spin mr-2"></div>
-                Cargando...
-              </span>
-            ) : (
-              isEditing ? 'Guardar Cambios' : 'Crear Producto'
-            )}
-          </button>
-        </div>
+            onClick={onSubmit} 
+          />
+        </div>        
       </div>
     </div>
   );

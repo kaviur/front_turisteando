@@ -5,14 +5,16 @@ import ProductForm from "@/components/ProductForm/ProductForm";
 
 export default function CreateProductPage() {
   // Estados para manejar los datos del formulario
-  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [cityId, setCityId] = useState("");
+  const [availabilityStartDate, setAvailabilityStartDate] = useState("");
+  const [availabilityEndDate, setAvailabilityEndDate] = useState("");
   const [capacity, setCapacity] = useState("");
   const [duration, setDuration] = useState("");
-  const [features, setFeatures] = useState<string[]>([]);
+  const [characteristicIds, setCharacteristicIds] = useState<string[]>([]);
   const [images, setImages] = useState<FileList | null>(null);
 
   // Estado adicional
@@ -25,23 +27,41 @@ export default function CreateProductPage() {
 
     try {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("description", description);
-      formData.append("price", price);
-      formData.append("startDate", startDate);
-      formData.append("endDate", endDate);
-      formData.append("capacity", capacity);
-      formData.append("duration", duration);
+      const touristPlan = JSON.stringify({
+        title,
+        description,
+        price,
+        seller: "admin", //TODO: CHANGE TO THE USER LOGGED
+        cityId,
+        categoryId,
+        availabilityStartDate,
+        availabilityEndDate,
+        capacity,
+        duration,
+        characteristicIds
+      })
 
-      features.forEach((feature, index) => {
-        formData.append(`features[${index}]`, feature);
-      });
+      // const characteristicIds = features.map((feature) => Number(feature)); // Convertir a números si es necesario
+      // formData.append("characteristicIds", JSON.stringify(characteristicIds)); // Campo único con JSON
+
+      // characteristicIds.forEach((feature, index) => {
+      //   formData.append(`characteristicIds[${index}]`, feature);
+      // });
+
+      formData.append(
+        "touristPlan",
+        new Blob([touristPlan], {type: "application/json"})
+      ); 
 
       if (images) {
         Array.from(images).forEach((image) => {
           formData.append("images", image);
         });
       }
+
+      console.log(formData)
+      console.log("algo")
+      console.log(touristPlan)
 
       const response = await fetch("/tourist-plans/create", {
         method: "POST",
@@ -53,14 +73,16 @@ export default function CreateProductPage() {
       }
 
       // Resetea el formulario si la petición fue exitosa
-      setName("");
+      setTitle("");
       setDescription("");
       setPrice("");
-      setStartDate("");
-      setEndDate("");
+      setCityId("");
+      setCategoryId("");
+      setAvailabilityStartDate("");
+      setAvailabilityEndDate("");
       setCapacity("");
       setDuration("");
-      setFeatures([]);
+      setCharacteristicIds([]);
       setImages(null);
     } catch (error) {
       console.error("Error:", error);
@@ -69,32 +91,38 @@ export default function CreateProductPage() {
     }
   };
 
+  const productFormProps = {
+    title,
+    setTitle,
+    description,
+    setDescription,
+    price,
+    setPrice,
+    cityId,
+    setCityId,
+    categoryId,
+    setCategoryId,
+    availabilityStartDate,
+    setAvailabilityStartDate,
+    availabilityEndDate,
+    setAvailabilityEndDate,
+    capacity,
+    setCapacity,
+    duration,
+    setDuration,
+    characteristicIds,
+    setCharacteristicIds,
+    images,
+    setImages,
+    onSubmit: handleSubmit,
+    isPending,
+    isEditing: false,
+  };
+
   return (
     <>
       <div className="ml-96 flex justify-center">
-        <ProductForm
-          name={name}
-          setName={setName}
-          description={description}
-          setDescription={setDescription}
-          price={price}
-          setPrice={setPrice}
-          startDate={startDate}
-          setStartDate={setStartDate}
-          endDate={endDate}
-          setEndDate={setEndDate}
-          capacity={capacity}
-          setCapacity={setCapacity}
-          duration={duration}
-          setDuration={setDuration}
-          features={features}
-          setFeatures={setFeatures}
-          images={images}
-          setImages={setImages}
-          onSubmit={handleSubmit}
-          isPending={isPending}
-          isEditing={false} // Siempre es falso, ya que es solo para crear
-        />
+        <ProductForm {...productFormProps} />;
       </div>
     </>
   );
