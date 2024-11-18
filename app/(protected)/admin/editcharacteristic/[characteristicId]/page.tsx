@@ -5,19 +5,18 @@ import { useState, useEffect, useCallback } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import { Category } from "@/types/category";
 import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
 import handleBackendError from "@/utils/validators/validatorBackendErrors";
+import { Characteristics } from "@/types/characteristics";
 
-const EditCategory = () => {
+const EditCharacteristic = () => {
   const router = useRouter(); // Router para el redireccionamiento
   const pathname = usePathname();
-  const categoryId = pathname.split("/").pop(); //  Obtener el ID de la URL dinámicamente
+  const characteristicId = pathname.split("/").pop(); //  Obtener el ID de la URL dinámicamente
   const { data: session } = useSession(); // Obtener la sesión y el token
 
-  const [form, setForm] = useState<Category>({
+  const [form, setForm] = useState<Characteristics>({
     name: "",
-    description: "",
     image: undefined,
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -35,9 +34,9 @@ const EditCategory = () => {
   };
 
   // Fetch para obtener la categoría por ID
-  const fetchCategory = useCallback(async () => {
-    if (!categoryId) {
-      console.warn("No category ID provided");
+  const fetchCharacteristics = useCallback(async () => {
+    if (!characteristicId) {
+      console.warn("No characteristic ID provided");
       return;
     }
     if (!session) {
@@ -46,11 +45,11 @@ const EditCategory = () => {
     }
 
     try {
-      //@ts-ignore
+      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token = session?.user?.accessToken;
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/categories/${categoryId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/${characteristicId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,8 +59,10 @@ const EditCategory = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error fetching category:", errorData);
-        throw new Error(errorData.message || "Error al obtener la categoría");
+        console.error("Error fetching characteristic:", errorData);
+        throw new Error(
+          errorData.message || "Error al obtener la característica"
+        );
       }
 
       const data = await response.json();
@@ -69,14 +70,14 @@ const EditCategory = () => {
         ...data.data,
       });
     } catch (error) {
-      console.error("Error fetching category:", error);
-      toast.error("Error al cargar los datos de la categoría");
+      console.error("Error fetching characteristic:", error);
+      toast.error("Error al cargar los datos de la característica");
     }
-  }, [categoryId, session]);
+  }, [characteristicId, session]);
 
   useEffect(() => {
-    fetchCategory();
-  }, [fetchCategory]);
+    fetchCharacteristics();
+  }, [fetchCharacteristics]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -95,26 +96,26 @@ const EditCategory = () => {
     }
 
     // Estructurar los datos según lo esperado por el servidor
-    const category = JSON.stringify({
+    const characteristic = JSON.stringify({
       ...form,
       image: undefined,
     });
     const formData = new FormData();
     formData.append(
-      "category",
-      new Blob([category], { type: "application/json" })
+      "characteristic",
+      new Blob([characteristic], { type: "application/json" })
     ); // Agregar el JSON en el campo "category"
 
     if (form.image instanceof File) {
       formData.append("image", form.image);
     } // Agregar el archivo en el campo "image"
 
-    //@ts-ignore
+    /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
     const token = session?.user?.accessToken;
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/categories/update/${categoryId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/update/${characteristicId}`,
         {
           method: "PUT",
           headers: {
@@ -129,15 +130,15 @@ const EditCategory = () => {
         handleBackendError(errorData);
       }
 
-      toast.success("Categoría actualizada exitosamente");
+      toast.success("Característica actualizada exitosamente");
 
       setTimeout(() => {
         setIsPending(false);
-        router.push("/admin/categories");
+        router.push("/admin/characteristics");
       }, 1500);
     } catch (error) {
       if (error instanceof Error && error.message !== "VALIDATION_ERROR") {
-        toast.error("Error al actualizar la categoría");
+        toast.error("Error al actualizar la característica");
       }
     } finally {
       setIsPending(false);
@@ -149,7 +150,7 @@ const EditCategory = () => {
       <div className="ml-96 flex justify-center">
         <Toaster position="top-center" />
         <ReusableSmallForm
-          entityType="categoría"
+          entityType="característica"
           form={form}
           setForm={setForm}
           onSubmit={handleSubmit}
@@ -163,4 +164,4 @@ const EditCategory = () => {
   );
 };
 
-export default EditCategory;
+export default EditCharacteristic;

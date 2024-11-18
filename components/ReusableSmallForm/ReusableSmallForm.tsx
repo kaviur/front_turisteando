@@ -2,11 +2,12 @@
 
 import { Category } from "@/types/category";
 import PrimaryButton from "../ui/PrimaryButton";
+import { Characteristics } from "@/types/characteristics";
 
 interface ReusableSmallFormProps {
   entityType: "categoría" | "característica";
-  form: Category;
-  setForm: React.Dispatch<React.SetStateAction<Category>>;
+  form: Category | Characteristics;
+  setForm: React.Dispatch<React.SetStateAction<Category | Characteristics>>;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -33,6 +34,11 @@ const ReusableSmallForm = ({
 
   const placeholderName = `Ingresa el nombre de la ${entityType}`;
   const buttonText = isEditing ? "Guardar Cambios" : `Crear ${entityType}`;
+
+  const imageName =
+    form.image instanceof File
+      ? form.image.name
+      : form.image?.imageUrl.split("/").pop();
 
   return (
     <div className="grid grid-cols-1 gap-9 sm:grid-cols-2">
@@ -69,7 +75,7 @@ const ReusableSmallForm = ({
                   </label>
                   <textarea
                     rows={6}
-                    value={form.description}
+                    value={(form as Category).description}
                     name="description"
                     onChange={handleChange}
                     placeholder="Ingresa la descripción de la categoría"
@@ -103,7 +109,7 @@ const ReusableSmallForm = ({
                     type="text"
                     value={
                       form.image
-                        ? (form.image as File).name
+                        ? imageName
                         : "Ningún archivo ha sido seleccionado"
                     }
                     className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"

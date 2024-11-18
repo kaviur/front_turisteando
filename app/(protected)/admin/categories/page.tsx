@@ -48,11 +48,7 @@ const CategoriesPage = () => {
 
   useEffect(() => {
     if (session) {
-      // Obtener el token de sesión
-      // {
-      //   /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      // }
-      //@ts-ignore
+       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token: string = session?.user?.accessToken;
 
       const fetchCategories = async () => {

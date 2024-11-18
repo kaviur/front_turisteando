@@ -6,6 +6,8 @@ import { useSession } from "next-auth/react"; // Importar useSession para obtene
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { Category } from "@/types/category";
+import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
+import handleBackendError from "@/utils/validators/validatorBackendErrors";
 
 export default function CreateCategory() {
   const router = useRouter();
@@ -15,7 +17,6 @@ export default function CreateCategory() {
     description: undefined,
     image: undefined,
   });
-  console.log(form);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, setIsPending] = useState(false);
 
@@ -30,31 +31,10 @@ export default function CreateCategory() {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-    if (!form.name || !/^[a-zA-ZáéíóúÁÉÍÓÚ0-9]{3,50}$/.test(form.name)) {
-      newErrors.name =
-        "El nombre debe tener entre 3 y 50 caracteres y solo puede contener letras y números.";
-    }
-    if (!form.description || !/^.{3,255}$/.test(form.description)) {
-      newErrors.description =
-        "La descripción debe tener entre 3 y 255 caracteres.";
-    }
-    if (
-      !(form.image instanceof File) ||
-      !/\.(jpg|jpeg|png|gif|webp)$/.test(form.image.name)
-    ) {
-      newErrors.image =
-        "El archivo debe ser una imagen válida (jpg, jpeg, png, gif, webp).";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   // Función para crear una categoría
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!validateForm()) {
+    if (!handleFrontendError({ form, setErrors })) {
       toast.error("Por favor, corrige los errores en el formulario.");
       return;
     }
@@ -70,17 +50,20 @@ export default function CreateCategory() {
     // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
     const token = session?.user?.accessToken;
 
-    const formToSend = { ...form };
-    const image = formToSend.image as File;
-    delete formToSend.image;
-
+    // Estructurar los datos según lo esperado por el servidor
+    const category = JSON.stringify({
+      ...form,
+      image: undefined,
+    });
     const formData = new FormData();
-    const category = JSON.stringify(formToSend);
     formData.append(
       "category",
       new Blob([category], { type: "application/json" })
-    );
-    if (image) formData.append("image", image as File); // Agregar el archivo en el campo "image"
+    ); // Agregar el JSON en el campo "category"
+
+    if (form.image instanceof File) {
+      formData.append("image", form.image);
+    } // Agregar el archivo en el campo "image"
 
     try {
       // Hacer la solicitud y mostrar el toast de carga
@@ -94,8 +77,7 @@ export default function CreateCategory() {
         }).then(async (response) => {
           if (!response.ok) {
             const errorData = await response.json();
-            console.log(errorData);
-            throw new Error("Error al crear la categoría");
+            handleBackendError(errorData);
           }
         }),
         {
