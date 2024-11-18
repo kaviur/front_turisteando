@@ -12,6 +12,8 @@ const CategoriesPage = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const { data: session } = useSession();
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const confirmDelete = async () => {
     return new Promise<boolean>((resolve) => {
@@ -48,7 +50,7 @@ const CategoriesPage = () => {
 
   useEffect(() => {
     if (session) {
-       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token: string = session?.user?.accessToken;
 
       const fetchCategories = async () => {
@@ -64,9 +66,16 @@ const CategoriesPage = () => {
             }
           );
           const data = await response.json();
-          setCategories(data.data);
+          if (response.ok) {
+            setCategories(data.data);
+            setLoading(false);
+          } else {
+            setError("Failed to fetch categories");
+          }
         } catch (error) {
           console.error("Error fetching categories:", error);
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -80,11 +89,11 @@ const CategoriesPage = () => {
   };
 
   // Método para eliminar una categoría existente
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | undefined) => {
     const confirmed = await confirmDelete();
     if (!confirmed || !session) return;
 
-    /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it.*/
+    /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
     const token = session?.user?.accessToken;
 
     try {
@@ -114,12 +123,18 @@ const CategoriesPage = () => {
     <div className="ml-60">
       <Toaster position="top-center" />
       <h1 className="text-2xl font-bold mb-4">Categorías</h1>
-      <ReusableTable
-        items={categories}
-        entityType="categoría"
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <p className="text-center">Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <ReusableTable
+          items={categories}
+          entityType="categoría"
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

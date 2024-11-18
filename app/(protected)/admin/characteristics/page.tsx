@@ -11,6 +11,8 @@ const CharacteristicsPage = () => {
   const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
   const { data: session } = useSession();
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const confirmDelete = async () => {
     return new Promise<boolean>((resolve) => {
@@ -62,9 +64,16 @@ const CharacteristicsPage = () => {
             }
           );
           const data = await response.json();
-          setCharacteristics(data.data);
+          if (response.ok) {
+            setCharacteristics(data.data);
+            setLoading(false);
+          } else {
+            setError("Failed to fetch characteristics");
+          }
         } catch (error) {
-          console.error("Error fetching categories:", error);
+          console.error("Error fetching characteristics:", error);
+        } finally {
+          setLoading(false);
         }
       };
       
@@ -78,7 +87,7 @@ const CharacteristicsPage = () => {
   };
 
   // Método para eliminar una caracteristica
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string | undefined) => {
     const confirmed = await confirmDelete();
     if (!confirmed || !session) return;
 
@@ -87,13 +96,16 @@ const CharacteristicsPage = () => {
 
     try {
       await toast.promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/delete/${id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }).then((response) => {
+        fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/delete/${id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        ).then((response) => {
           if (!response.ok)
             throw new Error("Error al eliminar la característica");
           setCharacteristics(
@@ -115,12 +127,18 @@ const CharacteristicsPage = () => {
     <div className="ml-60">
       <Toaster position="top-center" />
       <h1 className="text-2xl font-bold mb-4">Características</h1>
-      <ReusableTable
-        items={characteristics}
-        entityType="característica"
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {loading ? (
+        <p className="text-center">Loading...</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <ReusableTable
+          items={characteristics}
+          entityType="característica"
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

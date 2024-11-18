@@ -8,7 +8,7 @@ type ReusableTableProps = {
   items: Category[] | Characteristics[];
   entityType: "categoría" | "característica";
   onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: string | undefined) => void;
 };
 
 const ReusableTable = ({
@@ -60,7 +60,7 @@ const ReusableTable = ({
           <div className="col-span-1 flex items-center">
             {item.image ? (
               <Image
-                src={item.image.imageUrl}
+                src={(item.image as { imageUrl: string }).imageUrl}
                 width={60}
                 height={50}
                 alt="Icono"
