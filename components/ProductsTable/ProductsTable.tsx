@@ -1,5 +1,6 @@
 import { TouristPlan } from "@/types/touristPlan";
 import Image from "next/image";
+import Link from "next/link";
 
 const ProductsTable = ({ products }: { products: TouristPlan[] }) => {
   return (
@@ -62,7 +63,9 @@ const ProductsTable = ({ products }: { products: TouristPlan[] }) => {
             <p className="text-sm text-black">{product.city.name}</p> {/* Correcto acceso a la ciudad */}
           </div>
           <div className="col-span-1 flex items-center ml-6 justify-end">
+          <Link href={`/product/${product.id}`}>
             <p className="text-xs text-accent">Ver Detalle</p>
+            </Link>
           </div>
         </div>
       ))}
