@@ -11,9 +11,15 @@ export default function Home() {
     <div className={`mx-auto mt-0 md:mt-24`}>
       <Navbar />
       <div className="flex flex-col items-center justify-center min-h-[60vh] bg-gray-50 p-6">
-        <Image style={imageStyle} src="/logo.png" alt="Logo" width={120} height={120} />
-
-        <h1 className="text-3xl font-bold text-gray-800 mt-4">
+        
+      <Image 
+  src="/logo.png" 
+  alt="Página no encontrada" 
+  width={200} 
+  height={200} 
+  className="w-auto"
+/>
+        <h1 className="text-4xl font-bold text-gray-800 mt-4">
           Acceso Denegado
         </h1>
         <p className="text-gray-600 mt-2 text-center max-w-md">
@@ -23,7 +29,7 @@ export default function Home() {
 
         <Link
           href="/"
-          className="mt-8 btn btn-primary text-white rounded-full px-8"
+          className="mt-8 btn btn-primary  rounded-full px-8"
         >
           Volver al Inicio
         </Link>
