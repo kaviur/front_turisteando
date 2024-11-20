@@ -40,7 +40,6 @@ export const {
           credentials.email as string,
           credentials.password as string
         );
-        console.log(result);
         return result && result.user
           ? {
               id: result.user.id,
