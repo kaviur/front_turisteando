@@ -3,9 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-const imageStyle = {
-  width: "auto",
-};
+
 export default function Home() {
   return (
     <div className={`mx-auto mt-0 md:mt-24`}>
