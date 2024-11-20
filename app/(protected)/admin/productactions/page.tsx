@@ -76,7 +76,7 @@ export default function ProductActionsPage() {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <ProductsTableActions products={touristPlans} />
+          <ProductsTableActions products={touristPlans} setTouristPlans={setTouristPlans} />
         )}
       </div>
     </div>
