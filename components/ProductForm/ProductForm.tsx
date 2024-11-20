@@ -23,11 +23,15 @@ interface TouristPlanRequest {
   setDuration: (duration: string) => void;
   characteristicIds: string[];
   setCharacteristicIds: (characteristicIds: string[]) => void;
-  images: FileList | null;
-  setImages: (images: FileList | null) => void;
+  images: File[];
+  setImages: React.Dispatch<React.SetStateAction<File[]>>
+  existingImages?: { id: number; imageUrl: string }[];
+  handleDeleteImage?: (imageUrl: string) => void; // Opcional
   onSubmit: (e: React.FormEvent) => void;
   isPending: boolean;
   isEditing: boolean;
+  remainingImagesToUpload: number;
+  setRemainingImagesToUpload: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ProductForm = ({
@@ -53,22 +57,58 @@ const ProductForm = ({
   setCharacteristicIds,
   images,
   setImages,
+  existingImages, // Opcional
+  handleDeleteImage, // Opcional
   onSubmit,
   isPending,
   isEditing,
+  remainingImagesToUpload,
+  setRemainingImagesToUpload
 }: TouristPlanRequest) => {
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setImages(files);
-    }
-  };
-
+  
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
   const [characteristics, setCharacteristics] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+
+  //Handle multipart images
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+  
+    if (files) {
+      // Convertir FileList a un array de File
+      const fileArray = Array.from(files);
+  
+      // Generar URLs temporales para previsualización
+      const previewUrls = fileArray.map((file) => URL.createObjectURL(file));
+  
+      // Actualizar el estado de las imágenes (multipart) con los archivos previos y nuevos
+      setImages((prevImages: File[]) => [...prevImages, ...fileArray]);
+  
+      // Actualizar el estado de las URLs de previsualización, acumulando las previas y las nuevas
+      setPreviewImages((prevPreviewImages) => [...prevPreviewImages, ...previewUrls]);
+  
+      // Calcular la cantidad de imágenes a subir y actualizar remainingImagesToUpload
+      setRemainingImagesToUpload((prevRemaining) => Math.max(prevRemaining - fileArray.length, 0));
+    }
+  };
+  
+
+  const handleRemovePreviewImage = (index: number) => {
+    if (images) {
+      // Eliminar el archivo en la posición especificada
+      const updatedImages = images.filter((_, i) => i !== index);
+  
+      // Actualizar el estado de images y previewImages
+      setImages(updatedImages);  // Ahora `images` es un array de File[]
+      setPreviewImages((prev) => prev.filter((_, i) => i !== index)); // Actualizar previsualizaciones
+  
+      // Aumentar la cantidad de imágenes restantes para subir
+      setRemainingImagesToUpload((prev) => prev + 1);
+    }
+  };
 
   // Función para obtener categorías y ciudades
   useEffect(() => {
@@ -146,13 +186,12 @@ const ProductForm = ({
                 <label className="mb-3 block text-sm font-medium text-black">
                   Categoría
                 </label>
-                <select 
-                  id="category" 
-                  name="category" 
-                  value={categoryId} 
+                <select
+                  id="category"
+                  name="category"
+                  value={categoryId} // Controlado por el estado
                   onChange={(e) => setCategoryId(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                  defaultValue=""
                   disabled={loading} // Deshabilitamos el select mientras carga
                 >
                   <option value="" disabled>
@@ -160,7 +199,7 @@ const ProductForm = ({
                   </option>
                   {!loading &&
                     categories?.map((category: { id: number; name: string }) => (
-                      <option key={category.id} value={category.id}>
+                      <option key={category.id} value={String(category.id)}>
                         {category.name}
                       </option>
                     ))}
@@ -174,10 +213,9 @@ const ProductForm = ({
                 <select
                   id="city"
                   name="city"
-                  value={cityId}
+                  value={cityId} // Controlado por el estado
                   onChange={(e) => setCityId(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                  defaultValue=""
                   disabled={loading}
                 >
                   <option value="" disabled>
@@ -185,12 +223,11 @@ const ProductForm = ({
                   </option>
                   {!loading &&
                     cities?.map((city: { id: number; name: string }) => (
-                      <option key={city.id} value={city.id}>
+                      <option key={city.id} value={String(city.id)}>
                         {city.name}
                       </option>
                     ))}
                 </select>
-
               </div>
 
               <div className="mb-6">
@@ -284,16 +321,106 @@ const ProductForm = ({
                 </select>
               </div>
 
+              {/* <div className="mb-6">
+                <label className="mb-3 block text-sm font-medium text-black">Características</label>
+                <div className="flex flex-wrap gap-4">
+                  {characteristics.map((char) => (
+                    <label key={char.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        defaultChecked 
+                        className="checkbox checkbox-primary"
+                        value={String(char.id)}
+                        checked={characteristicIds.includes(String(char.id))}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setCharacteristicIds([...characteristicIds, value]);
+                          } else {
+                            setCharacteristicIds(characteristicIds.filter((id) => id !== value));
+                          }
+                        }}
+                      />
+                      {char.name}
+                    </label>
+                  ))}
+                </div>
+              </div> */}
+
+              <div className="flex gap-4 flex-wrap items-center justify-center">
+                {/* Mostrar imágenes existentes solo si están definidas */}
+                {isEditing && existingImages && existingImages.length > 0 && (
+                  <div>
+                    <div className="flex gap-4 flex-wrap">  
+                      {existingImages.map((image) => (
+                        <div key={image.id} className="relative">
+                          <img
+                            src={image.imageUrl}
+                            alt={`Imagen ${image.id + 1}`}
+                            className="w-24 h-24 object-cover border rounded"
+                          />
+                          {handleDeleteImage && (
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteImage(image.imageUrl)}
+                              className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                            >
+                              X
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Renderizar imágenes cargadas desde el input */}
+                {previewImages.length > 0 && (
+                  <div>
+                    <div className="flex gap-4 flex-wrap">
+                      {previewImages.map((imageUrl, index) => (
+                        <div key={index} className="relative">
+                          <img
+                            src={imageUrl}
+                            alt={`Previsualización ${index + 1}`}
+                            className="w-24 h-24 object-cover border rounded"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePreviewImage(index)}
+                            className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                          >
+                            X
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="mb-6">
                 <label className="block text-sm font-medium text-black mb-2">Imágenes</label>
                 <div className="flex items-center border border-gray-300 rounded overflow-hidden">
                   <label className="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
-                    Selecciona los archivos
+                    Selecciona los archivos 
+                    <p>
+                    {
+                      remainingImagesToUpload === 0
+                        ? "Ya has seleccionado las 5 imágenes permitidas."
+                        : remainingImagesToUpload === 1
+                        ? "Agrega otra imagen."
+                        : remainingImagesToUpload === 5
+                        ? "Agrega 5 imágenes."
+                        : `Agrega ${remainingImagesToUpload} imágenes más.`
+                    }
+                    </p>
                     <input
                       type="file"
                       className="hidden"
                       multiple
                       onChange={handleFileChange}
+                      disabled={remainingImagesToUpload === 0}
                     />
                   </label>
                   <input
