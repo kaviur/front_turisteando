@@ -1,6 +1,7 @@
 import { useState, useEffect, ChangeEvent } from 'react';
 import PrimaryButton from '../ui/PrimaryButton';
 import CurrencyInput from 'react-currency-input-field';
+import { FaXmark } from "react-icons/fa6";
 
 interface TouristPlanRequest {
   title: string;
@@ -347,7 +348,7 @@ const ProductForm = ({
                 </div>
               </div> */}
 
-              <div className="flex gap-4 flex-wrap items-center justify-center">
+              <div className="flex gap-4 flex-wrap items-center justify-center pb-6">
                 {/* Mostrar imágenes existentes solo si están definidas */}
                 {isEditing && existingImages && existingImages.length > 0 && (
                   <div>
@@ -357,15 +358,15 @@ const ProductForm = ({
                           <img
                             src={image.imageUrl}
                             alt={`Imagen ${image.id + 1}`}
-                            className="w-24 h-24 object-cover border rounded"
+                            className="w-28 h-28 object-cover rounded-md shadow-slate-500 shadow-lg"
                           />
                           {handleDeleteImage && (
                             <button
                               type="button"
                               onClick={() => handleDeleteImage(image.imageUrl)}
-                              className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                              className="absolute -top-2 -right-2 bg-red-500 text-white font-bold px-2 rounded-full"
                             >
-                              X
+                              x
                             </button>
                           )}
                         </div>
@@ -383,14 +384,14 @@ const ProductForm = ({
                           <img
                             src={imageUrl}
                             alt={`Previsualización ${index + 1}`}
-                            className="w-24 h-24 object-cover border rounded"
+                            className="w-28 h-28 object-cover rounded-md shadow-slate-400 shadow-lg"
                           />
                           <button
                             type="button"
                             onClick={() => handleRemovePreviewImage(index)}
-                            className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full"
+                            className="absolute -top-2 -right-2 bg-red-500 text-white font-bold p-1 rounded-full"
                           >
-                            X
+                            <FaXmark />
                           </button>
                         </div>
                       ))}

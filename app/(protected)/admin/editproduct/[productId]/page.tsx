@@ -20,7 +20,7 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
   const [characteristicIds, setCharacteristicIds] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<{ id: number; imageUrl: string }[]>([]);// URLs actuales
-  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // URLs eliminadas
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]); // URLs de imágenes eliminadas
   const [remainingImagesToUpload, setRemainingImagesToUpload] = useState(0);
 
   // Estado adicional
