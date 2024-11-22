@@ -1,7 +1,9 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import PrimaryButton from '../ui/PrimaryButton';
 import CurrencyInput from 'react-currency-input-field';
 import { FaXmark } from "react-icons/fa6";
+import Dropzone from '../ui/Dropzone';
+import Image from 'next/image';
 
 interface TouristPlanRequest {
   title: string;
@@ -75,25 +77,24 @@ const ProductForm = ({
   const [previewImages, setPreviewImages] = useState<string[]>([]);
 
   //Handle multipart images
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-  
-    if (files) {
-      // Convertir FileList a un array de File
-      const fileArray = Array.from(files);
-  
-      // Generar URLs temporales para previsualización
-      const previewUrls = fileArray.map((file) => URL.createObjectURL(file));
-  
-      // Actualizar el estado de las imágenes (multipart) con los archivos previos y nuevos
-      setImages((prevImages: File[]) => [...prevImages, ...fileArray]);
-  
-      // Actualizar el estado de las URLs de previsualización, acumulando las previas y las nuevas
-      setPreviewImages((prevPreviewImages) => [...prevPreviewImages, ...previewUrls]);
-  
-      // Calcular la cantidad de imágenes a subir y actualizar remainingImagesToUpload
-      setRemainingImagesToUpload((prevRemaining) => Math.max(prevRemaining - fileArray.length, 0));
-    }
+  const handleDrop = (acceptedFiles: File[]) => {
+
+    const validFiles: File[] = [];
+    const previewUrls: string[] = [];
+    const maxFileSize = 10 * 1024 * 1024; // 10 MB
+
+    acceptedFiles.forEach((file) => {
+      if (file.size <= maxFileSize && file.type.startsWith('image/')) {
+        validFiles.push(file);
+        previewUrls.push(URL.createObjectURL(file));
+      } else {
+        alert('Archivo no válido. Asegúrate de subir imágenes menores a 10 MB.');
+      }
+    });
+
+    setImages((prevImages) => [...prevImages, ...validFiles]);
+    setPreviewImages((prevPreviewImages) => [...prevPreviewImages, ...previewUrls]);
+    setRemainingImagesToUpload((prev) => Math.max(prev - validFiles.length, 0));
   };
   
 
@@ -101,12 +102,13 @@ const ProductForm = ({
     if (images) {
       // Eliminar el archivo en la posición especificada
       const updatedImages = images.filter((_, i) => i !== index);
+
+      // Revocar la URL del objeto eliminada para liberar memoria
+      URL.revokeObjectURL(previewImages[index]);
   
       // Actualizar el estado de images y previewImages
-      setImages(updatedImages);  // Ahora `images` es un array de File[]
-      setPreviewImages((prev) => prev.filter((_, i) => i !== index)); // Actualizar previsualizaciones
-  
-      // Aumentar la cantidad de imágenes restantes para subir
+      setImages(updatedImages);
+      setPreviewImages((prev) => prev.filter((_, i) => i !== index));
       setRemainingImagesToUpload((prev) => prev + 1);
     }
   };
@@ -348,92 +350,65 @@ const ProductForm = ({
                 </div>
               </div> */}
 
-              <div className="flex gap-4 flex-wrap items-center justify-center pb-6">
-                {/* Mostrar imágenes existentes solo si están definidas */}
-                {isEditing && existingImages && existingImages.length > 0 && (
-                  <div>
-                    <div className="flex gap-4 flex-wrap">  
-                      {existingImages.map((image) => (
-                        <div key={image.id} className="relative">
-                          <img
-                            src={image.imageUrl}
-                            alt={`Imagen ${image.id + 1}`}
-                            className="w-28 h-28 object-cover rounded-md shadow-slate-500 shadow-lg"
-                          />
-                          {handleDeleteImage && (
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteImage(image.imageUrl)}
-                              className="absolute -top-2 -right-2 bg-red-500 text-white font-bold px-2 rounded-full"
-                            >
-                              x
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Renderizar imágenes cargadas desde el input */}
-                {previewImages.length > 0 && (
-                  <div>
-                    <div className="flex gap-4 flex-wrap">
-                      {previewImages.map((imageUrl, index) => (
-                        <div key={index} className="relative">
-                          <img
-                            src={imageUrl}
-                            alt={`Previsualización ${index + 1}`}
-                            className="w-28 h-28 object-cover rounded-md shadow-slate-400 shadow-lg"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => handleRemovePreviewImage(index)}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white font-bold p-1 rounded-full"
-                          >
-                            <FaXmark />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
               <div className="mb-6">
-                <label className="block text-sm font-medium text-black mb-2">Imágenes</label>
-                <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                  <label className="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
-                    Selecciona los archivos 
-                    <p>
-                    {
-                      remainingImagesToUpload === 0
-                        ? "Ya has seleccionado las 5 imágenes permitidas."
-                        : remainingImagesToUpload === 1
-                        ? "Agrega otra imagen."
-                        : remainingImagesToUpload === 5
-                        ? "Agrega 5 imágenes."
-                        : `Agrega ${remainingImagesToUpload} imágenes más.`
-                    }
-                    </p>
-                    <input
-                      type="file"
-                      className="hidden"
-                      multiple
-                      onChange={handleFileChange}
-                      disabled={remainingImagesToUpload === 0}
-                    />
-                  </label>
-                  <input
-                    type="text"
-                    id="file-name"
-                    placeholder="Ningún archivo ha sido seleccionado"
-                    className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
-                    readOnly
-                    value={images ? `${images.length} archivo(s) seleccionado(s)` : ''}
-                  />
-                </div>
+                  <Dropzone className = "p-16 mt-10 border border-neutral-200" onDrop={handleDrop} remainingImagesToUpload={remainingImagesToUpload} />
               </div>
+
+              <div className="flex gap-4 flex-wrap items-center justify-center pb-6">
+              {/* Mostrar imágenes existentes solo si están definidas */}
+              {isEditing && existingImages && existingImages.length > 0 && (
+                <div>
+                  <div className="flex gap-4 flex-wrap">
+                    {existingImages.map((image) => (
+                      <div key={image.id} className="relative w-28 h-28"> 
+                      <Image
+                        src={image.imageUrl}
+                        alt={`Imagen ${image.id + 1}`}
+                        layout="fill" 
+                        objectFit="cover" 
+                        className="rounded-md shadow-slate-400 shadow-lg"
+                      />
+                      {handleDeleteImage && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteImage(image.imageUrl)}
+                          className="absolute -top-2 -right-2 bg-red-400 text-white font-bold p-1 rounded-full"
+                        >
+                          <FaXmark />
+                        </button>
+                      )}
+                    </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Renderizar imágenes cargadas desde el input */}
+              {previewImages.length > 0 && (
+                <div>
+                  <div className="flex gap-4 flex-wrap">
+                  {previewImages.map((imageUrl, index) => (
+                    <div key={index} className="relative w-28 h-28"> 
+                      <Image
+                        src={imageUrl}
+                        alt={`Previsualización ${index + 1}`}
+                        layout="fill" 
+                        objectFit="cover" 
+                        className="rounded-md shadow-slate-400 shadow-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePreviewImage(index)}
+                        className="absolute -top-2 -right-2 bg-red-400 text-white font-bold p-1 rounded-full"
+                      >
+                        <FaXmark />
+                      </button>
+                    </div>
+                  ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             </div>
           </form>
