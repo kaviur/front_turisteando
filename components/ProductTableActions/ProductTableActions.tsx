@@ -72,13 +72,15 @@ const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
                     <div className="col-span-1 flex items-center ml-6 justify-end space-x-4">
                     <Link href={`/product/${product.id}`}>
                         <button className="text-[#ff5b03] text-xs border-[1px] border-[#ff5b03] bg-white rounded-[48px] px-2 py-1 hover:bg-orange-600 hover:text-white transition-colors duration-300">Detalles</button>
-                        </Link>
+                    </Link>
+                    <Link href={`/admin/editproduct/${product.id}`}>
                         <button
                             className="text-blue-500 hover:text-blue-700"
                             aria-label="Editar producto"
                         >
                             <FiEdit size={18} />
                         </button>
+                    </Link>
                         <button
                             className="text-red-500 hover:text-red-700"
                             aria-label="Eliminar producto"

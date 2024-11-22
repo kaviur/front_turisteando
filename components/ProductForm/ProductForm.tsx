@@ -1,6 +1,9 @@
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import PrimaryButton from '../ui/PrimaryButton';
 import CurrencyInput from 'react-currency-input-field';
+import { FaXmark } from "react-icons/fa6";
+import Dropzone from '../ui/Dropzone';
+import Image from 'next/image';
 
 interface TouristPlanRequest {
   title: string;
@@ -23,11 +26,15 @@ interface TouristPlanRequest {
   setDuration: (duration: string) => void;
   characteristicIds: string[];
   setCharacteristicIds: (characteristicIds: string[]) => void;
-  images: FileList | null;
-  setImages: (images: FileList | null) => void;
+  images: File[];
+  setImages: React.Dispatch<React.SetStateAction<File[]>>
+  existingImages?: { id: number; imageUrl: string }[];
+  handleDeleteImage?: (imageUrl: string) => void; // Opcional
   onSubmit: (e: React.FormEvent) => void;
   isPending: boolean;
   isEditing: boolean;
+  remainingImagesToUpload: number;
+  setRemainingImagesToUpload: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const ProductForm = ({
@@ -53,22 +60,58 @@ const ProductForm = ({
   setCharacteristicIds,
   images,
   setImages,
+  existingImages, // Opcional
+  handleDeleteImage, // Opcional
   onSubmit,
   isPending,
   isEditing,
+  remainingImagesToUpload,
+  setRemainingImagesToUpload
 }: TouristPlanRequest) => {
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setImages(files);
-    }
-  };
-
+  
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
   const [characteristics, setCharacteristics] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+
+  //Handle multipart images
+  const handleDrop = (acceptedFiles: File[]) => {
+
+    const validFiles: File[] = [];
+    const previewUrls: string[] = [];
+    const maxFileSize = 10 * 1024 * 1024; // 10 MB
+
+    acceptedFiles.forEach((file) => {
+      if (file.size <= maxFileSize && file.type.startsWith('image/')) {
+        validFiles.push(file);
+        previewUrls.push(URL.createObjectURL(file));
+      } else {
+        alert('Archivo no válido. Asegúrate de subir imágenes menores a 10 MB.');
+      }
+    });
+
+    setImages((prevImages) => [...prevImages, ...validFiles]);
+    setPreviewImages((prevPreviewImages) => [...prevPreviewImages, ...previewUrls]);
+    setRemainingImagesToUpload((prev) => Math.max(prev - validFiles.length, 0));
+  };
+  
+
+  const handleRemovePreviewImage = (index: number) => {
+    if (images) {
+      // Eliminar el archivo en la posición especificada
+      const updatedImages = images.filter((_, i) => i !== index);
+
+      // Revocar la URL del objeto eliminada para liberar memoria
+      URL.revokeObjectURL(previewImages[index]);
+  
+      // Actualizar el estado de images y previewImages
+      setImages(updatedImages);
+      setPreviewImages((prev) => prev.filter((_, i) => i !== index));
+      setRemainingImagesToUpload((prev) => prev + 1);
+    }
+  };
 
   // Función para obtener categorías y ciudades
   useEffect(() => {
@@ -146,13 +189,12 @@ const ProductForm = ({
                 <label className="mb-3 block text-sm font-medium text-black">
                   Categoría
                 </label>
-                <select 
-                  id="category" 
-                  name="category" 
-                  value={categoryId} 
+                <select
+                  id="category"
+                  name="category"
+                  value={categoryId} // Controlado por el estado
                   onChange={(e) => setCategoryId(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                  defaultValue=""
                   disabled={loading} // Deshabilitamos el select mientras carga
                 >
                   <option value="" disabled>
@@ -160,7 +202,7 @@ const ProductForm = ({
                   </option>
                   {!loading &&
                     categories?.map((category: { id: number; name: string }) => (
-                      <option key={category.id} value={category.id}>
+                      <option key={category.id} value={String(category.id)}>
                         {category.name}
                       </option>
                     ))}
@@ -174,10 +216,9 @@ const ProductForm = ({
                 <select
                   id="city"
                   name="city"
-                  value={cityId}
+                  value={cityId} // Controlado por el estado
                   onChange={(e) => setCityId(e.target.value)}
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                  defaultValue=""
                   disabled={loading}
                 >
                   <option value="" disabled>
@@ -185,12 +226,11 @@ const ProductForm = ({
                   </option>
                   {!loading &&
                     cities?.map((city: { id: number; name: string }) => (
-                      <option key={city.id} value={city.id}>
+                      <option key={city.id} value={String(city.id)}>
                         {city.name}
                       </option>
                     ))}
                 </select>
-
               </div>
 
               <div className="mb-6">
@@ -284,28 +324,91 @@ const ProductForm = ({
                 </select>
               </div>
 
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-black mb-2">Imágenes</label>
-                <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                  <label className="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
-                    Selecciona los archivos
-                    <input
-                      type="file"
-                      className="hidden"
-                      multiple
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                  <input
-                    type="text"
-                    id="file-name"
-                    placeholder="Ningún archivo ha sido seleccionado"
-                    className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
-                    readOnly
-                    value={images ? `${images.length} archivo(s) seleccionado(s)` : ''}
-                  />
+              {/* <div className="mb-6">
+                <label className="mb-3 block text-sm font-medium text-black">Características</label>
+                <div className="flex flex-wrap gap-4">
+                  {characteristics.map((char) => (
+                    <label key={char.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        defaultChecked 
+                        className="checkbox checkbox-primary"
+                        value={String(char.id)}
+                        checked={characteristicIds.includes(String(char.id))}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (e.target.checked) {
+                            setCharacteristicIds([...characteristicIds, value]);
+                          } else {
+                            setCharacteristicIds(characteristicIds.filter((id) => id !== value));
+                          }
+                        }}
+                      />
+                      {char.name}
+                    </label>
+                  ))}
                 </div>
+              </div> */}
+
+              <div className="mb-6">
+                  <Dropzone className = "p-16 mt-10 border border-neutral-200" onDrop={handleDrop} remainingImagesToUpload={remainingImagesToUpload} />
               </div>
+
+              <div className="flex gap-4 flex-wrap items-center justify-center pb-6">
+              {/* Mostrar imágenes existentes solo si están definidas */}
+              {isEditing && existingImages && existingImages.length > 0 && (
+                <div>
+                  <div className="flex gap-4 flex-wrap">
+                    {existingImages.map((image) => (
+                      <div key={image.id} className="relative w-28 h-28"> 
+                      <Image
+                        src={image.imageUrl}
+                        alt={`Imagen ${image.id + 1}`}
+                        layout="fill" 
+                        objectFit="cover" 
+                        className="rounded-md shadow-slate-400 shadow-lg"
+                      />
+                      {handleDeleteImage && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteImage(image.imageUrl)}
+                          className="absolute -top-2 -right-2 bg-red-400 text-white font-bold p-1 rounded-full"
+                        >
+                          <FaXmark />
+                        </button>
+                      )}
+                    </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Renderizar imágenes cargadas desde el input */}
+              {previewImages.length > 0 && (
+                <div>
+                  <div className="flex gap-4 flex-wrap">
+                  {previewImages.map((imageUrl, index) => (
+                    <div key={index} className="relative w-28 h-28"> 
+                      <Image
+                        src={imageUrl}
+                        alt={`Previsualización ${index + 1}`}
+                        layout="fill" 
+                        objectFit="cover" 
+                        className="rounded-md shadow-slate-400 shadow-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemovePreviewImage(index)}
+                        className="absolute -top-2 -right-2 bg-red-400 text-white font-bold p-1 rounded-full"
+                      >
+                        <FaXmark />
+                      </button>
+                    </div>
+                  ))}
+                  </div>
+                </div>
+              )}
+            </div>
 
             </div>
           </form>

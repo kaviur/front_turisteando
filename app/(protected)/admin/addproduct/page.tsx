@@ -16,7 +16,9 @@ export default function CreateProductPage() {
   const [capacity, setCapacity] = useState("");
   const [duration, setDuration] = useState("");
   const [characteristicIds, setCharacteristicIds] = useState<string[]>([]);
-  const [images, setImages] = useState<FileList | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+
+  const [remainingImagesToUpload, setRemainingImagesToUpload] = useState(5);
 
   // Estado adicional
   const [isPending, setIsPending] = useState(false);
@@ -83,7 +85,7 @@ export default function CreateProductPage() {
       setCapacity("");
       setDuration("");
       setCharacteristicIds([]);
-      setImages(null);
+      setImages([]);
   
       toast.success("Producto creado exitosamente!"); // Mensaje de éxito
     } catch (error) {
@@ -120,6 +122,8 @@ export default function CreateProductPage() {
     onSubmit: handleSubmit,
     isPending,
     isEditing: false,
+    remainingImagesToUpload,
+    setRemainingImagesToUpload
   };
 
   return (
