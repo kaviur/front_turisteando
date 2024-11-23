@@ -7,7 +7,7 @@ import ProductsTableActions from "@/components/ProductTableActions/ProductTableA
 
 export default function ProductActionsPage() {
   const [touristPlans, setTouristPlans] = useState<TouristPlan[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Fetch the tourist plans when the component mounts

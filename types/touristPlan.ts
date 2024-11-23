@@ -26,6 +26,14 @@ export interface TouristPlan {
   availabilityEndDate: string;
   capacity: number;
   duration: string;
+  characteristic:{
+    id: number,
+    name: string,
+    icon: {
+      id: number;
+      imageUrl: string;
+    }
+  }[];
   foodIncluded: boolean;
   wifiIncluded: boolean;
   petsFriendly: boolean;
