@@ -1,5 +1,5 @@
 export interface TouristPlan {
-  id: number;
+  id: string;
   title: string;
   description: string;
   price: number;
@@ -26,10 +26,10 @@ export interface TouristPlan {
   availabilityEndDate: string;
   capacity: number;
   duration: string;
-  foodIncluded: boolean;
-  wifiIncluded: boolean;
-  petsFriendly: boolean;
-  disabilityAccess: boolean;
+  characteristic: {
+    id: number;
+    name: string;
+    image: string;
+  }[];
   active: boolean;
 }
-
