@@ -4,7 +4,9 @@ import { IoChevronDownOutline } from "react-icons/io5";
 import { MdOutlineSearch } from "react-icons/md";
 import Calendar from "./Calendar";
 import {
+  filterPlansByCity,
   filterPlansByDateRange,
+  filterPlansByPriceRange,
   filterPlansByTitle,
 } from "@/utils/filters/filters";
 import { Range } from "react-date-range";
@@ -16,38 +18,53 @@ type SearchBarProps = {
 };
 
 const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
-  const [selectedOption, setSelectedOption] = useState("Lugares");
+  const [selectedOption, setSelectedOption] = useState("Tours");
   const [selectedTours, setSelectedTours] = useState<TouristPlan[]>([]);
   const [rangeDate, setRangeDate] = useState<Range>({});
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
+
+  const [value, setValue] = useState("");
 
   const searchOptions = [
-    "Lugares",
+    "Tours",
+    "Ciudad",
     "Fecha",
     "Categoría",
     "Capacidad",
-    "Tours",
     "Precio",
   ];
 
-  const allowOptions = ["Tours", "Lugares"];
+  const allowOptions = ["Tours", "Ciudad"];
 
   const handleSelectedOption = (e: React.MouseEvent<HTMLLIElement>) => {
     setSelectedOption(e.currentTarget.textContent || "");
+    setValue("");
+    setTours(allTours);
+    setSelectedTours([]);
   };
 
+  // Maneja los filtro por tours y ciudades
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
-    const filteredTours = filterPlansByTitle(value, allTours);
+    let filteredTours: TouristPlan[] = [];
+    if (selectedOption === "Tours") {
+      filteredTours = filterPlansByTitle(value, allTours);
+    }
+    if (selectedOption === "Ciudad") {
+      filteredTours = filterPlansByCity(value, allTours);
+    }
 
     setSelectedTours(filteredTours);
     setTours(filteredTours);
+    setValue(value);
 
     if (value === "") {
       setSelectedTours([]);
     }
   };
 
+  // Maneja el filtro por rango de fechas
   const handleGetRangeDate = (rangeDate: Range) => {
     setRangeDate(rangeDate);
   };
@@ -63,6 +80,20 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     }
   }, [rangeDate.startDate, rangeDate.endDate, allTours, setTours]);
 
+  // Maneja el filtro por rango de precios
+  const handlePriceChange = (range: { min: number; max: number }) => {
+    setPriceRange(range);
+  };
+
+  useEffect(() => {
+    const filteredTours = filterPlansByPriceRange(
+      priceRange.min,
+      priceRange.max,
+      allTours
+    );
+    setTours(filteredTours);
+  }, [priceRange, allTours, setTours]);
+
   const optionsList = searchOptions.map((option, index) => (
     <li
       key={index}
@@ -73,18 +104,36 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     </li>
   ));
 
-  const toursList = selectedTours.map((tour, index) => (
-    <li
-      key={index}
-      className="px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl"
-    >
-      {tour.title}
-    </li>
-  ));
+  // Genera la lista de planes que coinciden por tour o ciudad
+  const toursList = () => {
+    let filteredTours;
+    if (selectedOption === "Tours") {
+      filteredTours = selectedTours.map((tour, index) => (
+        <li
+          key={index}
+          className="px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl"
+        >
+          {tour.title}
+        </li>
+      ));
+    }
 
-   const handlePriceChange = (range: { min: number; max: number }) => {
-     console.log("Price Range Updated:", range);
-   };
+    if (selectedOption === "Ciudad") {
+      const uniqueCities = Array.from(
+        new Set(selectedTours.map((tour) => tour.city.name))
+      );
+      console.log(uniqueCities);
+      filteredTours = uniqueCities.map((city, index) => (
+        <li
+          key={index}
+          className="px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl"
+        >
+          {city}
+        </li>
+      ));
+    }
+    return filteredTours;
+  };
 
   return (
     <div className="relative">
@@ -106,6 +155,7 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
           </ul>
         </div>
         <input
+          value={value}
           disabled={allowOptions.includes(selectedOption) ? false : true}
           type="text"
           onChange={handleChange}
@@ -122,31 +172,38 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
         <Calendar onRangeDate={handleGetRangeDate} />
       )}
 
-      <PriceRange
-        minPrice={0}
-        maxPrice={5000}
-        step={50}
-        onRangeChange={handlePriceChange}
-      />
+      {/**
+       * Mostrar el rango de precios si la opción seleccionada es 'Precio'
+       */}
+      {selectedOption === "Precio" && (
+        <PriceRange
+          minPrice={0}
+          maxPrice={5000}
+          step={50}
+          onRangeChange={handlePriceChange}
+        />
+      )}
 
       {/**
        * Resultados de la búsqueda para 'Lugares' y 'Tours'
        */}
-      <div
-        className={`absolute -bottom-1 right-0 mt-2 translate-y-full bg-primary w-[390px] rounded-lg p-2 text-start max-h-[230px] overflow-auto ${
-          selectedTours.length > 0 ? "block" : "hidden"
-        }`}
-      >
-        <ul>
-          {selectedTours.length > 0 ? (
-            toursList
-          ) : (
-            <li className="px-4 py-2 text-white text-sm font-medium rounded-xl">
-              No se encontraron resultados
-            </li>
-          )}
-        </ul>
-      </div>
+      {selectedOption === "Tours" || selectedOption === "Ciudad" ? (
+        <div
+          className={`absolute -bottom-1 right-0 mt-2 translate-y-full bg-primary w-[390px] rounded-lg p-2 text-start max-h-[230px] overflow-auto ${
+            selectedTours.length > 0 ? "block" : "hidden"
+          }`}
+        >
+          <ul>
+            {selectedTours.length > 0 ? (
+              toursList()
+            ) : (
+              <li className="px-4 py-2 text-white text-sm font-medium rounded-xl">
+                No se encontraron resultados
+              </li>
+            )}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 };

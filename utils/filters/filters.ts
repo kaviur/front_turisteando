@@ -7,6 +7,13 @@ export const filterPlansByTitle = (value: string, allTours: TouristPlan[]) => {
   return filteredTours;
 };
 
+export const filterPlansByCity = (value: string, allTours: TouristPlan[]) => {
+  const filteredTours = allTours.filter((tour) =>
+    tour.city.name.toLowerCase().includes(value.toLowerCase())
+  );
+  return filteredTours;
+};
+
 export const filterPlansByDateRange = (
   startDate: Date,
   endDate: Date,
@@ -17,6 +24,19 @@ export const filterPlansByDateRange = (
     const tourEndDate = new Date(tour.availabilityEndDate);
 
     return tourStartDate >= startDate && tourEndDate <= endDate;
+  });
+
+  return filteredTours;
+};
+
+export const filterPlansByPriceRange = (
+  minPrice: number,
+  maxPrice: number,
+  allTours: TouristPlan[]
+) => {
+  const filteredTours = allTours.filter((tour) => {
+    const price = tour.price;
+    return price >= minPrice && price <= maxPrice;
   });
 
   return filteredTours;

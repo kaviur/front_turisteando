@@ -18,7 +18,7 @@ const PriceRangeWithInputs: React.FC<PriceRangeWithInputsProps> = ({
 
   const handleChange = (newValues: number[]) => {
     setValues(newValues);
-    onRangeChange({ min: newValues[0], max: newValues[1] }); // Notificar al padre
+    onRangeChange({ min: newValues[0], max: newValues[1] });
   };
 
   const handleInputChange = (index: number, value: string) => {
@@ -32,7 +32,7 @@ const PriceRangeWithInputs: React.FC<PriceRangeWithInputsProps> = ({
   };
 
   return (
-    <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-lg shadow-md flex flex-col gap-4 items-center">
+    <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-xl shadow-md flex flex-col gap-4 items-center">
       <h2 className="text-lg mb-5 font-semibold">
         Selecciona el rango de precio
       </h2>
@@ -63,30 +63,34 @@ const PriceRangeWithInputs: React.FC<PriceRangeWithInputsProps> = ({
               {children}
             </div>
           )}
-          renderThumb={({ props, isDragged, index }) => (
-            <div
-              {...props}
-              style={{
-                ...props.style,
-                height: "20px",
-                width: "20px",
-                borderRadius: "50%",
-                backgroundColor: isDragged ? "#ff0178" : "#fff",
-                border: "2px solid #ff0178",
-                boxShadow: "0px 2px 6px #aaa",
-                position: "relative",
-              }}
-            >
+          renderThumb={({ props, isDragged, index }) => {
+            const { key, ...restProps } = props;
+            return (
               <div
-                className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-primary text-white text-sm px-2 py-1 rounded-lg shadow-md"
+                key={key}
+                {...restProps}
                 style={{
-                  whiteSpace: "nowrap",
+                  ...restProps.style,
+                  height: "20px",
+                  width: "20px",
+                  borderRadius: "50%",
+                  backgroundColor: isDragged ? "#ff0178" : "#fff",
+                  border: "2px solid #ff0178",
+                  boxShadow: "0px 2px 6px #aaa",
+                  position: "relative",
                 }}
               >
-                ${values[index]}
+                <div
+                  className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-primary text-white text-sm px-2 py-1 rounded-lg shadow-md"
+                  style={{
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  S/. {values[index]}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          }}
         />
       </div>
 
@@ -115,9 +119,6 @@ const PriceRangeWithInputs: React.FC<PriceRangeWithInputsProps> = ({
             />
           </div>
         </div>
-        <button className="btn bg-primary text-white hover:bg-primary">
-          Buscar
-        </button>
       </div>
     </div>
   );
