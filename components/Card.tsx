@@ -72,7 +72,7 @@ export default function Card({
         >
           {title} <span className="text-gray-500">Perú</span>
         </h2>
-        <p>{description}</p>
+        <p className="text-justify text-gray-600">{description}</p>
       </div>
     </Link>
   );
