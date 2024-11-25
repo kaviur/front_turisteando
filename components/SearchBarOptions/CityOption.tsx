@@ -17,29 +17,21 @@ const CityOption: React.FC<SearchBarOptionProps> = ({
   allTours,
 }) => {
   const [selectedTours, setSelectedTours] = useState<TouristPlan[]>([]);
-  const [selectedTour, setSelectedTour] = useState<string | null>(null);
 
   useEffect(() => {
     if (!value) {
       setSelectedTours([]);
+      setTours(allTours);
       return;
     }
 
     const filteredTours = filterPlansByCity(value, allTours);
-    console.log(filteredTours);
     setSelectedTours(filteredTours);
-  }, [value, allTours]);
+  }, [value, allTours, setTours]);
 
   const handleTourClick = (cityName: string) => {
-    setSelectedTour(cityName);
     setValue(cityName);
     setTours(allTours.filter((tour) => tour.city.name === cityName));
-  };
-
-  const handleRemoveTour = () => {
-    setSelectedTour(null);
-    setValue("");
-    setTours(allTours);
   };
 
   const tourCities = Array.from(
@@ -50,10 +42,8 @@ const CityOption: React.FC<SearchBarOptionProps> = ({
     <>
       {selectedTours.length > 0 && (
         <ResultsTable
-          selectedTour={selectedTour}
           selectedTours={tourCities}
           handleTourClick={handleTourClick}
-          handleRemoveTour={handleRemoveTour}
         />
       )}
     </>

@@ -1,17 +1,13 @@
 import React from "react";
 
 interface ResultsTableProps {
-  selectedTour: string | null;
   selectedTours: string[];
   handleTourClick: (title: string) => void;
-  handleRemoveTour: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const ResultsTable: React.FC<ResultsTableProps> = ({
-  selectedTour,
   selectedTours,
   handleTourClick,
-  handleRemoveTour,
 }) => {
   return (
     <div
@@ -23,16 +19,10 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
         {selectedTours.map((tour) => (
           <li
             key={tour}
-            className={`px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl`}
+            onClick={() => handleTourClick(tour)}
+            className={`relative px-4 py-2 text-white cursor-pointer hover:bg-pink-600 text-sm font-medium rounded-xl`}
           >
-            <span className="tour-title" onClick={() => handleTourClick(tour)}>
-              {tour}
-            </span>
-            {selectedTour === tour && (
-              <button className="remove-tour-button" onClick={handleRemoveTour}>
-                X
-              </button>
-            )}
+            {tour}
           </li>
         ))}
       </ul>
