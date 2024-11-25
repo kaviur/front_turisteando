@@ -6,7 +6,7 @@ import CalendarOption from "./SearchBarOptions/CalendarOption";
 import { filterPlansByDateRange } from "@/utils/filters/filters";
 import { Range } from "react-date-range";
 import PriceOption from "./SearchBarOptions/PriceOption";
-import TourOption from "./SearchBarOptions/TourOption";
+import SearchOption from "./SearchBarOptions/SearchOption";
 import CityOption from "./SearchBarOptions/CityOption";
 import CapacityOption from "./SearchBarOptions/CapacityOption";
 
@@ -29,10 +29,10 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     "Fecha",
     "Precio",
     "Capacidad",
-    "Categoría",
+    "Empresa",
   ];
 
-  const allowOptions = ["Tours", "Ciudad"];
+  const allowOptions = ["Tours", "Ciudad", "Empresa"];
 
   const handleSelectedOption = (e: React.MouseEvent<HTMLLIElement>) => {
     setSelectedOption(e.currentTarget.textContent || "");
@@ -51,7 +51,7 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     setRangeDate(rangeDate);
   };
 
-  // Cargar el minimo y maximo precio de los tours
+  // Obtener valores minimo y maximo de los tours
   useEffect(() => {
     const minPrice = allTours.reduce((min, tour) => {
       return Math.min(min, tour.price);
@@ -84,21 +84,6 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     }
   }, [rangeDate.startDate, rangeDate.endDate, allTours, setTours]);
 
-  // // Maneja el filtro por rango de precios
-  // const handlePriceChange = (range: { min: number; max: number }) => {
-  //   setPriceRange(range);
-  // };
-
-  // useEffect(() => {
-  //   const filteredTours = filterPlansByPriceRange(
-  //     priceRange.min,
-  //     priceRange.max,
-  //     allTours
-  //   );
-  //   setTours(filteredTours);
-  // }, [priceRange, allTours, setTours]);
-
-  // Lista de opciones disonibles para busqueda del usuario
   const optionsList = searchOptions.map((option, index) => (
     <li
       key={index}
@@ -161,12 +146,13 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
       {/**
        *   Mostrar los tours filtrados por título
        */}
-      {selectedOption === "Tours" && (
-        <TourOption
+      {(selectedOption === "Tours" || selectedOption === "Empresa") && (
+        <SearchOption
           value={value}
           setValue={setValue}
           setTours={setTours}
           allTours={allTours}
+          filterBy={selectedOption}
         />
       )}
 

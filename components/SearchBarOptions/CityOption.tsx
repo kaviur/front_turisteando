@@ -8,6 +8,7 @@ export interface SearchBarOptionProps {
   setValue: (value: string) => void;
   allTours: TouristPlan[];
   setTours: (tours: TouristPlan[]) => void;
+  filterBy?: string;
 }
 
 const CityOption: React.FC<SearchBarOptionProps> = ({

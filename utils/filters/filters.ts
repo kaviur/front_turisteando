@@ -1,8 +1,12 @@
 import { TouristPlan } from "@/types/touristPlan";
 
-export const filterPlansByTitle = (value: string, allTours: TouristPlan[]) => {
+export const filterPlansByPropertie = (
+  value: string,
+  allTours: TouristPlan[],
+  param: keyof TouristPlan
+) => {
   const filteredTours = allTours.filter((tour) =>
-    tour.title.toLowerCase().includes(value.toLowerCase())
+    (tour[param] as string).toLowerCase().includes(value.toLowerCase())
   );
   return filteredTours;
 };

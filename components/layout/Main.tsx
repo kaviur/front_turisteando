@@ -20,6 +20,8 @@ export const Main = () => {
   const [tours, setTours] = useState<TouristPlan[]>([]);
   const [allTours, setAllTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true); // Nuevo estado de carga
+  const [activities, setActivities] = useState<TouristPlan[]>([]);
+  console.log(tours)
 
   useEffect(() => {
     const fetchTours = async () => {
@@ -31,7 +33,14 @@ export const Main = () => {
         const data = await response.json();
 
         if (data && Array.isArray(data.data)) {
-          setTours(data.data);
+          const activities = data.data.filter(
+            (tour: TouristPlan) => tour.category.name === "Activity"
+          );
+          setActivities(activities);
+          const tours = data.data.filter(
+            (tour: TouristPlan) => tour.category.name === "Tours"
+          );
+          setTours(tours);
           setAllTours(data.data);
         } else {
           console.error(
@@ -69,10 +78,7 @@ export const Main = () => {
           </h1>
 
           {/* Buscador */}
-          <SearchBar
-            setTours={setTours}
-            allTours={allTours}
-          />
+          <SearchBar setTours={setTours} allTours={allTours} />
         </div>
       </section>
 
@@ -111,7 +117,7 @@ export const Main = () => {
         {/* Swiper con Condición de Carga */}
         <Swiper
           slidesPerView={3}
-          spaceBetween={12}
+          spaceBetween={30}
           freeMode={true}
           pagination={{ clickable: true, dynamicBullets: true }}
           modules={[FreeMode, Pagination]}
@@ -233,7 +239,7 @@ export const Main = () => {
                 </SwiperSlide>
               ))
             : // Renderizar tours cuando la carga haya terminado
-              tours.map((tour) => (
+              activities.map((tour) => (
                 <SwiperSlide key={tour.id}>
                   <Card
                     isPrimary={false}
