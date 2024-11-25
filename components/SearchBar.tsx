@@ -2,15 +2,15 @@ import { TouristPlan } from "@/types/touristPlan";
 import { useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { MdOutlineSearch } from "react-icons/md";
-import Calendar from "./Calendar";
+import CalendarOption from "./SearchBarOptions/CalendarOption";
 import {
-  filterPlansByCity,
   filterPlansByDateRange,
   filterPlansByPriceRange,
-  filterPlansByTitle,
 } from "@/utils/filters/filters";
 import { Range } from "react-date-range";
-import PriceRange from "./PriceRange";
+import PriceOption from "./SearchBarOptions/PriceOption";
+import TourOption from "./SearchBarOptions/TourOption";
+import CityOption from "./SearchBarOptions/CityOption";
 
 type SearchBarProps = {
   setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>>;
@@ -19,7 +19,6 @@ type SearchBarProps = {
 
 const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
   const [selectedOption, setSelectedOption] = useState("Tours");
-  const [selectedTours, setSelectedTours] = useState<TouristPlan[]>([]);
   const [rangeDate, setRangeDate] = useState<Range>({});
   const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
 
@@ -29,9 +28,9 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     "Tours",
     "Ciudad",
     "Fecha",
-    "Categoría",
-    "Capacidad",
     "Precio",
+    "Capacidad",
+    "Categoría",
   ];
 
   const allowOptions = ["Tours", "Ciudad"];
@@ -40,28 +39,12 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     setSelectedOption(e.currentTarget.textContent || "");
     setValue("");
     setTours(allTours);
-    setSelectedTours([]);
   };
 
   // Maneja los filtro por tours y ciudades
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
-    let filteredTours: TouristPlan[] = [];
-    if (selectedOption === "Tours") {
-      filteredTours = filterPlansByTitle(value, allTours);
-    }
-    if (selectedOption === "Ciudad") {
-      filteredTours = filterPlansByCity(value, allTours);
-    }
-
-    setSelectedTours(filteredTours);
-    setTours(filteredTours);
     setValue(value);
-
-    if (value === "") {
-      setSelectedTours([]);
-    }
   };
 
   // Maneja el filtro por rango de fechas
@@ -94,6 +77,7 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     setTours(filteredTours);
   }, [priceRange, allTours, setTours]);
 
+  // Lista de opciones disonibles para busqueda del usuario
   const optionsList = searchOptions.map((option, index) => (
     <li
       key={index}
@@ -103,37 +87,6 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
       {option}
     </li>
   ));
-
-  // Genera la lista de planes que coinciden por tour o ciudad
-  const toursList = () => {
-    let filteredTours;
-    if (selectedOption === "Tours") {
-      filteredTours = selectedTours.map((tour, index) => (
-        <li
-          key={index}
-          className="px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl"
-        >
-          {tour.title}
-        </li>
-      ));
-    }
-
-    if (selectedOption === "Ciudad") {
-      const uniqueCities = Array.from(
-        new Set(selectedTours.map((tour) => tour.city.name))
-      );
-      console.log(uniqueCities);
-      filteredTours = uniqueCities.map((city, index) => (
-        <li
-          key={index}
-          className="px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl"
-        >
-          {city}
-        </li>
-      ));
-    }
-    return filteredTours;
-  };
 
   return (
     <div className="relative">
@@ -166,17 +119,17 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
       </div>
 
       {/**
-       * Mostrar el calendario si la opción seleccionada es 'Fecha'
+       * Mostrar los tours filtrados por rango de fecha
        */}
       {selectedOption === "Fecha" && (
-        <Calendar onRangeDate={handleGetRangeDate} />
+        <CalendarOption onRangeDate={handleGetRangeDate} />
       )}
 
       {/**
-       * Mostrar el rango de precios si la opción seleccionada es 'Precio'
+       *  Mostrar los tours filtrados por rango de precio
        */}
       {selectedOption === "Precio" && (
-        <PriceRange
+        <PriceOption
           minPrice={0}
           maxPrice={5000}
           step={50}
@@ -185,25 +138,28 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
       )}
 
       {/**
-       * Resultados de la búsqueda para 'Lugares' y 'Tours'
+       *   Mostrar los tours filtrados por título
        */}
-      {selectedOption === "Tours" || selectedOption === "Ciudad" ? (
-        <div
-          className={`absolute -bottom-1 right-0 mt-2 translate-y-full bg-primary w-[390px] rounded-lg p-2 text-start max-h-[230px] overflow-auto ${
-            selectedTours.length > 0 ? "block" : "hidden"
-          }`}
-        >
-          <ul>
-            {selectedTours.length > 0 ? (
-              toursList()
-            ) : (
-              <li className="px-4 py-2 text-white text-sm font-medium rounded-xl">
-                No se encontraron resultados
-              </li>
-            )}
-          </ul>
-        </div>
-      ) : null}
+      {selectedOption === "Tours" && (
+        <TourOption
+          value={value}
+          setValue={setValue}
+          setTours={setTours}
+          allTours={allTours}
+        />
+      )}
+
+      {/**
+       *  Mostrar los tours filtrados por ciudad
+       */}
+      {selectedOption === "Ciudad" && (
+        <CityOption
+          value={value}
+          setValue={setValue}
+          setTours={setTours}
+          allTours={allTours}
+        />
+      )}
     </div>
   );
 };

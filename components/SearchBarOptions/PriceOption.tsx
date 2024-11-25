@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Range, getTrackBackground } from "react-range";
 
-interface PriceRangeWithInputsProps {
+interface PriceRangeProps {
   minPrice: number;
   maxPrice: number;
   step?: number;
   onRangeChange: (range: { min: number; max: number }) => void;
 }
 
-const PriceRangeWithInputs: React.FC<PriceRangeWithInputsProps> = ({
+const PriceOption: React.FC<PriceRangeProps> = ({
   minPrice,
   maxPrice,
   step = 1,
@@ -124,4 +124,4 @@ const PriceRangeWithInputs: React.FC<PriceRangeWithInputsProps> = ({
   );
 };
 
-export default PriceRangeWithInputs;
+export default PriceOption;

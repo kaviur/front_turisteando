@@ -1,4 +1,3 @@
-// components/DateRangePicker.tsx
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { useState } from "react";
@@ -15,7 +14,7 @@ interface DateRangePickerProps {
   onRangeDate: (param: Range) => void;
 }
 
-const Calendar: React.FC<DateRangePickerProps> = ({ onRangeDate }) => {
+const CalendarOption: React.FC<DateRangePickerProps> = ({ onRangeDate }) => {
   const [selectedRange, setSelectedRange] = useState<DateRangeState>({
     startDate: new Date(),
     endDate: new Date(),
@@ -69,4 +68,4 @@ const Calendar: React.FC<DateRangePickerProps> = ({ onRangeDate }) => {
   );
 };
 
-export default Calendar;
+export default CalendarOption;
