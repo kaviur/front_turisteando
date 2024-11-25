@@ -38,24 +38,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const [selectedSchedule, setSelectedSchedule] = useState<string>("");
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
 
-  const imagesGallery = [
-    {
-      original: "https://picsum.photos/id/1018/1000/600/",
-      thumbnail: "https://picsum.photos/id/1018/250/150/",
-    },
-    {
-      original: "https://picsum.photos/id/1015/1000/600/",
-      thumbnail: "https://picsum.photos/id/1015/250/150/",
-    },
-    {
-      original: "https://picsum.photos/id/1019/1000/600/",
-      thumbnail: "https://picsum.photos/id/1019/250/150/",
-    },
-    {
-      original: images[0].imageUrl,
-      thumbnail: images[0].imageUrl,
-    },
-  ];
+  const imagesGallery = images.map((img) => ({
+    original: img.imageUrl,
+    thumbnail: img.imageUrl,
+  }));
+
 
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
