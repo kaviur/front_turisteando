@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 
 interface CardProps {
-  id: string;  // Añadir el parámetro id
+  id: number;  // Añadir el parámetro id
   imageSrc: string;
   title: string;
   isPrimary: boolean;

@@ -13,73 +13,22 @@ import { FreeMode, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-
-// Definir el tipo para los tours
-type Tour = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  seller: string;
-  city: {
-    id: number;
-    name: string;
-    country: {
-      id: number;
-      name: string;
-    };
-  };
-  category: {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-  };
-  images: {
-    id: number;
-    imageUrl: string;
-  }[];
-  availabilityStartDate: string;
-  availabilityEndDate: string;
-  capacity: number;
-  duration: string;
-  characteristic: {
-    id: number;
-    name: string;
-    icon: string;
-  }[];
-  active: boolean;
-};
+import { TouristPlan } from "@/types/touristPlan";
+import { fetchTours } from "@/lib/actions";
 
 export const Main = () => {
-  // Tipar el estado 'tours' como un array de 'Tour'
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState(true); // Nuevo estado de carga
+  const [tours, setTours] = useState<TouristPlan[]>([]);
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
-    const fetchTours = async () => {
-      setLoading(true); // Inicia la carga
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
-        );
-        const data = await response.json();
-
-        if (data && Array.isArray(data.data)) {
-          setTours(data.data);
-        } else {
-          console.error(
-            "La respuesta de la API no contiene un array de tours:",
-            data
-          );
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-      }
-      setLoading(false); // Termina la carga
+    const loadTours = async () => {
+      setLoading(true);
+      const data = await fetchTours();
+      setTours(data);
+      setLoading(false);
     };
 
-    fetchTours();
+    loadTours();
   }, []);
 
   return (
