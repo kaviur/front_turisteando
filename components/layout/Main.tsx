@@ -54,7 +54,7 @@ export const Main = () => {
       setLoading(false); // Termina la carga
     };
 
-    fetchTours();
+    loadTours();
   }, []);
 
   return (
