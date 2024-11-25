@@ -3,14 +3,12 @@ import { useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { MdOutlineSearch } from "react-icons/md";
 import CalendarOption from "./SearchBarOptions/CalendarOption";
-import {
-  filterPlansByDateRange,
-  filterPlansByPriceRange,
-} from "@/utils/filters/filters";
+import { filterPlansByDateRange } from "@/utils/filters/filters";
 import { Range } from "react-date-range";
 import PriceOption from "./SearchBarOptions/PriceOption";
 import TourOption from "./SearchBarOptions/TourOption";
 import CityOption from "./SearchBarOptions/CityOption";
+import CapacityOption from "./SearchBarOptions/CapacityOption";
 
 type SearchBarProps = {
   setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>>;
@@ -21,6 +19,7 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
   const [selectedOption, setSelectedOption] = useState("Tours");
   const [rangeDate, setRangeDate] = useState<Range>({});
   const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
+  const [capacityRange, setCapacityRange] = useState({ min: 0, max: 5000 });
 
   const [value, setValue] = useState("");
 
@@ -52,6 +51,28 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     setRangeDate(rangeDate);
   };
 
+  // Cargar el minimo y maximo precio de los tours
+  useEffect(() => {
+    const minPrice = allTours.reduce((min, tour) => {
+      return Math.min(min, tour.price);
+    }, Infinity);
+
+    const maxPrice = allTours.reduce((max, tour) => {
+      return Math.max(max, tour.price);
+    }, -Infinity);
+
+    const minCapacity = allTours.reduce((min, tour) => {
+      return Math.min(min, tour.capacity);
+    }, Infinity);
+
+    const maxCapacity = allTours.reduce((max, tour) => {
+      return Math.max(max, tour.capacity);
+    }, -Infinity);
+
+    setCapacityRange({ min: minCapacity, max: maxCapacity });
+    setPriceRange({ min: minPrice, max: maxPrice });
+  }, [allTours]);
+
   useEffect(() => {
     if (rangeDate.startDate && rangeDate.endDate) {
       const filteredTours = filterPlansByDateRange(
@@ -63,19 +84,19 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
     }
   }, [rangeDate.startDate, rangeDate.endDate, allTours, setTours]);
 
-  // Maneja el filtro por rango de precios
-  const handlePriceChange = (range: { min: number; max: number }) => {
-    setPriceRange(range);
-  };
+  // // Maneja el filtro por rango de precios
+  // const handlePriceChange = (range: { min: number; max: number }) => {
+  //   setPriceRange(range);
+  // };
 
-  useEffect(() => {
-    const filteredTours = filterPlansByPriceRange(
-      priceRange.min,
-      priceRange.max,
-      allTours
-    );
-    setTours(filteredTours);
-  }, [priceRange, allTours, setTours]);
+  // useEffect(() => {
+  //   const filteredTours = filterPlansByPriceRange(
+  //     priceRange.min,
+  //     priceRange.max,
+  //     allTours
+  //   );
+  //   setTours(filteredTours);
+  // }, [priceRange, allTours, setTours]);
 
   // Lista de opciones disonibles para busqueda del usuario
   const optionsList = searchOptions.map((option, index) => (
@@ -130,10 +151,10 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
        */}
       {selectedOption === "Precio" && (
         <PriceOption
-          minPrice={0}
-          maxPrice={5000}
-          step={50}
-          onRangeChange={handlePriceChange}
+          minValue={priceRange.min}
+          maxValue={priceRange.max}
+          allTours={allTours}
+          setTours={setTours}
         />
       )}
 
@@ -158,6 +179,18 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
           setValue={setValue}
           setTours={setTours}
           allTours={allTours}
+        />
+      )}
+
+      {/**
+       *  Mostrar los tours filtrados por capacidad
+       */}
+      {selectedOption === "Capacidad" && (
+        <CapacityOption
+          minValue={capacityRange.min}
+          maxValue={capacityRange.max}
+          allTours={allTours}
+          setTours={setTours}
         />
       )}
     </div>

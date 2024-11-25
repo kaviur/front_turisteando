@@ -29,14 +29,15 @@ export const filterPlansByDateRange = (
   return filteredTours;
 };
 
-export const filterPlansByPriceRange = (
-  minPrice: number,
-  maxPrice: number,
-  allTours: TouristPlan[]
+export const filterPlansByRange = (
+  minValue: number,
+  maxValue: number,
+  allTours: TouristPlan[],
+  filterBy: keyof TouristPlan
 ) => {
   const filteredTours = allTours.filter((tour) => {
-    const price = tour.price;
-    return price >= minPrice && price <= maxPrice;
+    const value = tour[filterBy] as number;
+    return value >= minValue && value <= maxValue;
   });
 
   return filteredTours;

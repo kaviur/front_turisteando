@@ -3,7 +3,7 @@ import { filterPlansByRange } from "@/utils/filters/filters";
 import { useEffect, useState } from "react";
 import { Range, getTrackBackground } from "react-range";
 
-const PriceOption: React.FC<RangeProps> = ({
+const CapacityOption: React.FC<RangeProps> = ({
   allTours,
   setTours,
   minValue,
@@ -16,7 +16,7 @@ const PriceOption: React.FC<RangeProps> = ({
       values[0],
       values[1],
       allTours,
-      "price"
+      "capacity"
     );
     setTours(filteredTours);
   }, [values, allTours, setTours]);
@@ -37,13 +37,13 @@ const PriceOption: React.FC<RangeProps> = ({
   return (
     <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-xl shadow-md flex flex-col gap-4 items-center">
       <h2 className="text-lg mb-5 font-semibold">
-        Selecciona el rango de precio
+        Selecciona el rango de capacidad de personas
       </h2>
 
       <div className="w-full">
         <Range
           values={values}
-          step={10}
+          step={1}
           min={minValue}
           max={maxValue}
           onChange={handleChange}
@@ -89,7 +89,7 @@ const PriceOption: React.FC<RangeProps> = ({
                     whiteSpace: "nowrap",
                   }}
                 >
-                  S/. {values[index]}
+                  {values[index]}
                 </div>
               </div>
             );
@@ -100,9 +100,7 @@ const PriceOption: React.FC<RangeProps> = ({
       <div className="w-full flex flex-col justify-between gap-4 mt-4">
         <div className="grid grid-cols-2 gap-x-4">
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-600">
-              Desde (S/.)
-            </label>
+            <label className="text-sm font-medium text-gray-600">Desde</label>
             <input
               type="number"
               value={values[0]}
@@ -111,9 +109,7 @@ const PriceOption: React.FC<RangeProps> = ({
             />
           </div>
           <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-600">
-              Hasta (S/.)
-            </label>
+            <label className="text-sm font-medium text-gray-600">Hasta</label>
             <input
               type="number"
               value={values[1]}
@@ -127,4 +123,4 @@ const PriceOption: React.FC<RangeProps> = ({
   );
 };
 
-export default PriceOption;
+export default CapacityOption;
