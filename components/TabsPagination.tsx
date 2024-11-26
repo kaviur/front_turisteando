@@ -3,27 +3,7 @@ import { BiCategoryAlt } from "react-icons/bi";
 import { LiaTreeSolid } from "react-icons/lia";
 import { PiMountainsFill } from "react-icons/pi";
 import Card from "./Card";
-
-type Tour = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  seller: string;
-  city: {
-    id: number;
-    name: string;
-    country: { id: number; name: string };
-  };
-  category: { id: number; name: string; description: string; image: string };
-  images: { id: number; imageUrl: string }[];
-  availabilityStartDate: string;
-  availabilityEndDate: string;
-  capacity: number;
-  duration: string;
-  characteristic: { id: number; name: string; icon: string }[];
-  active: boolean;
-};
+import { TouristPlan } from "@/types/touristPlan";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -31,7 +11,7 @@ type TabsProps = {
 
 export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
   const [activeTab, setActiveTab] = useState(1);
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<TouristPlan[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true); // Para el estado de carga
   const itemsPerPage = 3;
