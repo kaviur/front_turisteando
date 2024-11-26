@@ -8,27 +8,7 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import Card from "./Card";
-
-type Tour = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  seller: string;
-  city: {
-    id: number;
-    name: string;
-    country: { id: number; name: string };
-  };
-  category: { id: number; name: string; description: string; image: string };
-  images: { id: number; imageUrl: string }[];
-  availabilityStartDate: string;
-  availabilityEndDate: string;
-  capacity: number;
-  duration: string;
-  characteristic: { id: number; name: string; icon: string }[];
-  active: boolean;
-};
+import { TouristPlan } from "@/types/touristPlan";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -36,7 +16,7 @@ type TabsProps = {
 
 export const Tabs: React.FC<TabsProps> = ({isMobile = false }) => {
   const [activeTab, setActiveTab] = useState(1);
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<TouristPlan[]>([]);
 
   useEffect(() => {
     const fetchTours = async () => {

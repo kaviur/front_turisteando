@@ -67,8 +67,8 @@ export async function register(prevState: FormState, formData: FormData) {
   try {
     const email = formData.get("email");
     const password = formData.get("password");
-    const name = formData.get("name");
-    const lastName = formData.get("lastName");
+    // const name = formData.get("name");
+    // const lastName = formData.get("lastName");
 
     const validatedFields = loginSchema.safeParse({
       email: email,
