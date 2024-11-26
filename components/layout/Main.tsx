@@ -24,7 +24,7 @@ export const Main = () => {
   console.log(tours)
 
   useEffect(() => {
-    const fetchTours = async () => {
+    const loadTours = async () => {
       setLoading(true); // Inicia la carga
       try {
         const response = await fetch(
