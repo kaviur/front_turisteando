@@ -48,12 +48,12 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         if (!confirmed) return;
 
         /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-        const token = session?.accessToken || '';
+        const token = session?.accessToken;
 
         try {
             await toast.promise(
-                fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/delete/${id}`, {
-                    method: "DELETE",
+                fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/toggle-status/${id}`, {
+                    method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
@@ -64,7 +64,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                 }),
                 {
                     loading: "Eliminando producto...",
-                    success: "Producto eliminada exitosamente",
+                    success: "Producto eliminado exitosamente",
                     error: "Error al eliminar el producto",
                 }
             );
