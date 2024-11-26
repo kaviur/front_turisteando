@@ -1,8 +1,9 @@
 import Link from "next/link";
 
 import DropdownNotification from "./DropdownNotification";
-import DropdownUser from "./DropdownUser";
+
 import Image from "next/image";
+import { DropdownUser } from "../DropdownUser/DropdowUser";
 
 const HeaderAdmin = (props: {
   sidebarOpen: string | boolean | undefined;
