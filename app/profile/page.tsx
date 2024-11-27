@@ -1,12 +1,17 @@
-"use client";
+import { auth } from "@/auth";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
-import { useSession } from "next-auth/react";
+import LogoutButton from "@/components/ui/LogoutButton";
+import { redirect } from "next/navigation";
 import { FaUser, FaEnvelope, FaUserTag } from "react-icons/fa";
 
-const Profile = () => {
-  const { data: session } = useSession();
+const Profile = async () => {
+  const session = await auth();
   const user = session?.user;
+
+  if (!session) {
+    redirect("/");
+  }
 
   return (
     <>
@@ -38,12 +43,13 @@ const Profile = () => {
               <FaEnvelope />
               <p>{user?.email}</p>
             </div>
-
+<pre>{JSON.stringify(session, null, 2)}</pre>
             <div className="flex items-center gap-2">
               {/* @ts-expect-error: Error en la validación de tipos */} 
               <p>Status: {user?.isActive ? "Activo" : "Inactivo"}</p>
             </div>
           </div>
+          <LogoutButton />
         </div>
       </div>
       <Footer />

@@ -1,38 +1,101 @@
 "use client";
-
-import Link from "next/link";
-import { TouristPlan } from "@/types/touristPlan";
+import { useSession } from "next-auth/react"; // Importar useSession para obtener el token
 import { useEffect, useState } from "react";
-import ProductsTableActions from "@/components/ProductTableActions/ProductTableActions";
+import { toast, Toaster } from "react-hot-toast";
 
-export default function ProductActionsPage() {
-  const [touristPlans, setTouristPlans] = useState<TouristPlan[]>([]);
+import { useRouter } from "next/navigation";
+import UserTable from "@/components/UserTable/UserTable";
+import Link from "next/link";
+import { User } from "@/types/user";
+import { deleteUser, getUsers } from "@/lib/user/userActions";
+
+export default function Home() {
+  const [user, setUser] = useState<User[]>([]);
+  const { data: session } = useSession(); // Obtener la sesión y el token
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch the tourist plans when the component mounts
+  console.log(user);
+
+  const confirmDelete = async () => {
+    return new Promise<boolean>((resolve) => {
+      toast(
+        (t) => (
+          <div>
+            <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(true);
+                }}
+              >
+                Sí, eliminar
+              </button>
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(false);
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ),
+        { duration: Infinity } // Evita que el toast desaparezca automáticamente
+      );
+    });
+  };
+
+  // Fetch Users when the component mounts
   useEffect(() => {
-    const fetchTouristPlans = async () => {
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`);
-        const data = await res.json();
-        console.log(data); // Para verificar los datos que estás recibiendo
-    
-        if (res.ok) {
-          setTouristPlans(data.data); // Aquí estamos accediendo a la propiedad 'data' de la respuesta JSON
-        } else {
-          setError("Failed to fetch tourist plans");
+    const fetchUsers = async () => {
+      if (session) {
+        //@ts-ignore
+        const token: string = session?.accessToken;
+        try {
+          const response = await getUsers(token);
+          setUser(response);
+          setLoading(false);
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
         }
-      } catch {
-        setError("Error occurred while fetching tourist plans");
-      } finally {
-        setLoading(false);
       }
-    };    
+    };
+    fetchUsers();
+  }, [session]);
 
-    fetchTouristPlans();
-  }, []); // Empty dependency array ensures this effect runs once after initial render
+  // Método para redirigir al formulario de edición
+  const handleEdit = (id: string) => {
+    router.push(`/admin/edituser/${id}`);
+  };
 
+  // Método para eliminar una caracteristica
+  const handleDelete = async (id: string) => {
+    const confirmed = await confirmDelete();
+    if (!confirmed || !session) return;
+
+    /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+    const token = session?.accessToken;
+    try {
+      const response = await deleteUser(token, id);
+      if (response) {
+         toast.success("El usuario se ha borrado con éxito");
+         setUser(user.filter(element=>element.id!==id));
+         setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error eliminando usuario:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="ml-60">
       <div className="flex justify-between items-center mt-5 mb-14">
@@ -62,11 +125,11 @@ export default function ProductActionsPage() {
               fill=""
             />
           </svg>
-          <h1 className="pl-2">Dashboard</h1>
+          <h1 className="pl-2">Usuarios</h1>
         </span>
-        <Link href={"/admin/addproduct"}>
+        <Link href={"/admin/adduser"}>
           <button className="bg-primary hover:bg-primary hover:opacity-80 text-white px-10 py-2 rounded-full font-medium">
-            Agregar Producto
+            Agregar Nuevo
           </button>
         </Link>
       </div>
@@ -76,7 +139,7 @@ export default function ProductActionsPage() {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <ProductsTableActions products={touristPlans} setTouristPlans={setTouristPlans} />
+          <UserTable users={user} onEdit={handleEdit} onDelete={handleDelete} />
         )}
       </div>
     </div>

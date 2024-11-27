@@ -4,7 +4,6 @@ import Card from "../Card";
 import FavouriteCard from "../FavouriteCard";
 import Testimonial from "../Testimonial";
 import Link from "next/link";
-import { MdOutlineSearch } from "react-icons/md";
 import { FaArrowRight } from "react-icons/fa";
 import { CgSearch } from "react-icons/cg";
 import { Tabs } from "../Tabs";
@@ -13,73 +12,30 @@ import { FreeMode, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-
-// Definir el tipo para los tours
-type Tour = {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  seller: string;
-  city: {
-    id: number;
-    name: string;
-    country: {
-      id: number;
-      name: string;
-    };
-  };
-  category: {
-    id: number;
-    name: string;
-    description: string;
-    image: string;
-  };
-  images: {
-    id: number;
-    imageUrl: string;
-  }[];
-  availabilityStartDate: string;
-  availabilityEndDate: string;
-  capacity: number;
-  duration: string;
-  characteristic: {
-    id: number;
-    name: string;
-    icon: string;
-  }[];
-  active: boolean;
-};
+import SearchBar from "../SearchBar";
+import { TouristPlan } from "@/types/touristPlan";
+import { fetchTours } from "@/lib/actions";
 
 export const Main = () => {
   // Tipar el estado 'tours' como un array de 'Tour'
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<TouristPlan[]>([]);
+  const [allTours, setAllTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true); // Nuevo estado de carga
+  const [activities, setActivities] = useState<TouristPlan[]>([]);
 
   useEffect(() => {
-    const fetchTours = async () => {
-      setLoading(true); // Inicia la carga
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
-        );
-        const data = await response.json();
-
-        if (data && Array.isArray(data.data)) {
-          setTours(data.data);
-        } else {
-          console.error(
-            "La respuesta de la API no contiene un array de tours:",
-            data
-          );
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-      }
-      setLoading(false); // Termina la carga
-    };
-
-    fetchTours();
+    fetchTours().then((data) => {
+      const activities = data.filter(
+        (tour: TouristPlan) => tour.category.name === "Activity"
+      );
+      setActivities(activities);
+      const tours = data.filter(
+        (tour: TouristPlan) => tour.category.name === "Tours"
+      );
+      setTours(tours);
+      setAllTours(data);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -103,18 +59,7 @@ export const Main = () => {
           </h1>
 
           {/* Buscador */}
-          <div className="flex items-center gap-2 bg-white rounded-full shadow-lg p-2">
-            <input
-              type="text"
-              placeholder="Comienza tu búsqueda aquí..."
-              className="ml-4 flex-grow p-2 text-gray-700 outline-none"
-            />
-            <MdOutlineSearch
-              className="mr-6"
-              size={24}
-              color="oklch(var(--p))"
-            />
-          </div>
+          <SearchBar setTours={setTours} allTours={allTours} />
         </div>
       </section>
 
@@ -153,7 +98,7 @@ export const Main = () => {
         {/* Swiper con Condición de Carga */}
         <Swiper
           slidesPerView={3}
-          spaceBetween={12}
+          spaceBetween={30}
           freeMode={true}
           pagination={{ clickable: true, dynamicBullets: true }}
           modules={[FreeMode, Pagination]}
@@ -197,8 +142,7 @@ export const Main = () => {
         {/* Títulos a la izquierda */}
         <h2 className="text-3xl font-bold  mb-6">Descubre Lugares</h2>
         {/* //@ts-expect-error Ignorando error*/}
-        <Tabs isMobile={true}/>
-        
+        <Tabs isMobile={true} />
       </section>
 
       {/* Responsive mobile section  */}
@@ -276,7 +220,7 @@ export const Main = () => {
                 </SwiperSlide>
               ))
             : // Renderizar tours cuando la carga haya terminado
-              tours.map((tour) => (
+              activities.map((tour) => (
                 <SwiperSlide key={tour.id}>
                   <Card
                     isPrimary={false}

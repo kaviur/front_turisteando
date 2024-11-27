@@ -1,15 +1,28 @@
-import { logout } from "@/lib/actions";
+"use client";
 import Link from "next/link";
 import { AiOutlineSetting } from "react-icons/ai";
 import { FaRegCalendarDays, FaUser } from "react-icons/fa6";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import PrimaryButton from "../ui/PrimaryButton";
 import SecondaryButton from "../ui/SecondaryButton";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
+import LogoutButton from "../ui/LogoutButton";
+import { useEffect } from "react";
 
 export const DropdownUser = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const user = session?.user;
+
+  const refetchSession = async () => {
+    await getSession(); // Forzar actualización de la sesión
+  };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      refetchSession();
+    }
+  }, [status]);
+
   return (
     <>
       {session ? (
@@ -63,13 +76,9 @@ export const DropdownUser = () => {
                 </li>
               )}
               <div className="divider my-0"></div>
+
               <li>
-                <button
-                  className="py-4 text-accent justify-center"
-                  onClick={() => logout()}
-                >
-                  Cerrar sesión
-                </button>
+                <LogoutButton />
               </li>
             </ul>
           </div>

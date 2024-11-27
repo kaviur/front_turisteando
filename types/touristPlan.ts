@@ -2,6 +2,7 @@ export interface TouristPlan {
   id: number;
   title: string;
   description: string;
+  rating: number;
   price: number;
   seller: string;
   city: {
@@ -22,6 +23,20 @@ export interface TouristPlan {
     id: number;
     imageUrl: string;
   }[];
+  reviews: {
+    comment: string;
+    idReview: number;
+    date: string;
+    rating: number;
+    user: {
+      email: string;
+      id: number;
+      name: string;
+      isActive: boolean;
+      date: string;
+      role: string;
+    };
+  }[];
   availabilityStartDate: string;
   availabilityEndDate: string;
   capacity: number;
@@ -29,15 +44,10 @@ export interface TouristPlan {
   characteristic:{
     id: number,
     name: string,
-    icon: {
+    image: {
       id: number;
       imageUrl: string;
     }
   }[];
-  foodIncluded: boolean;
-  wifiIncluded: boolean;
-  petsFriendly: boolean;
-  disabilityAccess: boolean;
   active: boolean;
 }
-

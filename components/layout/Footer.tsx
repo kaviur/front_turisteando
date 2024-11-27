@@ -40,7 +40,9 @@ export const Footer = () => {
             <a className="link link-hover">Ayuda</a>
             <a className="link link-hover">Contáctenos</a>
             <a className="link link-hover">Políticas de privacidad</a>
-            <a className="link link-hover">Términos de servicio</a>
+            <Link href="/terms-and-conditions" className="link link-hover">
+            Términos de servicio
+            </Link>
           </nav>
 
           <nav className="flex flex-col gap-4">

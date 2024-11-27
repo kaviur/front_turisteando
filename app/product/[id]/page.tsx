@@ -12,52 +12,67 @@ import "swiper/css/pagination";
 import Testimonial from "@/components/Testimonial";
 import Link from "next/link";
 import { TouristPlan } from "@/types/touristPlan";
+import Card from "@/components/Card";
+import { FaArrowRight } from "react-icons/fa";
+import { fetchProduct, fetchTours } from "@/lib/actions";
 
 export default function ProductPage() {
+  const [tours, setTours] = useState<TouristPlan[]>([]);
+  const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<TouristPlan | null>(null);
+
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
 
+  // Cargar el producto específico
   useEffect(() => {
-    if (productId) {
-      const fetchProduct = async () => {
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`);
-          const data = await response.json();
-          console.log(data);
-          if (data.success && data.data) {
-            setProduct(data.data);
-          } else {
-            console.error("Error fetching product", data.errors);
-          }
-        } catch (error) {
-          console.error("Failed to fetch product:", error);
-        }
-      };
+    const loadProduct = async () => {
+      if (productId) {
+        const productData = await fetchProduct(productId);
+        setProduct(productData);
+      }
+    };
 
-      fetchProduct();
-    }
+    loadProduct();
   }, [productId]);
 
-  if (!product) return ;
+  // Cargar todos los tours
+  useEffect(() => {
+    const loadTours = async () => {
+      setLoading(true);
+      const data = await fetchTours();
+      setTours(data);
+      setLoading(false);
+    };
 
+    loadTours();
+  }, []);
+
+  console.log(product);
+
+  if (!product) return;
+  console.log(product);
   return (
     <div className="md:mt-28">
       <Navbar />
 
       <ProductDetails
+        id={product?.id}
         title={product?.title}
         images={product?.images}
-        location={`${product?.city?.name}, ${product?.city?.country?.name}`}
+        rating={product?.rating}
+        reviews={product?.reviews}
         description={product?.description}
-        people={`Capacidad: ${product?.capacity}`}
-        duration={`Duración: ${product?.duration}`}
-        peopleOptions={["1-2 personas", "3-4 personas", "5-6 personas"]} // Personaliza según tus necesidades
-        scheduleOptions={[
-          "10:00 AM - 12:00 PM",
-          "2:00 PM - 4:00 PM",
-          "6:00 PM - 8:00 PM",
-        ]} // Personaliza según tus necesidades
+        capacity={product?.capacity}
+        duration={product?.duration}
+        city={product?.city}
+        category={product?.category}
+        availabilityStartDate={product?.availabilityStartDate}
+        availabilityEndDate={product?.availabilityEndDate}
+        characteristic={product?.characteristic}
+        price={product?.price}
+        seller={product?.seller}
+        active={product?.active}
       />
 
       <section className="px-8 py-12 w-full hidden md:block max-w-7xl mx-auto">
@@ -111,13 +126,84 @@ export default function ProductPage() {
           {/* Otros testimonios */}
         </Swiper>
       </section>
+      {/* Desktop Section */}
+      <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto ">
+        {/* Encabezado */}
+        <div className="flex items-center justify-between mb-4">
+          {/* Títulos a la izquierda */}
+          <div>
+            <h2 className="text-3xl font-bold text-secondary">
+              Descubre nuestras actividades
+            </h2>
+            <p className="text-lg text-gray-500">
+              Explora{" "}
+              <span className="text-secondary font-semibold">
+                experiencias increíbles
+              </span>
+            </p>
+          </div>
 
-      <Link href={"/categories"} className="my-8 mx-auto block w-fit text-center">
-      <button className="btn btn-secondary text-white my-8. btn-wide mx-auto block rounded-3xl ">
-        Explora más Opciones
-      </button>
+          {/* Link a la derecha */}
+          <Link
+            href="/categories"
+            className="text-secondary flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-secondary hover:text-white "
+          >
+            Ver todos <FaArrowRight size={24} />
+          </Link>
+        </div>
+
+        {/*Cards Swiper Component*/}
+        <Swiper
+          slidesPerView={3}
+          spaceBetween={12}
+          freeMode={true}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          modules={[FreeMode, Pagination]}
+          className="mySwiper"
+        >
+          {loading
+            ? // Renderizar esqueleto mientras se cargan los datos
+              Array.from({ length: 3 }).map((_, index) => (
+                <SwiperSlide key={index}>
+                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                    <div className="skeleton h-52 w-full"></div>
+                    <div className="skeleton h-4 w-36"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                  </div>
+                </SwiperSlide>
+              ))
+            : // Renderizar tours cuando la carga haya terminado
+              tours.map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    isPrimary={false}
+                    id={tour.id}
+                    mobileTitle={tour.title}
+                    isMobile={false}
+                    imageSrc={tour.images[0]?.imageUrl}
+                    title={tour.title}
+                    description={tour.description}
+                  />
+                </SwiperSlide>
+              ))}
+        </Swiper>
+      </section>
+
+      <Link
+        href={"/categories"}
+        className="my-8 mx-auto block w-fit text-center"
+      >
+        <button className="btn btn-secondary text-white my-8. btn-wide mx-auto block rounded-3xl ">
+          Explora más Opciones
+        </button>
       </Link>
-
 
       <Footer />
     </div>
