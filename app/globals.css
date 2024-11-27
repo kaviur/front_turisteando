@@ -138,3 +138,21 @@ h2.react-datepicker__current-month {
   top: 4px;
   font-size: 20px;
 }
+
+
+/* TWITTER HEART */
+.heart {
+  width: 100px;
+  height: 100px;
+  background: url("/heart.png") no-repeat;
+  background-position: 0 0;
+  cursor: pointer;
+  transition: background-position 1s steps(28);
+  transition-duration: 0s;
+}
+
+.heart.is-active {
+  transition-duration: 1s;
+  background-position: -2800px 0;
+}
+
