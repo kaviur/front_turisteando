@@ -28,9 +28,11 @@ export async function login(prevState: FormState, formData: FormData) {
     const result = await signIn("credentials", {
       email: email,
       password: password,
+      redirect: true,
       redirectTo: "/",
     });
-      // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
+
+    // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
     if (result?.error) {
       // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
       throw new Error(result.error);
@@ -86,7 +88,7 @@ export async function register(prevState: FormState, formData: FormData) {
       password: password,
       redirectTo: "/",
     });
-      // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
+    // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
     if (result?.error) {
       // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
       throw new Error(result.error);
@@ -120,22 +122,20 @@ export async function register(prevState: FormState, formData: FormData) {
   }
 }
 
-
-export async function logout() {
-  await signOut({redirect: false});
-}
-
-
-
 export const fetchTours = async (): Promise<TouristPlan[]> => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
+    );
     const data = await response.json();
 
     if (data && Array.isArray(data.data)) {
       return data.data;
     } else {
-      console.error("La respuesta de la API no contiene un array de tours:", data);
+      console.error(
+        "La respuesta de la API no contiene un array de tours:",
+        data
+      );
       return [];
     }
   } catch (error) {
@@ -145,9 +145,13 @@ export const fetchTours = async (): Promise<TouristPlan[]> => {
 };
 
 // Función para obtener un producto específico
-export const fetchProduct = async (productId: string): Promise<TouristPlan | null> => {
+export const fetchProduct = async (
+  productId: string
+): Promise<TouristPlan | null> => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/${productId}`
+    );
     const data = await response.json();
 
     if (data.success && data.data) {

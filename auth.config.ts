@@ -1,52 +1,50 @@
 import type { NextAuthConfig } from "next-auth";
-
+import Credentials from "next-auth/providers/credentials";
+async function getUser(email: string, password: string): Promise<any> {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) throw new Error("Failed to fetch user");
+    const userJson = await res.json();
+    return userJson.data;
+  } catch (error) {
+    console.error("Error fetching user from API:", error);
+    return null;
+  }
+}
 export const authConfig = {
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    error: "/",
-    signIn: "/",
-    signOut: "/",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.name = user.name;
-        //@ts-ignore
-        token.lastName = user.lastName;
-        token.email = user.email;
-        //@ts-ignore
-        token.role = user.role;
-        //@ts-ignore
-        token.isActive = user.isActive;
-        //@ts-ignore
-        token.accessToken = user.accessToken;
-      }
-      return token;
-    },
 
-    async session({ session, token }) {
-      session.user = {
-        //@ts-ignore
-        id: token.id,
-        name: token.name,
-        lastName: token.lastName,
-        //@ts-ignore
-        email: token.email,
-        role: token.role,
-        isActive: token.isActive,
-      };
-      //@ts-ignore
-      session.accessToken = token.accessToken;
-      return session;
-    },
-
-    authorized({ auth }) {
-      const isAuthenticated = !!auth?.user;
-      return isAuthenticated;
-    },
-  },
-  providers: [],
+  providers: [
+    Credentials({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials) return null;
+        const result = await getUser(
+          credentials.email as string,
+          credentials.password as string
+        );
+        console.log(result);
+        return result && result.user
+          ? {
+              id: result.user.id,
+              name: result.user.name,
+              lastName: result.user.lastName,
+              email: result.user.email,
+              role: result.user.role,
+              accessToken: result.accessToken,
+              isActive: result.user.isActive,
+            }
+          : null;
+      },
+    }),
+  ],
 } satisfies NextAuthConfig;
