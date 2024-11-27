@@ -32,7 +32,6 @@ interface UserFormProps {
 
 const UserForm = ({
   form,
-  setForm,
   handleChange,
   errors,
   onSubmit,
