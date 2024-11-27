@@ -262,7 +262,7 @@ const menuItems = [
       </svg>
     ),
     label: "Usuarios",
-    route: "/admin/addcategories",
+    route: "/admin/users",
     children: [     
       {
         icon: (
@@ -285,7 +285,7 @@ const menuItems = [
           </svg>
         ),
         label: "Lista de Usuarios",
-        route: "/admin/categories",
+        route: "/admin/users",
       },
       {
         icon: (
@@ -308,7 +308,7 @@ const menuItems = [
           </svg>
         ),
         label: "Agregar Usuario",
-        route: "/admin/addcategory",
+        route: "/admin/adduser",
       },
     ],
   },
