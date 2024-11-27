@@ -5,7 +5,7 @@ import {Dispatch, SetStateAction } from "react";
 import PrimaryButton from "./ui/PrimaryButton";
 
 
-// Interfaz para los datos del formulario
+/// Interfaz para los datos del formulario
 export interface FormData {
   name: string;
   lastName: string;

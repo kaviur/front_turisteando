@@ -2,7 +2,7 @@
 import { useSession } from "next-auth/react"; // Importar useSession para obtener el token
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-
+///Fue modificada
 import { useRouter } from "next/navigation";
 import UserTable from "@/components/UserTable/UserTable";
 import Link from "next/link";
