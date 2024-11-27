@@ -48,26 +48,31 @@ export default function ProductPage() {
     loadTours();
   }, []);
 
+  console.log(product);
 
-  if (!product) return ;
+  if (!product) return;
   console.log(product);
   return (
     <div className="md:mt-28">
       <Navbar />
 
       <ProductDetails
+        id={product?.id}
         title={product?.title}
         images={product?.images}
-        location={`${product?.city?.name}, ${product?.city?.country?.name}`}
+        rating={product?.rating}
+        reviews={product?.reviews}
         description={product?.description}
-        people={`Capacidad: ${product?.capacity}`}
-        duration={`Duración: ${product?.duration}`}
-        peopleOptions={["1-2 personas", "3-4 personas", "5-6 personas"]} // Personaliza según tus necesidades
-        scheduleOptions={[
-          "10:00 AM - 12:00 PM",
-          "2:00 PM - 4:00 PM",
-          "6:00 PM - 8:00 PM",
-        ]} // Personaliza según tus necesidades
+        capacity={product?.capacity}
+        duration={product?.duration}
+        city={product?.city}
+        category={product?.category}
+        availabilityStartDate={product?.availabilityStartDate}
+        availabilityEndDate={product?.availabilityEndDate}
+        characteristic={product?.characteristic}
+        price={product?.price}
+        seller={product?.seller}
+        active={product?.active}
       />
 
       <section className="px-8 py-12 w-full hidden md:block max-w-7xl mx-auto">
@@ -191,12 +196,14 @@ export default function ProductPage() {
         </Swiper>
       </section>
 
-      <Link href={"/categories"} className="my-8 mx-auto block w-fit text-center">
-      <button className="btn btn-secondary text-white my-8. btn-wide mx-auto block rounded-3xl ">
-        Explora más Opciones
-      </button>
+      <Link
+        href={"/categories"}
+        className="my-8 mx-auto block w-fit text-center"
+      >
+        <button className="btn btn-secondary text-white my-8. btn-wide mx-auto block rounded-3xl ">
+          Explora más Opciones
+        </button>
       </Link>
-
 
       <Footer />
     </div>

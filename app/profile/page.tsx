@@ -10,7 +10,7 @@ const Profile = async () => {
   const user = session?.user;
 
   if (!session) {
-    return <div>Not authenticated</div>;
+    redirect("/");
   }
 
   return (
