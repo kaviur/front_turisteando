@@ -5,7 +5,7 @@ const handleBackendError = ({ debugMessage }: { debugMessage: string }) => {
   const errorDevelopment = debugMessage?.includes("restricción de unicidad");
   if (errorProduction || errorDevelopment) {
     toast.error("El nombre ya existe. Por favor, elija otro nombre.");
-    throw new Error("VALIDATION_ERROR");
+    return;
   }
 };
 

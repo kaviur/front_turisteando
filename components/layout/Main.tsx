@@ -14,6 +14,7 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import SearchBar from "../SearchBar";
 import { TouristPlan } from "@/types/touristPlan";
+import { fetchTours } from "@/lib/actions";
 
 export const Main = () => {
   // Tipar el estado 'tours' como un array de 'Tour'
@@ -21,40 +22,20 @@ export const Main = () => {
   const [allTours, setAllTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true); // Nuevo estado de carga
   const [activities, setActivities] = useState<TouristPlan[]>([]);
-  console.log(tours)
 
   useEffect(() => {
-    const loadTours = async () => {
-      setLoading(true); // Inicia la carga
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
-        );
-        const data = await response.json();
-
-        if (data && Array.isArray(data.data)) {
-          const activities = data.data.filter(
-            (tour: TouristPlan) => tour.category.name === "Activity"
-          );
-          setActivities(activities);
-          const tours = data.data.filter(
-            (tour: TouristPlan) => tour.category.name === "Tours"
-          );
-          setTours(tours);
-          setAllTours(data.data);
-        } else {
-          console.error(
-            "La respuesta de la API no contiene un array de tours:",
-            data
-          );
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-      }
-      setLoading(false); // Termina la carga
-    };
-
-    loadTours();
+    fetchTours().then((data) => {
+      const activities = data.filter(
+        (tour: TouristPlan) => tour.category.name === "Activity"
+      );
+      setActivities(activities);
+      const tours = data.filter(
+        (tour: TouristPlan) => tour.category.name === "Tours"
+      );
+      setTours(tours);
+      setAllTours(data);
+      setLoading(false);
+    });
   }, []);
 
   return (

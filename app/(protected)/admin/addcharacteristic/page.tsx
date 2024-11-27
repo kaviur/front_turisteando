@@ -1,6 +1,7 @@
 "use client";
 
 import ReusableSmallForm from "@/components/ReusableSmallForm/ReusableSmallForm";
+import { createCharacteristic } from "@/lib/actions";
 import { Characteristics } from "@/types/characteristics";
 import handleBackendError from "@/utils/validators/validatorBackendErrors";
 import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
@@ -51,6 +52,7 @@ export default function Home() {
       ...form,
       image: undefined,
     });
+
     const formData = new FormData();
     formData.append(
       "characteristic",
@@ -62,32 +64,24 @@ export default function Home() {
     } // Agregar el archivo en el campo "image"
 
     try {
-      await toast.promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/create`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }).then(async (response) => {
-          if (!response.ok) {
-            const errorData = await response.json();
-            handleBackendError(errorData);
-          }
-        }),
-        {
-          loading: "Registrando...",
-          success: "Registro exitoso",
-          error: "Error al registrar la característica",
-        }
-      );
+      const response = await createCharacteristic(token, formData);
+      if ("debugMessage" in response) {
+        handleBackendError(response);
 
-      setTimeout(() => {
+        toast.error(response.message);
         setIsPending(false);
-        router.push("/admin/characteristics");
-      }, 1000);
+      } else {
+        toast.success("Característica creada exitosamente");
+
+        setTimeout(() => {
+          setIsPending(false);
+          router.push("/admin/characteristics");
+        }, 1000);
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error al crear la característica:", error);
+
+      toast.error("Error al crear la característica. Intenta nuevamente.");
       setIsPending(false);
     }
   };

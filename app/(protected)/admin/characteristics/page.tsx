@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 import ReusableTable from "@/components/ReusableTable/ReusableTable";
 import { Characteristics } from "@/types/characteristics";
+import { deleteCharacteristic, fetchCharacteristics } from "@/lib/actions";
 
 const CharacteristicsPage = () => {
   const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
@@ -48,37 +49,24 @@ const CharacteristicsPage = () => {
   };
 
   useEffect(() => {
-    if (session) {
-      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token: string = session?.accessToken;
+    const fetchData = async () => {
+      if (session) {
+        /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+        const token: string = session?.accessToken;
 
-      const fetchCharacteristic = async () => {
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/all`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          const data = await response.json();
-          if (response.ok) {
-            setCharacteristics(data.data);
-            setLoading(false);
-          } else {
-            setError("Failed to fetch characteristics");
-          }
+          const data = await fetchCharacteristics(token);
+          setCharacteristics(data);
+          setLoading(false);
         } catch (error) {
           console.error("Error fetching characteristics:", error);
-        } finally {
+          setError("Error fetching characteristics");
           setLoading(false);
         }
-      };
-      
-      fetchCharacteristic();
-    }
+      }
+    };
+
+    fetchData();
   }, [session]);
 
   // Método para redirigir al formulario de edición
@@ -95,29 +83,13 @@ const CharacteristicsPage = () => {
     const token = session?.accessToken;
 
     try {
-      await toast.promise(
-        fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/delete/${id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        ).then((response) => {
-          if (!response.ok)
-            throw new Error("Error al eliminar la característica");
-          setCharacteristics(
-            characteristics.filter((characteristic) => characteristic.id !== id)
-          );
-        }),
-        {
-          loading: "Eliminando caracteristica...",
-          success: "Característica eliminada exitosamente",
-          error: "Error al eliminar la caracteristica",
-        }
-      );
+      const response = await deleteCharacteristic(token, id);
+      if (response) {
+        toast.success(response);
+        setCharacteristics(
+          characteristics.filter((characteristic) => characteristic.id !== id)
+        );
+      }
     } catch (error) {
       console.error("Error deleting characteristic:", error);
     }

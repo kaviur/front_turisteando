@@ -6,8 +6,10 @@ import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
-import handleBackendError from "@/utils/validators/validatorBackendErrors";
+// import handleBackendError from "@/utils/validators/validatorBackendErrors";
 import { Characteristics } from "@/types/characteristics";
+import { editCharacteristic, fetchCharacteristicById } from "@/lib/actions";
+import handleBackendError from "@/utils/validators/validatorBackendErrors";
 
 const EditCharacteristic = () => {
   const router = useRouter(); // Router para el redireccionamiento
@@ -48,30 +50,16 @@ const EditCharacteristic = () => {
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token = session?.accessToken;
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/${characteristicId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error fetching characteristic:", errorData);
-        throw new Error(
-          errorData.message || "Error al obtener la característica"
-        );
+      const response = await fetchCharacteristicById(token, characteristicId);
+      if (response) {
+        setForm({
+          ...response,
+        });
+      } else {
+        toast.error("Error al cargar los datos de la característica");
       }
-
-      const data = await response.json();
-      setForm({
-        ...data.data,
-      });
     } catch (error) {
-      console.error("Error fetching characteristic:", error);
-      toast.error("Error al cargar los datos de la característica");
+      console.error("Error al cargar los datos de la característica:", error);
     }
   }, [characteristicId, session]);
 
@@ -114,33 +102,29 @@ const EditCharacteristic = () => {
     const token = session?.accessToken;
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/update/${characteristicId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
+      const response = await editCharacteristic(
+        token,
+        formData,
+        characteristicId
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        handleBackendError(errorData);
-      }
+      if ("debugMessage" in response) {
+        handleBackendError(response);
 
-      toast.success("Característica actualizada exitosamente");
-
-      setTimeout(() => {
+        toast.error(response.message);
         setIsPending(false);
-        router.push("/admin/characteristics");
-      }, 1500);
-    } catch (error) {
-      if (error instanceof Error && error.message !== "VALIDATION_ERROR") {
-        toast.error("Error al actualizar la característica");
+      } else {
+        toast.success("Característica actualizada exitosamente");
+
+        setTimeout(() => {
+          setIsPending(false);
+          router.push("/admin/characteristics");
+        }, 1000);
       }
-    } finally {
+    } catch (error) {
+      console.error("Error al actualizar la característica:", error);
+      
+      toast.error("Error al actualizar la característica. Intenta nuevamente.");
       setIsPending(false);
     }
   };
