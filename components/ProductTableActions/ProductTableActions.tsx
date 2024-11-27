@@ -6,6 +6,7 @@ import { TbArrowsExchange } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 type Category = {
     id: number;
@@ -26,6 +27,15 @@ const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
     const [currentCategoryId, setCurrentCategoryId] = useState<number | null>(null);
 
     const router = useRouter();
+    const { data: session } = useSession();
+
+    if (!session) {
+      toast.error("No se encontró la sesión.");
+      return;
+    }
+
+    // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
+    const token = session?.accessToken;
 
     const handleCategorySelect = (id: number) => {
         setSelectedCategoryId(id);
@@ -49,7 +59,11 @@ const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`,{
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
       
             if (!res.ok) {
               setError('Error en la solicitud de categorías.');
@@ -101,6 +115,9 @@ const ProductsTableActions = ({ products }: { products: TouristPlan[] }) => {
               {
                 method: "PUT",
                 body: formData,
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
               }
             );
       
