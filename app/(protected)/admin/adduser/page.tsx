@@ -2,15 +2,15 @@
 
 import UserForm from "@/components/UserForm";
 import { useState } from "react";
-import { User } from "@/types/user";
-import handleBackendError from "@/utils/validators/validatorBackendErrors";
-import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
+
+//import handleBackendError from "@/utils/validators/validatorBackendErrors";
+//import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
 import { useRouter } from "next/navigation";
 
 import { toast, Toaster } from "react-hot-toast";
 import { createUser } from "@/lib/user/userActions";
-import { FaLessThanEqual } from "react-icons/fa";
-import { setConfig } from "next/config";
+//import { FaLessThanEqual } from "react-icons/fa";
+//import { setConfig } from "next/config";
 import { useSession } from "next-auth/react";
 
 export default function Home() {
@@ -66,14 +66,15 @@ export default function Home() {
     console.log( "Este es el form: ",form);
          
     const handleSubmit = async (event: React.FormEvent) => {
-      const { email, password, name, lastName } = form;
+     // const { email, password, name, lastName } = form;
       event.preventDefault();
       if (!validateForm()) {
         return toast.error("Error en el formulario. Revisa los campos.");
       }
       setIsPending(true);
 
-      //@ts-ignore
+      
+     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token = session?.accessToken;
   
       try {

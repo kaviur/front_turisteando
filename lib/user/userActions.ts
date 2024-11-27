@@ -2,7 +2,7 @@
 
 import { FormData } from "@/components/UserForm";
 import handleBackendError from "@/utils/validators/validatorBackendErrors";
-//Función para actualizar los usuarios
+///Función para actualizar los usuarios
 export const updateUsers= async (userId: string | undefined, token: string, form: FormData)=>{
 
   const response = await fetch(

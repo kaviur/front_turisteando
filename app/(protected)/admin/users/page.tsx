@@ -1,8 +1,8 @@
 "use client";
 import { useSession } from "next-auth/react"; // Importar useSession para obtener el token
 import { useEffect, useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
-
+import { toast } from "react-hot-toast";
+///Fue modificada
 import { useRouter } from "next/navigation";
 import UserTable from "@/components/UserTable/UserTable";
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default function Home() {
   const { data: session } = useSession(); // Obtener la sesión y el token
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const error = "";
 
   console.log(user);
 
@@ -55,7 +55,7 @@ export default function Home() {
   useEffect(() => {
     const fetchUsers = async () => {
       if (session) {
-        //@ts-ignore
+       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
         const token: string = session?.accessToken;
         try {
           const response = await getUsers(token);
