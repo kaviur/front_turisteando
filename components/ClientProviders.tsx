@@ -1,6 +1,4 @@
-// ClientProviders.tsx
-"use client"; // Este componente debe ser un cliente
-
+"use client"; 
 import { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";

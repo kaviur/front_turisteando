@@ -1,24 +1,5 @@
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import { authConfig } from "./auth.config";
-
-async function getUser(email: string, password: string): Promise<any> {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
-      method: "POST",
-      body: JSON.stringify({ email, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) throw new Error("Failed to fetch user");
-    const userJson = await res.json();
-    return userJson.data;
-  } catch (error) {
-    console.error("Error fetching user from API:", error);
-    return null;
-  }
-}
 
 export const {
   auth,
@@ -27,31 +8,53 @@ export const {
   handlers: { GET, POST },
 } = NextAuth({
   ...authConfig,
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        if (!credentials) return null;
-        const result = await getUser(
-          credentials.email as string,
-          credentials.password as string
-        );
-        return result && result.user
-          ? {
-              id: result.user.id,
-              name: result.user.name,
-              lastName: result.user.lastName,
-              email: result.user.email,
-              role: result.user.role,
-              accessToken: result.accessToken,
-              isActive: result.user.isActive,
-            }
-          : null;
-      },
-    }),
-  ],
+  session: {
+    strategy: "jwt",
+  },
+  pages: { 
+    error: "/not-authorized",
+    signIn: "/login",
+    signOut: "/",
+    newUser: "/register",
+  },
+  
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.name = user.name;
+        //@ts-ignore
+        token.lastName = user.lastName;
+        token.email = user.email;
+        //@ts-ignore
+        token.role = user.role;
+        //@ts-ignore
+        token.isActive = user.isActive;
+        //@ts-ignore
+        token.accessToken = user.accessToken;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user = {
+          id: token.id as string,
+          name: token.name as string,
+          email: token.email as string,
+          //@ts-ignore
+          lastName: token.lastName as string,
+          role: token.role as string,
+          isActive: token.isActive as boolean,
+          accessToken: token.accessToken as string,
+        };
+      }
+      return session;
+    },
+
+    authorized({ auth }) {
+      const isAuthenticated = !!auth?.user;
+      return isAuthenticated;
+    },
+  },
 });

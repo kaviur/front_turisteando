@@ -1,8 +1,8 @@
-"use client";
 import Image from "next/image";
 import Link from "next/link";
-
 import { DropdownUser } from "../DropdownUser/DropdowUser";
+
+
 const imageStyle = {
   width: "auto",
   height: "auto",

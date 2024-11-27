@@ -29,6 +29,7 @@ export async function login(prevState: FormState, formData: FormData) {
     const result = await signIn("credentials", {
       email: email,
       password: password,
+      redirect: true,
       redirectTo: "/",
     });
     // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
