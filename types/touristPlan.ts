@@ -2,6 +2,7 @@ export interface TouristPlan {
   id: number;
   title: string;
   description: string;
+  rating: number;
   price: number;
   seller: string;
   city: {
@@ -21,6 +22,20 @@ export interface TouristPlan {
   images: {
     id: number;
     imageUrl: string;
+  }[];
+  reviews: {
+    comment: string;
+    idReview: number;
+    date: string;
+    rating: number;
+    user: {
+      email: string;
+      id: number;
+      name: string;
+      isActive: boolean;
+      date: string;
+      role: string;
+    };
   }[];
   availabilityStartDate: string;
   availabilityEndDate: string;

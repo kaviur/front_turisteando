@@ -1,7 +1,7 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { signIn, signOut } from "@/auth";
+import { signIn } from "@/auth";
 import { loginSchema } from "@/types/schema";
 import { TouristPlan } from "@/types/touristPlan";
 import { Characteristics } from "@/types/characteristics";
@@ -120,10 +120,6 @@ export async function register(prevState: FormState, formData: FormData) {
     console.log(error);
     throw error;
   }
-}
-
-export async function logout() {
-  await signOut({ redirect: false });
 }
 
 export const fetchTours = async (): Promise<TouristPlan[]> => {
