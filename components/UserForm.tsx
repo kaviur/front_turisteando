@@ -1,46 +1,52 @@
 "use client";
 
-import PrimaryButton from "../ui/PrimaryButton";
 
-interface UserFormProps {
-  entityType: "Usuario";
+import {Dispatch, SetStateAction } from "react";
+import PrimaryButton from "./ui/PrimaryButton";
+
+
+// Interfaz para los datos del formulario
+export interface FormData {
   name: string;
-  setName: (value: string) => void;
-  lastName?: string;
-  setLastName?: (value: string) => void;
+  lastName: string;
   email: string;
-  setEmail: (value: string) => void;
-  role: string;
-  setRole: (value: string) => void;
-  isActive: boolean;
-  setIsActive: (value: boolean) => void;
-  
-  onSubmit: (event: React.FormEvent) => void;
-  isPending: boolean; // Pasar el estado isPending al formulario
-  isEditing: boolean;
+  password: string;
+  confirmPassword: string;
 }
 
+// Interfaz para las props de UserForm
+interface UserFormProps {
+  form: FormData;
+  setForm: Dispatch<SetStateAction<FormData>>; // setState del formulario
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
+
+  errors: { [key: string]: string }; // Errores de validación, clave es el campo y el valor es el mensaje de error
+  onSubmit: (e: React.FormEvent) => void; // Función para manejar el envío del formulario
+  isPending: boolean; // Si está en proceso de envío
+  isEditing: boolean; // Si el formulario está en modo de edición (true o false)
+}
+
+
+
 const UserForm = ({
-  entityType,
-  name,
-  setName,
-  lastName,
-  setLastName,
-  email,
-  setEmail,
-  isActive,
-  setIsActive,  
+  form,
+  setForm,
+  handleChange,
+  errors,
   onSubmit,
   isPending,
   isEditing,
 }: UserFormProps) => {
-  const isUser = entityType === "Usuario"; // Determinamos si es Usuario
-  const title = isEditing
-    ? `Editar ${isUser? "Usuario" : "Característica"}`
-    : `Crear ${isCategory ? "Categoría" : "Característica"}`;
 
-  const placeholderName = `Ingresa el nombre de ${entityType}`;
-  const buttonText = isEditing ? "Guardar Cambios" : `Crear ${entityType}`;
+ 
+
+  const title = isEditing
+    ? "Editar Usuario"
+    : "Agregar Usuario";
+
+  const buttonText = isEditing ? "Guardar Cambios" : `Crear Usuario`;
 
   return (
     <div className="grid grid-cols-1 gap-9 sm:grid-cols-2">
@@ -58,11 +64,15 @@ const UserForm = ({
                   </label>
                   <input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={placeholderName}
+                    name = "name"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Ingresar Nombre"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                  />
+                  /> 
+                   {errors.name && (
+                    <div className="text-red-500 text-sm">{errors.name}</div>
+                  )}
                 </div>
               </div>
 
@@ -72,49 +82,76 @@ const UserForm = ({
                   </label>
                   <input
                     type="text"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder={placeholderName}
+                    name = "lastName"
+                    value={form.lastName}
+                    onChange={handleChange}
+                    placeholder="Ingresar Apellido"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   />
+                   {errors.lastName && (
+                    <div className="text-red-500 text-sm">
+                      {errors.lastName}
+                    </div>
+                  )}
                 </div>
               
                 <div className="mb-6">
                   <label className="mb-3 block text-sm font-medium text-black">
-                    Descripción
-                  </label>
-                  <textarea
-                    rows={6}
-                    value={description}
-                    onChange={(e) => setDescription?.(e.target.value)}
-                    placeholder="Ingresa la descripción de la categoría"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
-                  ></textarea>
-                </div>
-              
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-black mb-2">
-                  Ícono
-                </label>
-                <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                  <label className="bg-gray-100 text-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-200">
-                    Selecciona el archivo
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={(e) => setIcono(e.target.files?.[0] || null)}
-                    />
+                    Email
                   </label>
                   <input
                     type="text"
-                    value={
-                      icono ? icono.name : "Ningún archivo ha sido seleccionado"
-                    }
-                    className="flex-grow px-4 py-2 border-l border-gray-300 outline-none text-gray-700"
-                    readOnly
+                    name = "email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="Ingresa el email"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
                   />
+                    {errors.email && (
+                    <div className="text-red-500 text-sm">
+                      {errors.email}
+                    </div>
+                  )}
                 </div>
-              </div>
+
+                <div className="mb-6">
+                  <label className="mb-3 block text-sm font-medium text-black">
+                    Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    name= "password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="Ingresa la contraseña"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
+                  />
+                    {errors.password && (
+                    <div className="text-red-500 text-sm">
+                      {errors.password}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="mb-6">
+                  <label className="mb-3 block text-sm font-medium text-black">
+                   Repetir Contraseña
+                  </label>
+                  <input
+                    type="password"
+                    name = "confirmPassword"
+                    value={form.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Vuelva a ingresar la contraseña"
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter"
+                  />
+                    {errors.confirmPassword && (
+                    <div className="text-red-500 text-sm">
+                      {errors.confirmPassword}
+                    </div>
+                  )}
+                </div>
+            
             </div>
           </form>
         </div>

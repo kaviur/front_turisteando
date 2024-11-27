@@ -1,57 +1,101 @@
 "use client";
+import { useSession } from "next-auth/react"; // Importar useSession para obtener el token
+import { useEffect, useState } from "react";
+import { toast, Toaster } from "react-hot-toast";
 
+import { useRouter } from "next/navigation";
 import UserTable from "@/components/UserTable/UserTable";
 import Link from "next/link";
 import { User } from "@/types/user";
-import { useEffect, useState } from "react";
-
-import { useSession } from "next-auth/react"; // Importar useSession para obtener el token
+import { deleteUser, getUsers } from "@/lib/user/userActions";
 
 export default function Home() {
   const [user, setUser] = useState<User[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession(); // Obtener la sesión y el token
-  
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   console.log(user);
 
-  // Fetch the User when the component mounts
+  const confirmDelete = async () => {
+    return new Promise<boolean>((resolve) => {
+      toast(
+        (t) => (
+          <div>
+            <p>¿Estás seguro de que deseas eliminar este usuario?</p>
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(true);
+                }}
+              >
+                Sí, eliminar
+              </button>
+              <button
+                className="bg-gray-300 text-black px-4 py-2 rounded"
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  resolve(false);
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        ),
+        { duration: Infinity } // Evita que el toast desaparezca automáticamente
+      );
+    });
+  };
+
+  // Fetch Users when the component mounts
   useEffect(() => {
-    if (session) {
-      // Obtener el token de sesión
-      // {
-      //   /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      // }
-
-      //@ts-ignore
-      const token: string = session?.accessToken;
-
-      const fetchUsers = async () => {
+    const fetchUsers = async () => {
+      if (session) {
+        //@ts-ignore
+        const token: string = session?.accessToken;
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/users/all`,
-            {
-                method: "GET",
-                headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-                
-              },
-            }
-          );
-          const data = await response.json();
-          //console.log(data);
-          setUser(data.data);
+          const response = await getUsers(token);
+          setUser(response);
           setLoading(false);
         } catch (error) {
-          console.error("Error fetching categories:", error);
+          console.log(error);
+        } finally {
+          setLoading(false);
         }
-      };
-
-      fetchUsers();
-    }
+      }
+    };
+    fetchUsers();
   }, [session]);
 
+  // Método para redirigir al formulario de edición
+  const handleEdit = (id: string) => {
+    router.push(`/admin/edituser/${id}`);
+  };
+
+  // Método para eliminar una caracteristica
+  const handleDelete = async (id: string) => {
+    const confirmed = await confirmDelete();
+    if (!confirmed || !session) return;
+
+    /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+    const token = session?.accessToken;
+    try {
+      const response = await deleteUser(token, id);
+      if (response) {
+         toast.success("El usuario se ha borrado con éxito");
+         setUser(user.filter(element=>element.id!==id));
+         setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error eliminando usuario:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="ml-60">
       <div className="flex justify-between items-center mt-5 mb-14">
@@ -83,7 +127,7 @@ export default function Home() {
           </svg>
           <h1 className="pl-2">Usuarios</h1>
         </span>
-        <Link href={"/(auth)/register"}>
+        <Link href={"/admin/adduser"}>
           <button className="bg-primary hover:bg-primary hover:opacity-80 text-white px-10 py-2 rounded-full font-medium">
             Agregar Nuevo
           </button>
@@ -95,7 +139,7 @@ export default function Home() {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <UserTable users={user} />
+          <UserTable users={user} onEdit={handleEdit} onDelete={handleDelete} />
         )}
       </div>
     </div>

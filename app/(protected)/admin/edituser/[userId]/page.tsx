@@ -1,11 +1,12 @@
 "use client";
-
-import ReusableSmallForm from "@/components/ReusableSmallForm/ReusableSmallForm";
+import UserForm from "@/components/UserForm";
 import { useState, useEffect, useCallback } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import UserForm from "@/components/UserForm";
+import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
+import handleBackendError from "@/utils/validators/validatorBackendErrors";
+import { getUserById, updateUsers } from "@/lib/user/userActions";
 
 const EditUser = () => {
   const router = useRouter(); // Router para el redireccionamiento
@@ -13,20 +14,60 @@ const EditUser = () => {
   const userId = pathname.split("/").pop(); //  Obtener el ID de la URL dinámicamente
   const { data: session } = useSession(); // Obtener la sesión y el token
 
-  //Debemos traernos los usuarios y los que no estén activos, permitir que los active  
-  const [name, setName] = useState("");
-  //const [icono, setIcono] = useState<File | null>(null);
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
-  const [isActive, setIsActive] = useState("");
-  
-  
-  //const [description, setDescription] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const [isPending, setIsPending] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!form.name.match(/^[a-zA-Z\s]{2,}$/)) {
+      newErrors.name = "El nombre debe tener al menos 2 letras y solo letras.";
+    }
+    if (!form.lastName.match(/^[a-zA-Z\s]{2,}$/)) {
+      newErrors.lastName =
+        "El apellido debe tener al menos 2 letras y solo letras.";
+    }
+    if (!form.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      newErrors.email = "Por favor, ingresa un correo electrónico válido.";
+    }
+
+    // Validación de contraseñas
+    if (form.password && form.password.length < 6) {
+      newErrors.password = "La contraseña debe tener al menos 6 caracteres.";
+    }
+
+    if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = "Las contraseñas no coinciden.";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
 
   // Fetch de Usuario
   const fetchUser = useCallback(async () => {
+    console.log("Este es el user Id:" + userId);
     if (!userId) {
       console.warn("No se ha provisto ID de usuario");
       return;
@@ -38,31 +79,15 @@ const EditUser = () => {
 
     try {
       //@ts-ignore
-      const token = session?.user?.accessToken;
+      const token = session?.accessToken;
+      console.log("Este es el token" + token);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error haciendo el fetching de Usuarios:", errorData);
-        throw new Error(errorData.message || "Error al obtener el usuario");
-      }
-
-      const data = await response.json();
-      setName(data.data.name);
-      setLastName(data.data.lastName);
-      setEmail(data.data.email);
-      setRole(data.data.role);
-      setIsActive(data.data.isActive);
-      
-      
+      const response = await getUserById(token, userId);
+      setForm({
+        ...response,
+        confirmPassword: "",
+        password: "",
+      });
     } catch (error) {
       console.error("Error haciendo el fetching Usuarios:", error);
       toast.error("Error al cargar los datos de Usuario");
@@ -75,6 +100,11 @@ const EditUser = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (!validateForm()) {
+      return toast.error("Error en el formulario. Revisa los campos.");
+    }
+
     setIsPending(true);
 
     if (!session) {
@@ -83,80 +113,33 @@ const EditUser = () => {
       return;
     }
 
-    const formData = new FormData();
-
-    // Estructurar los datos según lo esperado por el servidor
-    const user = JSON.stringify({
-      name,
-      lastName,
-      email,
-      role,
-      isActive
-
-    });
-    formData.append(
-      "category",
-      new Blob([user], { type: "application/json" })
-    ); // Agregar el JSON en el campo "category"
-   
-   
-    //if (icono) formData.append("image", icono); // Agregar el archivo en el campo "image"
-
-    //@ts-ignore
-    const token = session?.user?.accessToken;
+     //@ts-ignore
+    const token = session?.accessToken;
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/update/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.log(errorData);
-        throw new Error("Error al actualizar el usuario");
-      }
-
-      toast.success("Usuario actualizado exitosamente");
-
-      setTimeout(() => {
+      const response = await updateUsers(userId, token, form);
+      if (response) {
+        console.log(response);
+        toast.success("Usuario actualizado con éxito");
+        router.push("/admin/users"); // Redirige a la lista de usuarios
         setIsPending(false);
-        router.push("/admin/categories");
-      }, 1500);
+      }
     } catch (error) {
-      console.error("Error actualizando usuario:", error);
-      toast.error("Error al actualizar el usuario");
+      console.log(error);
     } finally {
       setIsPending(false);
     }
   };
-
   return (
     <>
       <div className="ml-96 flex justify-center">
         <Toaster position="top-center" />
 
         <UserForm
-          entityType="user"
-          name={name}
-          setName={setName}
-          lastName={name}
-          setLastName={setLastName}
-          email={email}
-          setEmail={setEmail}
-          role={role}
-          setRole={setRole}
-          isActive
-          //description={description}
-          //setDescription={setDescription}
-         // icono={icono}
-          //setIcono={setIcono}
+          form={form}
+          setForm={setForm}
+          handleChange={handleChange}
+          errors={errors}
           onSubmit={handleSubmit}
           isPending={isPending}
           isEditing={true}
@@ -165,5 +148,4 @@ const EditUser = () => {
     </>
   );
 };
-
 export default EditUser;

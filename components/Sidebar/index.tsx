@@ -308,7 +308,7 @@ const menuItems = [
           </svg>
         ),
         label: "Agregar Usuario",
-        route: "/admin/addcategory",
+        route: "/admin/adduser",
       },
     ],
   },
