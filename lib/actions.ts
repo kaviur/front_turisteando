@@ -30,7 +30,7 @@ export async function login(prevState: FormState, formData: FormData) {
       email: email,
       password: password,
       redirect: true,
-      redirectTo: "/",
+      redirectTo: "/admin",
     });
     // @ts-expect-error: error for result, but TypeScript doesn't recognize it.
     if (result?.error) {

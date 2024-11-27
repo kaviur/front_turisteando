@@ -19,7 +19,6 @@ type Category = {
 };
 
 const ProductsTableActions = ({ products, setTouristPlans }: { products: TouristPlan[]; setTouristPlans: React.Dispatch<React.SetStateAction<TouristPlan[]>> }) => {
-    const { data: session } = useSession();
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -27,6 +26,15 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
     const [currentCategoryId, setCurrentCategoryId] = useState<number | null>(null);
 
     const router = useRouter();
+    const { data: session } = useSession();
+
+    if (!session) {
+      toast.error("No se encontró la sesión.");
+      return;
+    }
+
+    // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
+    const token = session?.accessToken;
 
     const confirmDelete = async () => {
         return new Promise<boolean>((resolve) => {
@@ -61,7 +69,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         });
     };
 
-    // Método para eliminar una categoría existente
+    // Método para eliminar un producto existente
     const handleDelete = async (id: number) => {
         const confirmed = await confirmDelete();
         if (!confirmed) return;
