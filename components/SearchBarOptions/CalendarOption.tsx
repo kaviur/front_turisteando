@@ -28,7 +28,7 @@ const CalendarOption: React.FC<DateRangePickerProps> = ({
     endDate: new Date(),
     key: "selection",
   });
-  const [isCalendarOpen, setIsCalendarOpen] = useState(true); // Controla el dropdown
+  const [isCalendarOpen, setIsCalendarOpen] = useState(true);
 
   const handleSelect = (ranges: RangeKeyDict): void => {
     const range = ranges.selection;
