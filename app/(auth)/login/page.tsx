@@ -54,7 +54,7 @@ export default function Login() {
         if (response?.error) {
           throw new Error(response.error); // Si hay error, lanzamos una excepción
         }
-        router.push("/admin"); // Redirigir a la página de administración
+        router.push("/"); // Redirigir a la página de administración
         return "Sesión iniciada con éxito!";
       }),
       {
