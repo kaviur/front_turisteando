@@ -47,10 +47,8 @@ const EditCharacteristic = () => {
     }
 
     try {
-      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token = session?.user?.accessToken;
 
-      const response = await fetchCharacteristicById(token, characteristicId);
+      const response = await fetchCharacteristicById(characteristicId);
       if (response) {
         setForm({
           ...response,

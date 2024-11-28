@@ -88,20 +88,11 @@ export const fetchCharacteristics = async (
 
 // Funcion para obtener caracteristica por id
 export const fetchCharacteristicById = async (
-  token: string,
   id: string | undefined
 ): Promise<Characteristics | null> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+      `${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/${id}`);
     const data = await response.json();
 
     if (data.success && data.data) {

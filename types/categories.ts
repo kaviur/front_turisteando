@@ -1,6 +1,6 @@
 export interface ReqCategory {
     id?: string;
-    name: string;
+    name?: string;
     description?: string;
     image?: {
       id: string;
