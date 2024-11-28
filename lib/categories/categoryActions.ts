@@ -93,3 +93,97 @@ export const createCategory = async (
     throw error;
   }
 };
+
+export const fetchCategoryById = async (
+  id: string | undefined
+): Promise<ResCategory | null> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/categories/${id}`);
+
+    const data = await response.json();
+
+    if (data.success && data.data) {
+      return data.data;
+    } else {
+      console.error("Error al obtener la categoría:", data.errors);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener la categoría:", error);
+    return null;
+  }
+};
+
+export const deleteCategory = async (
+  token: string,
+  id: string | undefined
+): Promise<string | undefined> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/categories/delete/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
+      console.error("Error al eliminar la categoría:", data.errors);
+      throw new Error(data.errors);
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error("Error al eliminar la categoría:", error);
+  }
+};
+
+export const editCategory = async (
+  token: string,
+  category: FormData,
+  id: string | undefined
+): Promise<ResCategory | { message: string; debugMessage: string }> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/categories/update/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: category,
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {
+        message: "Error al editar la categoría",
+        debugMessage: errorData.debugMessage || "Error desconocido",
+      };
+    }
+
+    const data = await response.json();
+
+    if (data.success && data.data) {
+      return data.data;
+    } else {
+      return {
+        message: "Error al editar la categoría",
+        debugMessage: data.debugMessage || "Error desconocido",
+      };
+    }
+  } catch (error) {
+    console.error("Error al editar la categoría:", error);
+    return {
+      message: "Error al editar la categoría",
+      debugMessage: "Error en la conexión o servidor",
+    };
+  }
+};

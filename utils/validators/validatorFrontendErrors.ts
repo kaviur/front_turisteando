@@ -13,9 +13,11 @@ const handleFrontendError = ({
   setErrors: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
 }) => {
   const newErrors: { [key: string]: string } = {};
-  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]{3,50}$/.test(form.name)) {
-    newErrors.name =
-      "El nombre debe tener entre 3 y 50 caracteres y solo puede contener letras y números.";
+  if(form.name != undefined){
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]{3,50}$/.test(form.name)) {
+      newErrors.name =
+        "El nombre debe tener entre 3 y 50 caracteres y solo puede contener letras y números.";
+    }
   }
 
   if (isCategory(form)) {
