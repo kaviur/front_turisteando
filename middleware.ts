@@ -19,7 +19,7 @@ export default auth((req) => {
   }
 
   // Si está autenticado pero no es ADMIN y está en una ruta protegida
-  if (isAuthenticated && !isAdmin && isPublicRoute) {
+  if (isAuthenticated && !isAdmin) {
     return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
   }
 });

@@ -48,7 +48,7 @@ const EditCharacteristic = () => {
 
     try {
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token = session?.accessToken;
+      const token = session?.user?.accessToken;
 
       const response = await fetchCharacteristicById(token, characteristicId);
       if (response) {
@@ -99,7 +99,7 @@ const EditCharacteristic = () => {
     } // Agregar el archivo en el campo "image"
 
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.accessToken;
+    const token = session?.user?.accessToken;
 
     try {
       const response = await editCharacteristic(

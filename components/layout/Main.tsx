@@ -21,18 +21,10 @@ export const Main = () => {
   const [tours, setTours] = useState<TouristPlan[]>([]);
   const [allTours, setAllTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true); // Nuevo estado de carga
-  const [activities, setActivities] = useState<TouristPlan[]>([]);
 
   useEffect(() => {
     fetchTours().then((data) => {
-      const activities = data.filter(
-        (tour: TouristPlan) => tour.category.name === "Activity"
-      );
-      setActivities(activities);
-      const tours = data.filter(
-        (tour: TouristPlan) => tour.category.name === "Tours"
-      );
-      setTours(tours);
+      setTours(data);
       setAllTours(data);
       setLoading(false);
     });
@@ -120,19 +112,21 @@ export const Main = () => {
                 </SwiperSlide>
               ))
             : // Renderizar tours cuando la carga haya terminado
-              tours.map((tour) => (
-                <SwiperSlide key={tour.id}>
-                  <Card
-                    isPrimary={true}
-                    id={tour.id}
-                    mobileTitle={tour.title}
-                    isMobile={false}
-                    imageSrc={tour.images[0]?.imageUrl}
-                    title={tour.title}
-                    description={tour.description}
-                  />
-                </SwiperSlide>
-              ))}
+              tours
+                .filter((tour) => tour.category.name === "Tours")
+                .map((tour) => (
+                  <SwiperSlide key={tour.id}>
+                    <Card
+                      isPrimary={true}
+                      id={tour.id}
+                      mobileTitle={tour.title}
+                      isMobile={false}
+                      imageSrc={tour.images[0]?.imageUrl}
+                      title={tour.title}
+                      description={tour.description}
+                    />
+                  </SwiperSlide>
+                ))}
         </Swiper>
       </section>
 
@@ -195,7 +189,7 @@ export const Main = () => {
         {/*Cards Swiper Component*/}
         <Swiper
           slidesPerView={3}
-          spaceBetween={12}
+          spaceBetween={30}
           freeMode={true}
           pagination={{
             clickable: true,
@@ -220,19 +214,21 @@ export const Main = () => {
                 </SwiperSlide>
               ))
             : // Renderizar tours cuando la carga haya terminado
-              activities.map((tour) => (
-                <SwiperSlide key={tour.id}>
-                  <Card
-                    isPrimary={false}
-                    id={tour.id}
-                    mobileTitle={tour.title}
-                    isMobile={false}
-                    imageSrc={tour.images[0]?.imageUrl}
-                    title={tour.title}
-                    description={tour.description}
-                  />
-                </SwiperSlide>
-              ))}
+              tours
+                .filter((tour) => tour.category.name === "Activity")
+                .map((tour) => (
+                  <SwiperSlide key={tour.id}>
+                    <Card
+                      isPrimary={false}
+                      id={tour.id}
+                      mobileTitle={tour.title}
+                      isMobile={false}
+                      imageSrc={tour.images[0]?.imageUrl}
+                      title={tour.title}
+                      description={tour.description}
+                    />
+                  </SwiperSlide>
+                ))}
         </Swiper>
       </section>
 
@@ -259,7 +255,7 @@ export const Main = () => {
         {/*Testimonial Swiper Component*/}
         <Swiper
           slidesPerView={3}
-          spaceBetween={12}
+          spaceBetween={30}
           freeMode={true}
           pagination={{
             clickable: true,
