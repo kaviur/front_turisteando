@@ -163,7 +163,7 @@ export default function Login() {
         <div className="mt-4 text-center">
           <p>
             ¿No tienes cuenta?{" "}
-            <Link href="/auth/signup" className="text-blue-600">
+            <Link href="/register" className="text-blue-600">
               Regístrate
             </Link>
           </p>
