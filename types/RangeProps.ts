@@ -5,4 +5,9 @@ export interface RangeProps {
   setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>>;
   minValue: number;
   maxValue: number;
+  onClose: (
+    setter: React.Dispatch<React.SetStateAction<number[]>>,
+    min: number,
+    max: number
+  ) => void;
 }

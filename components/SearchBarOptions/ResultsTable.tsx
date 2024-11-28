@@ -9,22 +9,28 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
   selectedTours,
   handleTourClick,
 }) => {
+  const results = selectedTours.map((title, index) => (
+    <li
+      key={index}
+      className="px-4 py-2 text-white hover:bg-pink-600 text-sm cursor-pointer font-medium rounded-xl"
+      onClick={() => handleTourClick(title)}
+    >
+      {title}
+    </li>
+  ));
+
   return (
     <div
-      className={`absolute -bottom-1 right-0 mt-2 translate-y-full bg-primary w-[390px] rounded-lg p-2 text-start max-h-[230px] overflow-auto ${
-        selectedTours.length > 0 ? "block" : "hidden"
-      }`}
+      className={`absolute -bottom-1 right-0 mt-2 translate-y-full bg-primary w-[390px] rounded-lg p-2 text-start max-h-[230px] overflow-auto`}
     >
       <ul className="results-table">
-        {selectedTours.map((tour) => (
-          <li
-            key={tour}
-            onClick={() => handleTourClick(tour)}
-            className={`relative px-4 py-2 text-white cursor-pointer hover:bg-pink-600 text-sm font-medium rounded-xl`}
-          >
-            {tour}
+        {selectedTours.length > 0 ? (
+          results
+        ) : (
+          <li className="px-4 py-2 text-white bg-primary text-sm font-medium rounded-xl">
+            No se encontraron resultados
           </li>
-        ))}
+        )}
       </ul>
     </div>
   );

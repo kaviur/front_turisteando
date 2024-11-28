@@ -2,7 +2,9 @@ import { TouristPlan } from "@/types/touristPlan";
 import { useEffect, useState } from "react";
 import { IoChevronDownOutline } from "react-icons/io5";
 import { MdOutlineSearch } from "react-icons/md";
-import CalendarOption from "./SearchBarOptions/CalendarOption";
+import CalendarOption, {
+  DateRangeState,
+} from "./SearchBarOptions/CalendarOption";
 import { filterPlansByDateRange } from "@/utils/filters/filters";
 import { Range } from "react-date-range";
 import PriceOption from "./SearchBarOptions/PriceOption";
@@ -49,6 +51,26 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
   // Maneja el filtro por rango de fechas
   const handleGetRangeDate = (rangeDate: Range) => {
     setRangeDate(rangeDate);
+  };
+
+  const handleCloseCalendar = (
+    setSelectedRange: React.Dispatch<React.SetStateAction<DateRangeState>>
+  ) => {
+    setSelectedRange({
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    });
+    setSelectedOption("Tours");
+  };
+
+  const handleCloseRange = (
+    setValues: React.Dispatch<React.SetStateAction<number[]>>,
+    min: number,
+    max: number
+  ) => {
+    setValues([min, max]);
+    setSelectedOption("Tours");
   };
 
   // Obtener valores minimo y maximo de los tours
@@ -128,7 +150,10 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
        * Mostrar los tours filtrados por rango de fecha
        */}
       {selectedOption === "Fecha" && (
-        <CalendarOption onRangeDate={handleGetRangeDate} />
+        <CalendarOption
+          onRangeDate={handleGetRangeDate}
+          onClose={handleCloseCalendar}
+        />
       )}
 
       {/**
@@ -140,6 +165,7 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
           maxValue={priceRange.max}
           allTours={allTours}
           setTours={setTours}
+          onClose={handleCloseRange}
         />
       )}
 
@@ -177,6 +203,7 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
           maxValue={capacityRange.max}
           allTours={allTours}
           setTours={setTours}
+          onClose={handleCloseRange}
         />
       )}
     </div>

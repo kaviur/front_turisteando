@@ -7,6 +7,8 @@ import { toast, Toaster } from "react-hot-toast";
 import ReusableTable from "@/components/ReusableTable/ReusableTable";
 import { Characteristics } from "@/types/characteristics";
 import { deleteCharacteristic, fetchCharacteristics } from "@/lib/actions";
+import Image from "next/image";
+import Hiking from "/public/hiking-converted.gif";
 
 const CharacteristicsPage = () => {
   const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
@@ -100,7 +102,13 @@ const CharacteristicsPage = () => {
       <Toaster position="top-center" />
       <h1 className="text-2xl font-bold mb-4">Características</h1>
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <Image
+          src={Hiking}
+          alt="Loading..."
+          width={150}
+          height={150}
+          className="mx-auto"
+        />
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (

@@ -96,37 +96,43 @@ export const Main = () => {
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          {loading
-            ? // Renderizar esqueleto mientras se cargan los datos
-              Array.from({ length: 3 }).map((_, index) => (
-                <SwiperSlide key={index}>
-                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
-                    <div className="skeleton h-52 w-full"></div>
-                    <div className="skeleton h-4 w-36"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                  </div>
+          {loading ? (
+            // Renderizar esqueleto mientras se cargan los datos
+            Array.from({ length: 3 }).map((_, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                  <div className="skeleton h-52 w-full"></div>
+                  <div className="skeleton h-4 w-36"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                </div>
+              </SwiperSlide>
+            ))
+          ) : // Renderizar tours cuando la carga haya terminado
+          tours.length > 0 ? (
+            tours
+              .filter((tour) => tour.category.name === "Tours")
+              .map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    isPrimary={true}
+                    id={tour.id}
+                    mobileTitle={tour.title}
+                    isMobile={false}
+                    imageSrc={tour.images[0]?.imageUrl}
+                    title={tour.title}
+                    description={tour.description}
+                  />
                 </SwiperSlide>
               ))
-            : // Renderizar tours cuando la carga haya terminado
-              tours
-                .filter((tour) => tour.category.name === "Tours")
-                .map((tour) => (
-                  <SwiperSlide key={tour.id}>
-                    <Card
-                      isPrimary={true}
-                      id={tour.id}
-                      mobileTitle={tour.title}
-                      isMobile={false}
-                      imageSrc={tour.images[0]?.imageUrl}
-                      title={tour.title}
-                      description={tour.description}
-                    />
-                  </SwiperSlide>
-                ))}
+          ) : (
+            <div className="text-center text-gray-500 text-xl">
+              No se encontraron tours disponibles
+            </div>
+          )}
         </Swiper>
       </section>
 
@@ -198,37 +204,43 @@ export const Main = () => {
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          {loading
-            ? // Renderizar esqueleto mientras se cargan los datos
-              Array.from({ length: 3 }).map((_, index) => (
-                <SwiperSlide key={index}>
-                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
-                    <div className="skeleton h-52 w-full"></div>
-                    <div className="skeleton h-4 w-36"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                  </div>
+          {loading ? (
+            // Renderizar esqueleto mientras se cargan los datos
+            Array.from({ length: 3 }).map((_, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                  <div className="skeleton h-52 w-full"></div>
+                  <div className="skeleton h-4 w-36"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                </div>
+              </SwiperSlide>
+            ))
+          ) : // Renderizar los planes con categoría "Actividad" cuando la carga haya terminado
+          tours.length > 0 ? (
+            tours
+              .filter((tour) => tour.category.name === "Activity")
+              .map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    isPrimary={false}
+                    id={tour.id}
+                    mobileTitle={tour.title}
+                    isMobile={false}
+                    imageSrc={tour.images[0]?.imageUrl}
+                    title={tour.title}
+                    description={tour.description}
+                  />
                 </SwiperSlide>
               ))
-            : // Renderizar tours cuando la carga haya terminado
-              tours
-                .filter((tour) => tour.category.name === "Activity")
-                .map((tour) => (
-                  <SwiperSlide key={tour.id}>
-                    <Card
-                      isPrimary={false}
-                      id={tour.id}
-                      mobileTitle={tour.title}
-                      isMobile={false}
-                      imageSrc={tour.images[0]?.imageUrl}
-                      title={tour.title}
-                      description={tour.description}
-                    />
-                  </SwiperSlide>
-                ))}
+          ) : (
+            <div className="text-center text-gray-500 text-xl">
+              No se encontraron actividades disponibles
+            </div>
+          )}
         </Swiper>
       </section>
 

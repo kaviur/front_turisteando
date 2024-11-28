@@ -1,6 +1,7 @@
 import { RangeProps } from "@/types/RangeProps";
 import { filterPlansByRange } from "@/utils/filters/filters";
 import { useEffect, useState } from "react";
+import { IoIosCloseCircle } from "react-icons/io";
 import { Range, getTrackBackground } from "react-range";
 
 const CapacityOption: React.FC<RangeProps> = ({
@@ -8,6 +9,7 @@ const CapacityOption: React.FC<RangeProps> = ({
   setTours,
   minValue,
   maxValue,
+  onClose
 }) => {
   const [values, setValues] = useState<number[]>([minValue, maxValue]);
 
@@ -36,11 +38,17 @@ const CapacityOption: React.FC<RangeProps> = ({
 
   return (
     <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-xl shadow-md flex flex-col gap-4 items-center">
-      <h2 className="text-lg mb-5 font-semibold">
+      <div className="absolute top-7 right-3">
+        <IoIosCloseCircle
+          className="text-primary w-6 h-6 cursor-pointer"
+          onClick={() => onClose(setValues, minValue, maxValue)}
+        />
+      </div>
+      <h2 className="text-lg mb-5 font-semibold max-w-[300px]">
         Selecciona el rango de capacidad de personas
       </h2>
 
-      <div className="w-full">
+      <div className="w-full px-2">
         <Range
           values={values}
           step={1}

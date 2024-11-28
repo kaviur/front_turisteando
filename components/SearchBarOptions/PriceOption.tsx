@@ -1,6 +1,7 @@
 import { RangeProps } from "@/types/RangeProps";
 import { filterPlansByRange } from "@/utils/filters/filters";
 import { useEffect, useState } from "react";
+import { IoIosCloseCircle } from "react-icons/io";
 import { Range, getTrackBackground } from "react-range";
 
 const PriceOption: React.FC<RangeProps> = ({
@@ -8,8 +9,10 @@ const PriceOption: React.FC<RangeProps> = ({
   setTours,
   minValue,
   maxValue,
+  onClose,
 }) => {
   const [values, setValues] = useState<number[]>([minValue, maxValue]);
+  const [tempValues, setTempValues] = useState<number[]>([minValue, maxValue]);
 
   useEffect(() => {
     const filteredTours = filterPlansByRange(
@@ -21,8 +24,9 @@ const PriceOption: React.FC<RangeProps> = ({
     setTours(filteredTours);
   }, [values, allTours, setTours]);
 
+  // Cambia los valores moviendo los indicadores y guarda los nuevos valores en un estado temporal
   const handleChange = (newValues: number[]) => {
-    setValues(newValues);
+    setTempValues(newValues);
   };
 
   const handleInputChange = (index: number, value: string) => {
@@ -31,18 +35,29 @@ const PriceOption: React.FC<RangeProps> = ({
       minValue,
       Math.min(maxValue, Number(value) || 0)
     );
-    setValues(newValues);
+    setTempValues(newValues);
+  };
+
+  // Aplica el filtro al hacer clic en el botón "Buscar"
+  const handleClick = () => {
+    setValues(tempValues);
   };
 
   return (
     <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-xl shadow-md flex flex-col gap-4 items-center">
+      <div className="absolute top-6 right-6">
+        <IoIosCloseCircle
+          className="text-primary w-6 h-6 cursor-pointer"
+          onClick={() => onClose(setValues, minValue, maxValue)}
+        />
+      </div>
       <h2 className="text-lg mb-5 font-semibold">
         Selecciona el rango de precio
       </h2>
 
-      <div className="w-full">
+      <div className="w-full pl-1 pr-4">
         <Range
-          values={values}
+          values={tempValues}
           step={10}
           min={minValue}
           max={maxValue}
@@ -55,7 +70,7 @@ const PriceOption: React.FC<RangeProps> = ({
                 height: "6px",
                 width: "100%",
                 background: getTrackBackground({
-                  values,
+                  values: tempValues,
                   colors: ["#ccc", "#ff0178", "#ccc"],
                   min: minValue,
                   max: maxValue,
@@ -89,7 +104,7 @@ const PriceOption: React.FC<RangeProps> = ({
                     whiteSpace: "nowrap",
                   }}
                 >
-                  S/. {values[index]}
+                  S/. {tempValues[index]}
                 </div>
               </div>
             );
@@ -97,7 +112,7 @@ const PriceOption: React.FC<RangeProps> = ({
         />
       </div>
 
-      <div className="w-full flex flex-col justify-between gap-4 mt-4">
+      <div className="w-full flex flex-col justify-between mt-4">
         <div className="grid grid-cols-2 gap-x-4">
           <div className="flex flex-col">
             <label className="text-sm font-medium text-gray-600">
@@ -105,7 +120,7 @@ const PriceOption: React.FC<RangeProps> = ({
             </label>
             <input
               type="number"
-              value={values[0]}
+              value={tempValues[0]}
               onChange={(e) => handleInputChange(0, e.target.value)}
               className="mt-1 p-2 border text-gray-700 border-gray-300 rounded-lg focus:outline-gray-400"
             />
@@ -116,12 +131,18 @@ const PriceOption: React.FC<RangeProps> = ({
             </label>
             <input
               type="number"
-              value={values[1]}
+              value={tempValues[1]}
               onChange={(e) => handleInputChange(1, e.target.value)}
               className="mt-1 p-2 border text-gray-700 border-gray-300 rounded-lg focus:outline-gray-400"
             />
           </div>
         </div>
+        <button
+          className="btn hover:bg-primary mt-3 bg-primary text-white"
+          onClick={handleClick}
+        >
+          Buscar
+        </button>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import "react-date-range/dist/theme/default.css";
 import { useState } from "react";
 import { DateRange, Range, RangeKeyDict } from "react-date-range";
 import { format } from "date-fns";
+import { IoIosCloseCircle } from "react-icons/io";
 
 export interface DateRangeState {
   startDate: Date | undefined;
@@ -12,9 +13,15 @@ export interface DateRangeState {
 
 interface DateRangePickerProps {
   onRangeDate: (param: Range) => void;
+  onClose: (
+    param: React.Dispatch<React.SetStateAction<DateRangeState>>
+  ) => void;
 }
 
-const CalendarOption: React.FC<DateRangePickerProps> = ({ onRangeDate }) => {
+const CalendarOption: React.FC<DateRangePickerProps> = ({
+  onRangeDate,
+  onClose,
+}) => {
   const [selectedRange, setSelectedRange] = useState<DateRangeState>({
     startDate: new Date(),
     endDate: new Date(),
@@ -33,8 +40,14 @@ const CalendarOption: React.FC<DateRangePickerProps> = ({ onRangeDate }) => {
   };
 
   return (
-    <div className="calendar absolute z-50 right-5 -bottom-1 translate-y-full flex flex-col items-center gap-4 p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
-      <h2 className="text-lg font-bold text-gray-800">
+    <div className="calendar absolute z-10 right-5 -bottom-1 translate-y-full flex flex-col items-center p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
+      <div className="absolute top-5 right-6">
+        <IoIosCloseCircle
+          className="text-primary w-6 h-6 cursor-pointer"
+          onClick={() => onClose(setSelectedRange)}
+        />
+      </div>
+      <h2 className="text-lg font-bold text-gray-800 max-w-48">
         Selecciona un rango de fechas
       </h2>
 

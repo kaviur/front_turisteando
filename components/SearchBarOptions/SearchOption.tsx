@@ -38,7 +38,7 @@ const SearchOption: React.FC<SearchBarOptionProps> = ({
 
   return (
     <>
-      {selectedTours.length > 0 && (
+      {value.length > 0 && (
         <ResultsTable
           selectedTours={tourNames}
           handleTourClick={handleTourClick}
