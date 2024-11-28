@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DateRange, Range, RangeKeyDict } from "react-date-range";
 import { format } from "date-fns";
 import { IoIosCloseCircle } from "react-icons/io";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 export interface DateRangeState {
   startDate: Date | undefined;
@@ -27,6 +28,7 @@ const CalendarOption: React.FC<DateRangePickerProps> = ({
     endDate: new Date(),
     key: "selection",
   });
+  const [isCalendarOpen, setIsCalendarOpen] = useState(true); // Controla el dropdown
 
   const handleSelect = (ranges: RangeKeyDict): void => {
     const range = ranges.selection;
@@ -40,43 +42,54 @@ const CalendarOption: React.FC<DateRangePickerProps> = ({
   };
 
   return (
-    <div className="calendar absolute z-10 right-5 -bottom-1 translate-y-full flex flex-col items-center p-4 bg-white shadow-md rounded-lg max-w-md mx-auto">
-      <div className="absolute top-5 right-6">
-        <IoIosCloseCircle
-          className="text-primary w-6 h-6 cursor-pointer"
-          onClick={() => onClose(setSelectedRange)}
+    <div className="absolute z-10 right-5 -bottom-1 translate-y-full flex flex-col items-center p-4 bg-white shadow-md rounded-lg w-[370px] mx-auto">
+      {/* Encabezado con dropdown */}
+      <div className="flex items-center justify-between w-full">
+        <IoIosArrowDropdown
+          className={`text-primary w-6 h-6 cursor-pointer transform ${
+            isCalendarOpen ? "rotate-0" : "rotate-180"
+          }`}
+          onClick={() => setIsCalendarOpen(!isCalendarOpen)}
         />
+        <h2 className="text-lg font-bold text-gray-800 max-w-48">
+          Selecciona un rango de fechas
+        </h2>
+          <IoIosCloseCircle
+            className="text-primary w-6 h-6 cursor-pointer"
+            onClick={() => onClose(setSelectedRange)}
+          />
       </div>
-      <h2 className="text-lg font-bold text-gray-800 max-w-48">
-        Selecciona un rango de fechas
-      </h2>
 
-      {/* Componente de selección de rango */}
-      <DateRange
-        ranges={[selectedRange]}
-        onChange={handleSelect}
-        // rangeColors={["#4f46e5"]}
-        rangeColors={["#ff0178"]}
-        showDateDisplay={false}
-        minDate={new Date()}
-        className="rounded-lg"
-      />
+      {/* Condicional para mostrar/ocultar el calendario */}
+      {isCalendarOpen && (
+        <>
+          {/* Componente de selección de rango */}
+          <DateRange
+            ranges={[selectedRange]}
+            onChange={handleSelect}
+            rangeColors={["#ff0178"]}
+            showDateDisplay={false}
+            minDate={new Date()}
+            className="rounded-lg mt-4"
+          />
 
-      {/* Mostrar el rango seleccionado */}
-      <div className="flex flex-col items-start gap-2 text-sm">
-        <p className="text-gray-600">
-          <span className="font-medium mr-2">Fecha de inicio:</span>{" "}
-          {selectedRange.startDate
-            ? format(selectedRange.startDate, "dd/MM/yyyy")
-            : "No hay fecha seleccionada"}
-        </p>
-        <p className="text-gray-600">
-          <span className="font-medium mr-2">Fecha de fin:</span>{" "}
-          {selectedRange.endDate
-            ? format(selectedRange.endDate, "dd/MM/yyyy")
-            : "No hay fecha seleccionada"}
-        </p>
-      </div>
+          {/* Mostrar el rango seleccionado */}
+          <div className="flex flex-col items-start gap-2 text-sm mt-4">
+            <p className="text-gray-600">
+              <span className="font-medium mr-2">Fecha de inicio:</span>{" "}
+              {selectedRange.startDate
+                ? format(selectedRange.startDate, "dd/MM/yyyy")
+                : "No hay fecha seleccionada"}
+            </p>
+            <p className="text-gray-600">
+              <span className="font-medium mr-2">Fecha de fin:</span>{" "}
+              {selectedRange.endDate
+                ? format(selectedRange.endDate, "dd/MM/yyyy")
+                : "No hay fecha seleccionada"}
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 };
