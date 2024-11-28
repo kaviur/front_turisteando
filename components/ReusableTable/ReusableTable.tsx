@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { FaRegEdit } from "react-icons/fa";
 import { AiOutlineDelete } from "react-icons/ai";
-import { Category } from "@/types/category";
+import { ResCategory } from "@/types/categories";
 import { Characteristics } from "@/types/characteristics";
 
 type ReusableTableProps = {
-  items: Category[] | Characteristics[];
+  items: ResCategory[] | Characteristics[];
   entityType: "categoría" | "característica";
   onEdit: (id: string) => void;
   onDelete: (id: string | undefined) => void;
@@ -84,7 +84,7 @@ const ReusableTable = ({
           {isCategory && (
             <div className="col-span-2 flex items-center">
               <p className="text-sm text-black">
-                {(item as Category).description || "Sin descripción"}
+                {(item as ResCategory).description || "Sin descripción"}
               </p>
             </div>
           )}

@@ -1,32 +1,27 @@
 import { TouristPlan } from "@/types/touristPlan";
+import { ResCategory } from "@/types/categories";
 import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+//import { useSession } from "next-auth/react";
 import { TbArrowsExchange } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { fetchCategories } from "@/lib/categories/categoryActions"
 
-type Category = {
-    id: number;
-    name: string;
-    description: string;
-    image: {
-        id: number;
-        imageUrl: string;
-    };
-};
+
 
 const ProductsTableActions = ({ products, setTouristPlans }: { products: TouristPlan[]; setTouristPlans: React.Dispatch<React.SetStateAction<TouristPlan[]>> }) => {
-    const { data: session } = useSession();
-    const [categories, setCategories] = useState<Category[]>([]);
+    const [categories, setCategories] = useState<ResCategory[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-    const [currentCategoryId, setCurrentCategoryId] = useState<number | null>(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+    const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(null);
 
     const router = useRouter();
+    //const { data: session } = useSession();
+
 
     const confirmDelete = async () => {
         return new Promise<boolean>((resolve) => {
@@ -61,7 +56,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         });
     };
 
-    // Método para eliminar una categoría existente
+    // Método para eliminar un producto existente
     const handleDelete = async (id: number) => {
         const confirmed = await confirmDelete();
         if (!confirmed) return;
@@ -94,11 +89,11 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         }
     };
 
-    const handleCategorySelect = (id: number) => {
+    const handleCategorySelect = (id: string) => {
         setSelectedCategoryId(id);
     };
 
-    const handleOpenModal = (categoryId: number) => {
+    const handleOpenModal = (categoryId: string) => {
         try {
             setCurrentCategoryId(categoryId);
             setSelectedCategoryId(null);
@@ -115,25 +110,17 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`)
-
-                if (!res.ok) {
-                    setError('Error en la solicitud de categorías.');
-                }
-
-                const categoriesData = await res.json();
-
-                setCategories(categoriesData.data);
-
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-                setError('Error al obtener las categorías.');
-            } finally {
-                setLoading(false);
-            }
+          try {
+            const categories = await fetchCategories();
+            setCategories(categories);
+          } catch (error) {
+            console.error("Error fetching categories:", error);
+            setError('Error al obtener las categorías.');
+          } finally {
+            setLoading(false);
+          }
         };
-
+      
         fetchData();
     }, []);
 
@@ -249,7 +236,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                         </span>
                         <button
                             className="bg-red-400 text-white font-bold p-1 rounded-full ml-4"
-                            onClick={() => handleOpenModal(product.category.id)}
+                            onClick={() => handleOpenModal(product.category.id.toString())}
                         >
                             <TbArrowsExchange />
                         </button>
@@ -263,7 +250,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                                     ) : error ? (
                                         <p className="text-red-500">{error}</p>
                                     ) :
-                                        (categories.map((category) => {
+                                        (categories?.map((category) => {
                                             const isCurrent = category.id === currentCategoryId;
                                             const isSelected = category.id === selectedCategoryId;
 

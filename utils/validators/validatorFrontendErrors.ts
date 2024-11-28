@@ -1,15 +1,15 @@
-import { Category } from "@/types/category";
+import { ReqCategory } from "@/types/categories";
 import { Characteristics } from "@/types/characteristics";
 
-function isCategory(form: Category | Characteristics): form is Category {
-  return (form as Category).description !== undefined;
+function isCategory(form: ReqCategory | Characteristics): form is ReqCategory {
+  return (form as ReqCategory).description !== undefined;
 }
 
 const handleFrontendError = ({
   form,
   setErrors,
 }: {
-  form: Category | Characteristics;
+  form: ReqCategory | Characteristics;
   setErrors: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
 }) => {
   const newErrors: { [key: string]: string } = {};

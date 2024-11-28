@@ -4,8 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
-import handleBackendError from "@/utils/validators/validatorBackendErrors";
+///import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
+//import handleBackendError from "@/utils/validators/validatorBackendErrors";
 import { getUserById, updateUsers } from "@/lib/user/userActions";
 
 const EditUser = () => {
@@ -78,7 +78,7 @@ const EditUser = () => {
     }
 
     try {
-      //@ts-ignore
+      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token = session?.accessToken;
       console.log("Este es el token" + token);
 
@@ -113,7 +113,7 @@ const EditUser = () => {
       return;
     }
 
-     //@ts-ignore
+    /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
     const token = session?.accessToken;
 
     try {

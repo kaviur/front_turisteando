@@ -1,7 +1,7 @@
 import { User } from "@/types/user";
-import Image from "next/image";
+///import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
-import profileImage from "/public/joseuser.jpg";
+///import profileImage from "/public/joseuser.jpg";
 import Checkbox from "../CheckBox";
 
 type UserTableProps = {
