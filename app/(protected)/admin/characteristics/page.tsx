@@ -52,7 +52,7 @@ const CharacteristicsPage = () => {
     const fetchData = async () => {
       if (session) {
         /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-        const token: string = session?.accessToken;
+        const token: string = session?.user?.accessToken;
 
         try {
           const data = await fetchCharacteristics(token);
@@ -80,7 +80,7 @@ const CharacteristicsPage = () => {
     if (!confirmed || !session) return;
 
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.accessToken;
+    const token = session?.user?.accessToken;
 
     try {
       const response = await deleteCharacteristic(token, id);
