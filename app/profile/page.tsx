@@ -27,7 +27,7 @@ const Profile = async () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold">{user?.name}</h2>
-              {/* @ts-expect-error: Error en la validación de tipos */} 
+              {/* @ts-expect-error: Error en la validación de tipos */}
               <p className="text-sm text-gray-500">{user?.role}</p>
             </div>
           </div>
@@ -35,7 +35,7 @@ const Profile = async () => {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <FaUserTag />
-              {/* @ts-expect-error: Error en la validación de tipos */} 
+              {/* @ts-expect-error: Error en la validación de tipos */}
               <p>{user?.role}</p>
             </div>
 
@@ -43,9 +43,9 @@ const Profile = async () => {
               <FaEnvelope />
               <p>{user?.email}</p>
             </div>
-<pre>{JSON.stringify(session, null, 2)}</pre>
+            <pre>{JSON.stringify(session, null, 2)}</pre>
             <div className="flex items-center gap-2">
-              {/* @ts-expect-error: Error en la validación de tipos */} 
+              {/* @ts-expect-error: Error en la validación de tipos */}
               <p>Status: {user?.isActive ? "Activo" : "Inactivo"}</p>
             </div>
           </div>
