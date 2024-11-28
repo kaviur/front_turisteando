@@ -84,7 +84,7 @@ export default function ProductPage() {
 
         <Swiper
           slidesPerView={3}
-          spaceBetween={12}
+          spaceBetween={30}
           freeMode={true}
           pagination={{
             clickable: true,
@@ -155,7 +155,7 @@ export default function ProductPage() {
         {/*Cards Swiper Component*/}
         <Swiper
           slidesPerView={3}
-          spaceBetween={12}
+          spaceBetween={30}
           freeMode={true}
           pagination={{
             clickable: true,
