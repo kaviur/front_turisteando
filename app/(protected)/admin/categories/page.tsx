@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 
 import ReusableTable from "@/components/ReusableTable/ReusableTable";
-import { Category } from "@/types/category";
+import { ReqCategory } from "@/types/categories";
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<ReqCategory[]>([]);
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
