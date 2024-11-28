@@ -63,7 +63,6 @@ export default function Home() {
       return Object.keys(newErrors).length === 0;
     };
   
-    console.log( "Este es el form: ",form);
          
     const handleSubmit = async (event: React.FormEvent) => {
      // const { email, password, name, lastName } = form;

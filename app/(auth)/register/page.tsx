@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -56,31 +57,40 @@ export default function Register() {
     setIsPending(true);
 
     await toast
-      .promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password, name, lastName }),
-        }).then((response) => {
-          if (!response.ok) throw new Error("Error al registrar la cuenta");
-          router.push("/login"); // Redirige a home en caso de éxito
+    .promise(
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, name, lastName }),
+      })
+        .then(async (response) => {
+          if (!response.ok) {
+            const errorResponse = await response.json(); // Parsear el cuerpo de la respuesta
+            const errorMessage = errorResponse?.debugMessage || "Error al registrar la cuenta";
+            throw new Error(errorMessage); // Lanzar el error para que lo capture el catch
+          }
+          router.push("/login"); // Redirige en caso de éxito
+        })
+        .catch((error) => {
+          throw error; // Asegurar que el error sea capturado por toast.promise
         }),
-        {
-          loading: "Registrando...",
-          success: "Registro exitoso",
-          error: "Error al registrar la cuenta",
-        }
-      )
-      .finally(() => {
-        setIsPending(false);
-      });
+      {
+        loading: "Registrando...",
+        success: "Registro exitoso",
+        error: (error) => error.message || "Ocurrió un error",
+      }
+    )
+    .finally(() => {
+      setIsPending(false);
+    });
+  
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
-      <div className="absolute top-6 left-6 hidden md:block">
+      <Link href={"/"} className="absolute top-6 left-6 hidden md:block">
         <Image
           width={200}
           height={200}
@@ -88,7 +98,7 @@ export default function Register() {
           alt="Logo"
           className="w-32"
         />
-      </div>
+      </Link>
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md flex flex-col gap-6"
