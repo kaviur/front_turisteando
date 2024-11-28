@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
-import { Category } from "@/types/category";
+import { ReqCategory } from "@/types/categories";
 import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
 import handleBackendError from "@/utils/validators/validatorBackendErrors";
 
@@ -15,7 +15,7 @@ const EditCategory = () => {
   const categoryId = pathname.split("/").pop(); //  Obtener el ID de la URL dinámicamente
   const { data: session } = useSession(); // Obtener la sesión y el token
 
-  const [form, setForm] = useState<Category>({
+  const [form, setForm] = useState<ReqCategory>({
     name: "",
     description: "",
     image: undefined,

@@ -5,14 +5,14 @@ import { useState } from "react";
 import { useSession } from "next-auth/react"; // Importar useSession para obtener el token
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { Category } from "@/types/category";
+import { ReqCategory } from "@/types/categories";
 import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
-import handleBackendError from "@/utils/validators/validatorBackendErrors";
+import { createCategory } from "@/lib/categories/categoryActions";
 
 export default function CreateCategory() {
   const router = useRouter();
   const { data: session } = useSession(); // Obtener la sesión y el token
-  const [form, setForm] = useState<Category>({
+  const [form, setForm] = useState<ReqCategory>({
     name: "",
     description: undefined,
     image: undefined,
@@ -34,65 +34,42 @@ export default function CreateCategory() {
   // Función para crear una categoría
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+  
     if (!handleFrontendError({ form, setErrors })) {
       toast.error("Por favor, corrige los errores en el formulario.");
       return;
     }
-
+  
     setIsPending(true);
-
+  
     if (!session) {
       toast.error("No se encontró la sesión.");
       setIsPending(false);
       return;
     }
-
+  
     // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
     const token = session?.accessToken;
-
-    // Estructurar los datos según lo esperado por el servidor
-    const category = JSON.stringify({
-      ...form,
-      image: undefined,
-    });
-    const formData = new FormData();
-    formData.append(
-      "category",
-      new Blob([category], { type: "application/json" })
-    ); // Agregar el JSON en el campo "category"
-
-    if (form.image instanceof File) {
-      formData.append("image", form.image);
-    } // Agregar el archivo en el campo "image"
-
+  
     try {
-      // Hacer la solicitud y mostrar el toast de carga
+      // Mostrar un toast mientras se crea la categoría
       await toast.promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/create`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }).then(async (response) => {
-          if (!response.ok) {
-            const errorData = await response.json();
-            handleBackendError(errorData);
-          }
-        }),
+        createCategory(form, token),
         {
           loading: "Creando categoría...",
-          success: "Categoría creada exitosamente",
-          error: "Error al crear la categoría",
+          success: "Categoría creada exitosamente.",
+          error: "Error al crear la categoría.",
         }
       );
-
+  
+      // Redirigir después de un pequeño retraso
       setTimeout(() => {
         setIsPending(false);
         router.push("/admin/categories");
       }, 1000);
     } catch (error) {
-      console.log(error);
+      console.error("Error al crear la categoría:", error);
+      toast.error("Hubo un problema al crear la categoría.");
       setIsPending(false);
     }
   };

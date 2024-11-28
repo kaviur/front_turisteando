@@ -1,13 +1,13 @@
 "use client";
 
-import { Category } from "@/types/category";
+import { ReqCategory } from "@/types/categories";
 import PrimaryButton from "../ui/PrimaryButton";
 import { Characteristics } from "@/types/characteristics";
 
 interface ReusableSmallFormProps {
   entityType: "categoría" | "característica";
-  form: Category | Characteristics;
-  setForm: React.Dispatch<React.SetStateAction<Category | Characteristics>>;
+  form: ReqCategory | Characteristics;
+  setForm: React.Dispatch<React.SetStateAction<ReqCategory | Characteristics>>;
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -75,7 +75,7 @@ const ReusableSmallForm = ({
                   </label>
                   <textarea
                     rows={6}
-                    value={(form as Category).description}
+                    value={(form as ReqCategory).description}
                     name="description"
                     onChange={handleChange}
                     placeholder="Ingresa la descripción de la categoría"
