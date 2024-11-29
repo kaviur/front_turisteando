@@ -3,6 +3,8 @@
 import { useState } from "react";
 import ProductForm from "@/components/ProductForm/ProductForm";
 import { toast, Toaster } from "react-hot-toast";
+import { createTouristPlan } from "@/lib/actions";
+import { useSession } from "next-auth/react";
 
 export default function CreateProductPage() {
   // Estados para manejar los datos del formulario
@@ -22,19 +24,21 @@ export default function CreateProductPage() {
 
   // Estado adicional
   const [isPending, setIsPending] = useState(false);
+  const { data: session } = useSession(); 
 
-  // Función para enviar el formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsPending(true);
   
     try {
-      const formData = new FormData();
-      const touristPlan = JSON.stringify({
+      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+      const token: string = session?.user.accessToken;
+  
+      const touristPlanData = {
         title,
         description,
         price: Number(price),
-        seller: "admin", //TODO: CHANGE TO THE USER LOGGED
+        seller: "seller", // TODO: Cambiar por el usuario autenticado
         cityId: Number(cityId),
         categoryId: Number(categoryId),
         availabilityStartDate,
@@ -42,37 +46,10 @@ export default function CreateProductPage() {
         capacity: Number(capacity),
         duration,
         characteristicIds: characteristicIds.map((id) => Number(id)),
-      });
+        images: images ? Array.from(images) : null,
+      };
   
-      formData.append(
-        "touristPlan",
-        new Blob([touristPlan], { type: "application/json" })
-      );
-  
-      if (images) {
-        Array.from(images).forEach((image) => {
-          formData.append("images", image);
-        });
-      }
-  
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/create`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-  
-      if (!response.ok) {
-        const errorData = await response.json(); // Parseamos la respuesta del backend
-        if (errorData.errors && Array.isArray(errorData.errors)) {
-          // Iteramos sobre los errores y mostramos un toast por cada uno
-          errorData.errors.forEach((err: string) => {
-            toast.error(err); // Mostramos cada error como toast
-          });
-        }
-        throw new Error("Error al crear el producto.");
-      }
+      await createTouristPlan(token, touristPlanData);
   
       // Resetea el formulario si la petición fue exitosa
       setTitle("");
@@ -90,7 +67,9 @@ export default function CreateProductPage() {
       toast.success("Producto creado exitosamente!"); // Mensaje de éxito
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Hubo un problema al crear el producto.");
+      toast.error(
+        error instanceof Error ? error.message : "Hubo un problema al crear el producto."
+      );
     } finally {
       setIsPending(false);
     }
