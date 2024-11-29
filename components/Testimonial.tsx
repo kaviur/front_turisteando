@@ -1,6 +1,5 @@
 "use client"
 import Image from "next/image";
-import { useState } from "react";
 
 interface TestimonialProps {
   userImage: string;       // Ruta de la imagen del usuario
