@@ -180,7 +180,9 @@ export const updateTouristPlan = async (
       }
     );
 
-    console.log("response---",response);
+    const data = await response.json()
+
+    console.log("response---",data.data);
 
     if (!response.ok) {
       const errorData = await response.json();
