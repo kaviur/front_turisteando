@@ -2,6 +2,7 @@ import "@/app/globals.css";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { addFavoriteToUser, deleteFavoriteToUser, getFavoritesByUser } from "@/lib/favoriteActions";
 
 interface LikeButtonProps {
   planId: number;
