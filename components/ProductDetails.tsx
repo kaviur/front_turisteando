@@ -47,7 +47,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
   active,
 }) => {
   const router = useRouter();
-  const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
+  //const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
 

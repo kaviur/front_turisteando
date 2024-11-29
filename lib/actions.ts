@@ -48,6 +48,75 @@ export const fetchProduct = async (
   }
 };
 
+// Método para crear un Tourist Plan
+export const createTouristPlan = async (
+  token: string,
+  touristPlanData: {
+    title: string;
+    description: string;
+    price: number;
+    seller: string;
+    cityId: number;
+    categoryId: number;
+    availabilityStartDate: string;
+    availabilityEndDate: string;
+    capacity: number;
+    duration: string;
+    characteristicIds: number[];
+    images: File[] | null;
+  }
+): Promise<void> => {
+  try {
+    const formData = new FormData();
+    const touristPlan = JSON.stringify({
+      title: touristPlanData.title,
+      description: touristPlanData.description,
+      price: touristPlanData.price,
+      seller: touristPlanData.seller,
+      cityId: touristPlanData.cityId,
+      categoryId: touristPlanData.categoryId,
+      availabilityStartDate: touristPlanData.availabilityStartDate,
+      availabilityEndDate: touristPlanData.availabilityEndDate,
+      capacity: touristPlanData.capacity,
+      duration: touristPlanData.duration,
+      characteristicIds: touristPlanData.characteristicIds,
+    });
+
+    formData.append(
+      "touristPlan",
+      new Blob([touristPlan], { type: "application/json" })
+    );
+
+    if (touristPlanData.images) {
+      touristPlanData.images.forEach((image) => {
+        formData.append("images", image);
+      });
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/create`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Se agrega el token aquí
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        throw new Error(errorData.errors.join(", "));
+      }
+      throw new Error("Error desconocido al crear el producto.");
+    }
+  } catch (error) {
+    console.error("Error al crear el producto:", error);
+    throw error; // Lanza el error para manejarlo en el componente
+  }
+};
+
 /**
  * ***********************************
  * FUNCIONES CRUD PARA CARACTERISTICAS
