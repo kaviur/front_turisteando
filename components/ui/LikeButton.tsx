@@ -1,8 +1,12 @@
 import "@/app/globals.css";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { addFavoriteToUser, deleteFavoriteToUser, getFavoritesByUser } from "@/lib/favoriteActions";
+import {
+  addFavoriteToUser,
+  deleteFavoriteToUser,
+  getFavoritesByUser,
+} from "@/lib/favoriteActions";
 
 interface LikeButtonProps {
   planId: number;
@@ -13,54 +17,64 @@ const LikeButton: React.FC<LikeButtonProps> = ({ planId }) => {
   const router = useRouter();
   const [isActive, setIsActive] = useState(false);
 
-  // Cargar favoritos sólo si el usuario está logueado
-  const fetchFavorites = useCallback(async () => {
-    if (session?.user?.id) {
-      try {
-        const response = await getFavoritesByUser(session.user.id);
-        if (Array.isArray(response)) {
-          setIsActive(response.some((fav) => fav.id === planId));
-        }
-      } catch (error) {
-        console.error("Error al cargar favoritos:", error);
-      }
-    }
-  }, [planId, session?.user?.id]);
-
+  // Verificar si el plan ya está en los favoritos cuando el componente se monta
   useEffect(() => {
-    fetchFavorites();
-  }, [fetchFavorites]);
+    const checkFavorites = async () => {
+      if (session && session.user) {
+        try {
+          try {
+            const response = await getFavoritesByUser(session?.user?.id);
+            if (Array.isArray(response)) {
+              setIsActive(response.some((fav) => fav.id === planId));
+            }
+          } catch (error) {
+            console.error("Error al cargar favoritos:", error);
+          }
+        } catch (error) {
+          console.error("Error al verificar favoritos:", error);
+        }
+      }
+    };
 
+    checkFavorites();
+  }, [session, planId]);
+
+  // Manejar el clic para alternar la clase
   const handleToggle = async () => {
+    //setIsActive((prevState) => !prevState);
+    // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
+    const token = session?.user?.accessToken;
 
-    if (!session) {
+    if (!session || !token) {
+      console.error("El usuario no está autenticado o falta el token");
       router.push("/login");
+    }
+
+    if (!planId) {
+      console.error("El planId es inválido:", planId);
       return;
     }
 
-    // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
-    const token = session.user.accessToken;
-
     try {
       const action = isActive
-        ? deleteFavoriteToUser(token, session.user?.id, planId)
-        : addFavoriteToUser(token, session.user?.id, planId);
+        ? deleteFavoriteToUser(token, session?.user?.id, planId)
+        : addFavoriteToUser(token, session?.user?.id, planId);
 
-      await action;
-      setIsActive((prev) => !prev);
+      setIsActive(!isActive);
+      // await action;
     } catch (error) {
-      console.error("Error al modificar el favorito:", error);
+      console.error("Error al hacer la solicitud:", error);
     }
   };
 
   return (
     <div className="btn btn-ghost rounded-full h-20 w-20 bg-white relative shadow-lg">
-
       <div
-        className={` heart absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${isActive ? "is-active" : ""}`}
+        className={` heart absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
+          isActive ? "is-active" : ""
+        }`}
         onClick={handleToggle}
       ></div>
-
     </div>
   );
 };

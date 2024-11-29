@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
+import LikeButton from "./ui/LikeButton";
 
 interface CardProps {
   id: number; // Añadir el parámetro id
@@ -59,15 +60,11 @@ export default function Card({
 
   // Desktop Version Card
   return (
-<<<<<<< Updated upstream
-    <Link href={`/product/${id}`} className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden">
-=======
     <Link
       href={`/product/${id}`}
       className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden relative"
       onClick={(event) => event.stopPropagation()}
     >
->>>>>>> Stashed changes
       <figure className="min-h-52 h-48 max-h-64">
         <Image
           className="rounded-t-xl w-full h-full object-cover"
@@ -76,14 +73,11 @@ export default function Card({
           width={400}
           height={400}
         />
-<<<<<<< Updated upstream
-=======
         {/* El botón de like se posiciona más hacia la izquierda y más arriba */}
 
         <div className="absolute top-24 right-1">
           <LikeButton planId={id} />
         </div>
->>>>>>> Stashed changes
       </figure>
       <div className="h-72 overflow-hidden px-2 pt-2">
         <h2
