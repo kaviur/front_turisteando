@@ -3,12 +3,13 @@ import { ResCategory } from "@/types/categories";
 import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
 import Link from "next/link";
-//import { useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { TbArrowsExchange } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { fetchCategories } from "@/lib/categories/categoryActions"
+import { updateTouristPlan } from "@/lib/actions";
 
 
 
@@ -19,6 +20,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(null);
 
+    const { data: session } = useSession(); 
     const router = useRouter();
     //const { data: session } = useSession();
 
@@ -125,52 +127,48 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
     }, []);
 
     const assignCategory = async (product: TouristPlan) => {
+        alert(product.id)
         if (!selectedCategoryId) {
             toast.error("Por favor selecciona una categoría antes de asignar.");
             return;
         }
-
+    
         try {
-            const formData = new FormData();
-            const touristPlan = JSON.stringify({
-                title: product.title,
-                description: product.description,
-                price: product.price,
-                cityId: product.city,
-                categoryId: product.category,
-                availabilityStartDate: product.availabilityStartDate,
-                availabilityEndDate: product.availabilityEndDate,
-                capacity: product.capacity,
-                duration: product.duration,
-                characteristicIds: product.characteristic
-            });
+            /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+            const token: string = session?.user?.accessToken;
 
-            formData.append(
-                "touristPlan",
-                new Blob([touristPlan], { type: "application/json" })
-            );
+            // Transformar characteristic en un arreglo de IDs
+            const characteristicIds = product.characteristic.map((char) => char.id);
 
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/update/${product.id}`,
+            await updateTouristPlan(
+                token, 
+                product.id.toString(),
                 {
-                    method: "PUT",
-                    body: formData,
+                    title: product.title,
+                    description: product.description,
+                    price: product.price,
+                    seller: product.seller ?? "",
+                    cityId: product.city.id,
+                    categoryId: Number(selectedCategoryId), // Usa la categoría seleccionada
+                    availabilityStartDate: product.availabilityStartDate,
+                    availabilityEndDate: product.availabilityEndDate,
+                    capacity: product.capacity,
+                    duration: product.duration,
+                    characteristicIds,
+                    images: null,
+                    imagesToDelete: [],
                 }
             );
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                if (errorData.errors && Array.isArray(errorData.errors)) {
-                    errorData.errors.forEach((err: string) => toast.error(err));
-                }
-                throw new Error("Error al modificar la categoría.");
-            }
-
+        
+            // Si todo va bien, muestra el mensaje de éxito
             toast.success("Categoría modificada exitosamente!");
             router.push("/admin/productactions");
         } catch (error) {
+            // Maneja errores lanzados desde `updateTouristPlan`
             console.error("Error al asignar la categoría:", error);
-            toast.error("Hubo un error. Por favor intenta nuevamente.");
+            toast.error(
+                "Hubo un error al modificar la categoría. Por favor intenta nuevamente."
+            );
         }
     };
 
@@ -251,8 +249,8 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                                         <p className="text-red-500">{error}</p>
                                     ) :
                                         (categories?.map((category) => {
-                                            const isCurrent = category.id === currentCategoryId;
-                                            const isSelected = category.id === selectedCategoryId;
+                                            const isCurrent = category.id.toString() === currentCategoryId;
+                                            const isSelected = category.id.toString() === selectedCategoryId;
 
                                             return (
                                                 <div
@@ -260,7 +258,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                                                     className={`relative group rounded-md overflow-hidden shadow-lg cursor-pointer ${isSelected ? "border-4 border-blue-500" : ""
                                                         } ${isCurrent ? "bg-gray-300 cursor-not-allowed" : ""}`}
                                                     onClick={() => {
-                                                        if (!isCurrent) handleCategorySelect(category.id);
+                                                        if (!isCurrent) handleCategorySelect(category.id.toString());
                                                     }}
                                                     style={{ opacity: isCurrent ? 0.6 : 1 }}
                                                 >
