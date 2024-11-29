@@ -1,0 +1,49 @@
+
+.rdrDay {
+  background: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  border: 0;
+  padding: 0px;
+  line-height: 1em;
+  height: 2.5em;
+  width: 2.5em;
+  text-align: center;
+}
+.rdrMonth {
+  padding: 0;
+  width: 17.667em;
+
+
+}
+
+.rdrMonthAndYearPickers{
+  visibility: hidden;
+}
+
+.rdrCalendarWrapper {
+  padding: 0 13px;
+  position: relative;
+}
+
+.rdrMonthAndYearWrapper {
+    z-index: 1;
+    width: 100%;
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    height: 12px;
+    padding-top: 0px;
+}
+.rdrNextButton{
+  position: absolute;
+  right: -2%;
+
+}
+.rdrPprevButton{
+  position: absolute;
+  left: -2%;
+}
