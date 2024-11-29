@@ -5,6 +5,7 @@ import { TiGroup } from "react-icons/ti";
 import { FaLocationDot } from "react-icons/fa6";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
+// import "../app/calendario.css"
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
