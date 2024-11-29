@@ -9,6 +9,7 @@ interface TestimonialProps {
   country: string;         // País del usuario
   date: string;            // Fecha en formato "mes año"
   reviewText: string;      // Texto de la experiencia del usuario
+  rating: number;
 }
 
 export default function Testimonial({
@@ -18,19 +19,32 @@ export default function Testimonial({
   country,
   date,
   reviewText,
+  rating,
 }: TestimonialProps) {
-  const [rating, setRating] = useState(0);  // Estado para calificación de estrellas
-
-  const handleRating = (star: number) => {
-    setRating(star);
+  // Función para obtener las iniciales del nombre
+  const getInitials = (name: string) => {
+    const names = name.split(" ");
+    return names
+      .map((n) => n.charAt(0).toUpperCase())
+      .join(""); // Retorna las iniciales en mayúscula
   };
+  //const [rating, setRating] = useState(0);  // Estado para calificación de estrellas
+
+  // const handleRating = (star: number) => {
+  //   setRating(star);
+  // };
 
   return (
     <div className="max-w-xl w-full mb-12 min-h-80 h-80 max-h-96 shadow-md rounded-xl bg-base-100 p-2 ">
       <div className="flex items-center gap-4">
         {/* Foto de usuario */}
+        {userImage ? (
         <Image src={userImage} alt={`${userName}'s photo`} width={50} height={50} className="rounded-full" />
-        
+      ) : (
+        <div className="w-12 h-12 bg-[#FF0178] flex items-center justify-center text-white rounded-full">
+          <span className="text-xl font-semibold">{getInitials(userName)}</span>
+        </div>
+      )}
         {/* Nombre y ubicación */}
         <div>
           <h3 className="text-lg font-semibold">{userName}</h3>
@@ -43,7 +57,7 @@ export default function Testimonial({
         {[1, 2, 3, 4, 5].map((star) => (
           <svg
             key={star}
-            onClick={() => handleRating(star)}
+            //onClick={() => handleRating(star)}
             xmlns="http://www.w3.org/2000/svg"
             className={`h-6 w-6 cursor-pointer ${star <= rating ? "text-yellow-400" : "text-gray-300"}`}
             fill={star <= rating ? "currentColor" : "none"}
