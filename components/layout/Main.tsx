@@ -284,6 +284,7 @@ export const Main = () => {
               country="Colombia"
               date="mayo 2024"
               reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+              rating={5}
             />
           </SwiperSlide>
           <SwiperSlide>
@@ -294,6 +295,7 @@ export const Main = () => {
               country="Colombia"
               date="mayo 2024"
               reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+              rating={5}
             />
           </SwiperSlide>
           <SwiperSlide>
@@ -304,6 +306,7 @@ export const Main = () => {
               country="Colombia"
               date="mayo 2024"
               reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+              rating={5}
             />
           </SwiperSlide>
           <SwiperSlide>
@@ -314,6 +317,7 @@ export const Main = () => {
               country="Colombia"
               date="mayo 2024"
               reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+              rating={5}
             />
           </SwiperSlide>
           <SwiperSlide>
@@ -324,6 +328,7 @@ export const Main = () => {
               country="Colombia"
               date="mayo 2024"
               reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
+              rating={5}
             />
           </SwiperSlide>
         </Swiper>
