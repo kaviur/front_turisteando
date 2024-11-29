@@ -51,14 +51,18 @@ export default function Home() {
     });
   };
 
+  
   // Fetch Users when the component mounts
   useEffect(() => {
     const fetchUsers = async () => {
       if (session) {
        /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-        const token: string = session?.accessToken;
+        const token: string =  session?.user?.accessToken;
+        console.log (token);
+
         try {
           const response = await getUsers(token);
+          console.log( "Estamos hacendo el fetch de User", response);
           setUser(response);
           setLoading(false);
         } catch (error) {
@@ -82,7 +86,7 @@ export default function Home() {
     if (!confirmed || !session) return;
 
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.accessToken;
+    const token = session?.user?.accessToken;
     try {
       const response = await deleteUser(token, id);
       if (response) {

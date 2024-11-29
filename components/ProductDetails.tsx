@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import DatePicker from "react-datepicker";
 import { LuClock } from "react-icons/lu";
 import { TiGroup } from "react-icons/ti";
 import { FaLocationDot } from "react-icons/fa6";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
+
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import {
   FaArrowLeft,
   FaHotel,
@@ -14,13 +16,15 @@ import {
   FaWifi,
 } from "react-icons/fa";
 import { TouristPlan } from "@/types/touristPlan";
-import { SiWalkman } from "react-icons/si"; 
+import { SiWalkman } from "react-icons/si";
 import { IoAccessibility, IoFastFood } from "react-icons/io5";
 import { TbMoodKid } from "react-icons/tb";
 import { PiStarDuotone, PiTreeEvergreenDuotone } from "react-icons/pi";
 import { MdPets } from "react-icons/md";
 import ShareProduct from "./ui/ShareButton";
 import LikeButton from "./ui/LikeButton";
+import { DateRange } from "react-date-range";
+import { addDays } from "date-fns";
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -43,8 +47,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
   active,
 }) => {
   const router = useRouter();
+  //const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
 
   const characteristicIcons: Record<string, JSX.Element> = {
@@ -62,6 +66,14 @@ const ProductDetails: React.FC<TouristPlan> = ({
     original: img.imageUrl,
     thumbnail: img.imageUrl,
   }));
+
+  const [state, setState] = useState([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 7),
+      key: "selection",
+    },
+  ]);
 
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
@@ -94,10 +106,10 @@ const ProductDetails: React.FC<TouristPlan> = ({
       </div>
 
       {/* Imagen, calendario y cantidad de personas */}
-      <div className="pt-12 -z-10 flex flex-wrap md:justify-between justify-center gap-4">
-        <div className="md:max-w-lg lg:max-w-2xl xl:max-w-4xl max-w-md mx-auto space-y-4">
+      <div className="pt-12 -z-10 flex xl:flex-nowrap flex-wrap xl:justify-between justify-center gap-4">
+        <div className="max-w-3xl w-3/4 mx-auto space-y-4 bg-black">
           <ImageGallery
-            additionalClass="z-10"
+            additionalClass="z-10 w-full"
             showBullets={false}
             showPlayButton={false}
             showNav={false}
@@ -106,13 +118,57 @@ const ProductDetails: React.FC<TouristPlan> = ({
             items={imagesGallery}
           />
         </div>
-        <div className="flex flex-col min-w-60 w-64">
+
+        <div className="flex flex-col min-w-max max-w-max w-2/5 ">
           <div className="bg-white rounded-lg shadow-lg  ">
-            <DatePicker
-              inline
-              selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
-              className="p-2 border rounded-md text-gray-600 shadow-inner"
+            <div className="flex items-center justify-between p-4   ">
+              {/* Indicador de disponibilidad */}
+              <div
+                className={`px-4 py-2 rounded-lg text-white font-bold ${
+                  active ? "bg-primary" : "bg-gray-400"
+                }`}
+              >
+                {active ? "Disponible" : "No Disponible"}
+              </div>
+
+              {/* Radio Buttons */}
+              <div className="flex items-center gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="tour"
+                    disabled
+                    className="radio radio-primary"
+                  />
+                  Tour
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    name="type"
+                    value="activity"
+                    disabled
+                    className="radio radio-primary"
+                  />
+                  Activity
+                </label>
+              </div>
+            </div>
+            <DateRange
+              showMonthArrow
+              showMonthAndYearPickers={false}
+              // showPreview={false}
+              //@ts-expect-error: Ignorando error por ahora
+              onChange={(item) => setState([item.selection])}
+              direction="horizontal"
+              ranges={state}
+              moveRangeOnFirstSelection={false}
+              weekdayDisplayFormat="EEEEE"
+              rangeColors={["#ff0178"]}
+              showDateDisplay={false}
+              months={2}
+              className="rounded-lg "
               minDate={new Date(availabilityStartDate)}
               maxDate={new Date(availabilityEndDate)}
             />
@@ -177,10 +233,12 @@ const ProductDetails: React.FC<TouristPlan> = ({
         <>
           <div className="text-center text-gray-500 text-sm">Disponible</div>
           <div className="text-center text-gray-500 text-sm">{price} €</div>
-          <div className="text-center text-gray-500 text-sm">{seller} vendedor</div>
-          <div className="text-center text-gray-500 text-sm">{category}, {categoryDescription} </div>
-
-
+          <div className="text-center text-gray-500 text-sm">
+            {seller} vendedor
+          </div>
+          <div className="text-center text-gray-500 text-sm">
+            {category}, {categoryDescription}{" "}
+          </div>
         </>
       ) : (
         <div className="text-center text-red-500 text-sm">No disponible</div>

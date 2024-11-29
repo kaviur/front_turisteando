@@ -93,7 +93,7 @@ const EditCategory = () => {
       const response = await editCategory(token, formData, categoryId);
   
       if ("debugMessage" in response) {
-        handleBackendError(response);
+        handleBackendError(response, "category");
   
         toast.error(response.message);
         setIsPending(false);
