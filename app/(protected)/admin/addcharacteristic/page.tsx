@@ -66,7 +66,7 @@ export default function Home() {
     try {
       const response = await createCharacteristic(token, formData);
       if ("debugMessage" in response) {
-        handleBackendError(response);
+        handleBackendError(response, "characteristic");
 
         toast.error(response.message);
         setIsPending(false);

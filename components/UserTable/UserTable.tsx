@@ -2,7 +2,13 @@ import { User } from "@/types/user";
 ///import Image from "next/image";
 import { FiEdit, FiTrash } from "react-icons/fi";
 ///import profileImage from "/public/joseuser.jpg";
+
+import { useState} from "react";
 import Checkbox from "../CheckBox";
+import { useSession } from "next-auth/react";
+
+import { toast, Toaster } from "react-hot-toast";
+import { updateUsersRole } from "@/lib/user/userActions";
 
 type UserTableProps = {
   users: User[]; // Recibir el arreglo de usuarios directamente
@@ -11,8 +17,33 @@ type UserTableProps = {
 }
 
 const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
-  return (
+  const { data: session } = useSession(); // Obtener la sesión y el token
   
+  const [isPending, setIsPending] = useState(false);
+
+  const handleRoleChange = (userId: string) => {
+    updateUsersRole(userId, token); // Llamar a la acción para cambiar el rol
+  };
+
+  if (!session) {
+    toast.error("No se encontró la sesión activa.");
+    setIsPending(false);
+    return; // Asegurarte de que no se ejecute nada más si no hay sesión.
+  }
+ 
+     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+     const token = session?.user?.accessToken;
+
+  if (!token) {
+    toast.error("Token de sesión no disponible.");
+    return; // Evitar la ejecución si no hay token
+  }
+
+
+
+  return (
+
+   
 
   
     <div className="rounded-sm border border-stroke bg-white shadow-default">
@@ -41,6 +72,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
         </div>
       </div>
 
+  
       {users.map((user, key) => (
         <div
           className="grid grid-cols-6 border-t border-stroke px-4 py-4 sm:grid-cols-7 md:px-6 2xl:px-7"
@@ -66,7 +98,10 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
           </div>
 
           <div className="col-span-1 flex items-center ml-6">
-            <Checkbox isChecked={user.role === "ADMIN"} />
+          <Checkbox
+              isChecked={user.role === "ADMIN"} // Aquí evaluamos si el usuario es ADMIN
+              onChange={() => handleRoleChange(user.id)} // Aquí pasamos el nuevo estado del checkbox
+            />
           </div>
           
           <div className="col-span-1 flex items-center ml-6 justify-end space-x-4">

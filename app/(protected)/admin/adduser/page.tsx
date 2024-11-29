@@ -12,6 +12,7 @@ import { createUser } from "@/lib/user/userActions";
 //import { FaLessThanEqual } from "react-icons/fa";
 //import { setConfig } from "next/config";
 import { useSession } from "next-auth/react";
+import handleBackendError from "@/utils/validators/validatorBackendErrors";
 
 export default function Home() {
   const router = useRouter();
@@ -74,22 +75,30 @@ export default function Home() {
 
       
      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token = session?.accessToken;
+      const token = session?.user?.accessToken;
   
       try {
           
           console.log(token);
            const response = await createUser(token, form)
-          if (response){
-            toast.success ("Usuario Creado exitosamente");
+
+           if ("debugMessage" in response) {
+            handleBackendError(response, "user");
+           
+            toast.error(response.message);
             setIsPending(false);
-            setTimeout(()=>{
-              router.push("/admin/users")
-            }, 1200) ;
-          }  
-      } catch (error) {
-        console.log( "Se dio un error ", error);
+          }  else{
+             toast.success ("Usuario Creado exitosamente");
+             setIsPending(false);
+             setTimeout(()=>{
+               router.push("/admin/users")
+             }, 1200) ;  
+            }
      
+      } catch (error) {
+        
+        console.log( "Error al Crear el Usuario", error);
+        toast.error( "Error al Crear el Usuario. Intenta nuevamente");
       }finally{
         setIsPending(false);
       }
