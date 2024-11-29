@@ -17,7 +17,7 @@ import { FaArrowRight } from "react-icons/fa";
 import { fetchProduct, fetchTours } from "@/lib/actions";
 import { fetchReviewsByPlan } from "@/lib/reviews/reviewActions";
 import { Review } from "@/types/review";
-import { useSession } from "next-auth/react";
+
 
 export default function ProductPage() {
   const [tours, setTours] = useState<TouristPlan[]>([]);
@@ -25,9 +25,6 @@ export default function ProductPage() {
   const [product, setProduct] = useState<TouristPlan | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
 
-  const { data: session, status } = useSession();  
-  // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
-  const token = session?.user.accessToken;
 
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
@@ -59,29 +56,24 @@ export default function ProductPage() {
   // Cargar las reseñas del producto
   useEffect(() => {
     const loadReviews = async () => {
-      if (status === "authenticated" && productId && token) {
-        try {
-          const reviewsData = await fetchReviewsByPlan(Number(productId), token);
-          console.log("Reviews Data:", reviewsData);
-          setReviews(reviewsData);
-        } catch (error) {
-          console.error("Error al cargar las reseñas:", error);
-        }
-      } else {
-        console.error("La sesión no está autenticada o el token es inválido.");
+      try {
+        const reviewsData = await fetchReviewsByPlan(Number(productId));
+        console.log("Reviews Data:", reviewsData);
+        setReviews(reviewsData);
+      } catch (error) {
+        console.error("Error al cargar las reseñas:", error);
       }
     };
-    if (status === "authenticated") {
-      loadReviews();  // Carga las reseñas solo si el usuario está autenticado
-    }
-  }, [productId, token, status]);
+
+    loadReviews();
+  }, [productId]);
 
   console.log(product);
 
   if (!product) return;
-  
+
   console.log(product);
-  
+
   return (
     <div className="md:mt-28">
       <Navbar />
@@ -146,7 +138,7 @@ export default function ProductPage() {
                 city="Bogotá"
                 country="Colombia"
                 date="mayo 2024"
-                reviewText="Desde Turisteando te informamos que no se han encontrado reseñas."
+                reviewText="No se han encontrado reseñas aún."
                 rating={5}
               />
             </SwiperSlide>

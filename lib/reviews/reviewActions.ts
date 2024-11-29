@@ -3,7 +3,7 @@
 import { Review } from "@/types/review"; 
 
 // Función para obtener todas las reseñas de un plan turístico
-export const fetchReviewsByPlan = async (planId: number, token: string): Promise<Review[]> => {
+export const fetchReviewsByPlan = async (planId: number): Promise<Review[]> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/reviews/plan/${planId}`,  
@@ -11,7 +11,6 @@ export const fetchReviewsByPlan = async (planId: number, token: string): Promise
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
         },
       }
     );
