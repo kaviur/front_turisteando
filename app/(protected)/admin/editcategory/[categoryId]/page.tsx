@@ -68,6 +68,9 @@ const EditCategory = () => {
       return;
     }
   
+    // Crear una copia del formulario sin el campo `image`
+  // const { image, ...categoryData } = form;
+  // const category = JSON.stringify(categoryData);
     // Estructurar los datos según lo esperado por el servidor
     const category = JSON.stringify({
       ...form,
