@@ -49,7 +49,8 @@ export default function CreateCategory() {
     }
   
     // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
-    const token = session?.accessToken;
+    const token = session?.user?.accessToken;
+      console.log("token---"+token)
   
     try {
       // Mostrar un toast mientras se crea la categoría

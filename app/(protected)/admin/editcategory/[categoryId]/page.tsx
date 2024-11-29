@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ReqCategory } from "@/types/categories";
 import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
 import handleBackendError from "@/utils/validators/validatorBackendErrors";
+import { fetchCategoryById, editCategory } from "@/lib/categories/categoryActions";
 
 const EditCategory = () => {
   const router = useRouter(); // Router para el redireccionamiento
@@ -34,40 +35,12 @@ const EditCategory = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
 
-  // Fetch para obtener la categoría por ID
   const fetchCategory = useCallback(async () => {
-    if (!categoryId) {
-      console.warn("No category ID provided");
-      return;
-    }
-    if (!session) {
-      console.warn("No session available");
-      return;
-    }
+    if (!categoryId || !session) return;
 
     try {
-      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token = session?.accessToken;
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/categories/${categoryId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error fetching category:", errorData);
-        throw new Error(errorData.message || "Error al obtener la categoría");
-      }
-
-      const data = await response.json();
-      setForm({
-        ...data.data,
-      });
+      const data = await fetchCategoryById(categoryId);
+      setForm({ ...data });
     } catch (error) {
       console.error("Error fetching category:", error);
       toast.error("Error al cargar los datos de la categoría");
@@ -78,22 +51,26 @@ const EditCategory = () => {
     fetchCategory();
   }, [fetchCategory]);
 
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+  
     if (!handleFrontendError({ form, setErrors })) {
       toast.error("Por favor, corrige los errores en el formulario.");
       return;
     }
-
+  
     setIsPending(true);
-
+  
     if (!session) {
       toast.error("No se encontró la sesión activa.");
       setIsPending(false);
       return;
     }
-
+  
+    // Crear una copia del formulario sin el campo `image`
+  // const { image, ...categoryData } = form;
+  // const category = JSON.stringify(categoryData);
     // Estructurar los datos según lo esperado por el servidor
     const category = JSON.stringify({
       ...form,
@@ -104,42 +81,34 @@ const EditCategory = () => {
       "category",
       new Blob([category], { type: "application/json" })
     ); // Agregar el JSON en el campo "category"
-
+  
     if (form.image instanceof File) {
       formData.append("image", form.image);
-    } // Agregar el archivo en el campo "image"
-
+    } // Agregar el archivo si existe
+  
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.accessToken;
-
+    const token = session?.user?.accessToken;
+  
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/categories/update/${categoryId}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        handleBackendError(errorData);
-      }
-
-      toast.success("Categoría actualizada exitosamente");
-
-      setTimeout(() => {
+      const response = await editCategory(token, formData, categoryId);
+  
+      if ("debugMessage" in response) {
+        handleBackendError(response, "category");
+  
+        toast.error(response.message);
         setIsPending(false);
-        router.push("/admin/categories");
-      }, 1500);
-    } catch (error) {
-      if (error instanceof Error && error.message !== "VALIDATION_ERROR") {
-        toast.error("Error al actualizar la categoría");
+      } else {
+        toast.success("Categoría actualizada exitosamente");
+  
+        setTimeout(() => {
+          setIsPending(false);
+          router.push("/admin/categories");
+        }, 1000);
       }
-    } finally {
+    } catch (error) {
+      console.error("Error al actualizar la categoría:", error);
+  
+      toast.error("Error al actualizar la categoría. Intenta nuevamente.");
       setIsPending(false);
     }
   };
