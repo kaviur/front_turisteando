@@ -120,6 +120,8 @@ export const deleteCategory = async (
   id: string | undefined
 ): Promise<string | undefined> => {
   try {
+
+    console.log( "Este es el token", token);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/categories/delete/${id}`,
       {
@@ -133,14 +135,17 @@ export const deleteCategory = async (
 
     const data = await response.json();
 
-    if (!data.success) {
-      console.error("Error al eliminar la categoría:", data.errors);
-      // Lanza un error con detalles
-      throw new Error(
-        Array.isArray(data.errors)
-          ? data.errors.join(", ")
-          : "Error desconocido al eliminar la categoría."
-      );
+    console.log ("Esto es el data", data);
+
+    // Verifica si la respuesta indica un error
+    if (!response.ok) {
+      console.log( "error del data error", data.errors);
+
+      const errorMessage = Array.isArray(data.errors)
+        ? data.errors.join(", ") // Combina todos los mensajes de error en uno solo
+        : "Error desconocido al eliminar la categoría.";
+      console.error("Error al eliminar la categoría:", errorMessage);
+      throw new Error(errorMessage);
     }
 
     return data.data;

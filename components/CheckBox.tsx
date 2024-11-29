@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type CheckboxProps = {
-  isChecked: boolean; // Nueva prop para manejar el estado inicial
+  isChecked: boolean; // Estado inicial proporcionado por el padre
+  onChange: (newCheckedState: boolean) => void; // Callback para notificar el cambio
 };
 
-export default function Checkbox({ isChecked }: CheckboxProps) {
-  const [checked, setChecked] = useState(isChecked); // Inicializar el estado con la prop
+export default function Checkbox({ isChecked, onChange }: CheckboxProps) {
+  const [checked, setChecked] = useState(isChecked); // Inicializa el estado con la prop
+ 
+  
+  // Sincronizar el estado local con la prop isChecked
+  useEffect(() => {
+    setChecked(isChecked);
+  }, [isChecked]);
 
   const handleChange = () => {
-    setChecked(!checked); // Cambiar el estado al hacer clic
+    const newCheckedState = !checked; // Cambiar el estado
+    setChecked(newCheckedState); // Actualiza el estado local
+    onChange(!newCheckedState); // Notificar al padre
+
   };
 
   return (
@@ -17,8 +27,8 @@ export default function Checkbox({ isChecked }: CheckboxProps) {
         <input
           type="checkbox"
           className="checkbox checkbox-primary"
-          checked={checked} // Vincular el estado
-          onChange={handleChange} // Manejar cambios
+          checked={checked} // Vincular el estado local
+          onChange={handleChange} // Llamar a handleChange cuando cambie el checkbox
         />
       </label>
     </div>

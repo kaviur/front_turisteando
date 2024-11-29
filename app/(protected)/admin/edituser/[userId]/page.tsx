@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 ///import handleFrontendError from "@/utils/validators/validatorFrontendErrors";
 //import handleBackendError from "@/utils/validators/validatorBackendErrors";
 import { getUserById, updateUsers } from "@/lib/user/userActions";
+import handleBackendError from "@/utils/validators/validatorBackendErrors";
 
 const EditUser = () => {
   const router = useRouter(); // Router para el redireccionamiento
@@ -79,9 +80,10 @@ const EditUser = () => {
 
     try {
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token = session?.accessToken;
+      const token = session?.user?.accessToken;
       console.log("Este es el token" + token);
 
+      //Se hace el llamado a la función Server de Next
       const response = await getUserById(token, userId);
       setForm({
         ...response,
@@ -114,18 +116,31 @@ const EditUser = () => {
     }
 
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.accessToken;
+    const token = session?.user?.accessToken;
 
     try {
       const response = await updateUsers(userId, token, form);
-      if (response) {
-        console.log(response);
-        toast.success("Usuario actualizado con éxito");
-        router.push("/admin/users"); // Redirige a la lista de usuarios
+
+      if ("debugMessage" in response) {
+        handleBackendError(response, "user");
+
+        toast.error(response.message);
         setIsPending(false);
+      } else {
+        toast.success("Usuario actualizado exitosamente");
+
+        setTimeout(() => {
+          setIsPending(false);
+          router.push("/admin/users"); // Redirige a la lista de usuarios
+        }, 1000);
       }
     } catch (error) {
-      console.log(error);
+      // Verifica si el error tiene un mensaje detallado
+
+      console.error("Error al actualizar el usuario:", error);
+
+      toast.error("Error al actualizar el usuario. Intenta nuevamente.");
+      setIsPending(false);
     } finally {
       setIsPending(false);
     }
