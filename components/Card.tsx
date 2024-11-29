@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 
 interface CardProps {
-  id: number;  // Añadir el parámetro id
+  id: number; // Añadir el parámetro id
   imageSrc: string;
   title: string;
   isPrimary: boolean;
@@ -12,21 +12,24 @@ interface CardProps {
   mobileTitle: string;
 }
 const imageStyle = {
-  width: 'auto',
-  height: 'auto', // Puedes ajustar ambos valores aquí si es necesario
-};  
+  width: "auto",
+  height: "auto", // Puedes ajustar ambos valores aquí si es necesario
+};
 export default function Card({
-  id,  // Asegurarse de recibir el id aquí
+  id, // Asegurarse de recibir el id aquí
   imageSrc,
   title,
   isPrimary,
   description,
   isMobile = false,
-  mobileTitle
+  mobileTitle,
 }: CardProps) {
   if (isMobile) {
     return (
-      <Link href={`/product/${id}`} className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6">
+      <Link
+        href={`/product/${id}`}
+        className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6"
+      >
         <Image
           loading="lazy"
           style={imageStyle}
@@ -56,7 +59,15 @@ export default function Card({
 
   // Desktop Version Card
   return (
+<<<<<<< Updated upstream
     <Link href={`/product/${id}`} className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden">
+=======
+    <Link
+      href={`/product/${id}`}
+      className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden relative"
+      onClick={(event) => event.stopPropagation()}
+    >
+>>>>>>> Stashed changes
       <figure className="min-h-52 h-48 max-h-64">
         <Image
           className="rounded-t-xl w-full h-full object-cover"
@@ -65,6 +76,14 @@ export default function Card({
           width={400}
           height={400}
         />
+<<<<<<< Updated upstream
+=======
+        {/* El botón de like se posiciona más hacia la izquierda y más arriba */}
+
+        <div className="absolute top-24 right-1">
+          <LikeButton planId={id} />
+        </div>
+>>>>>>> Stashed changes
       </figure>
       <div className="h-72 overflow-hidden px-2 pt-2">
         <h2
