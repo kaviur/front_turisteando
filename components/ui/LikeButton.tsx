@@ -61,7 +61,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ planId }) => {
         : addFavoriteToUser(token, session?.user?.id, planId);
 
       setIsActive(!isActive);
-      // await action;
+      await action;
     } catch (error) {
       console.error("Error al hacer la solicitud:", error);
     }
