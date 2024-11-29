@@ -4,44 +4,44 @@ import { ReqCategory, ResCategory } from "@/types/categories";
 
 
 export const fetchCategories = async (): Promise<ResCategory[]> => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error(
+        "Error en la solicitud para obtener categorías:",
+        errorData.error
       );
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error(
-          "Error en la solicitud para obtener categorías:",
-          errorData.error
-        );
-        throw new Error(
-          errorData.error?.join(", ") || "Error desconocido al obtener categorías."
-        );
-      }
-  
-      const data = await response.json();
-  
-      if (data && Array.isArray(data.data)) {
-        return data.data;
-      } else {
-        console.error(
-          "La respuesta de la API no contiene un array de categorías:",
-          data
-        );
-        return [];
-      }
-    } catch (error) {
-      console.error("Error al obtener las categorías:", error);
+      throw new Error(
+        errorData.error?.join(", ") || "Error desconocido al obtener categorías."
+      );
+    }
+
+    const data = await response.json();
+
+    if (data && Array.isArray(data.data)) {
+      return data.data;
+    } else {
+      console.error(
+        "La respuesta de la API no contiene un array de categorías:",
+        data
+      );
       return [];
     }
-  };
+  } catch (error) {
+    console.error("Error al obtener las categorías:", error);
+    return [];
+  }
+};
 
 export const createCategory = async (
   categoryData: ReqCategory,
@@ -135,12 +135,19 @@ export const deleteCategory = async (
 
     if (!data.success) {
       console.error("Error al eliminar la categoría:", data.errors);
-      throw new Error(data.errors);
+      // Lanza un error con detalles
+      throw new Error(
+        Array.isArray(data.errors)
+          ? data.errors.join(", ")
+          : "Error desconocido al eliminar la categoría."
+      );
     }
 
     return data.data;
   } catch (error) {
     console.error("Error al eliminar la categoría:", error);
+    // Vuelve a lanzar el error para manejarlo en el frontend
+    throw error;
   }
 };
 
@@ -163,8 +170,9 @@ export const editCategory = async (
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.log(errorData.error)
       return {
-        message: "Error al editar la categoría",
+        message: "Error al editar la categoríasss",
         debugMessage: errorData.debugMessage || "Error desconocido",
       };
     }
@@ -175,14 +183,14 @@ export const editCategory = async (
       return data.data;
     } else {
       return {
-        message: "Error al editar la categoría",
+        message: "Error al editar la categoríamm",
         debugMessage: data.debugMessage || "Error desconocido",
       };
     }
   } catch (error) {
-    console.error("Error al editar la categoría:", error);
+    console.error("Error al editar la categoríaii:", error);
     return {
-      message: "Error al editar la categoría",
+      message: "Error al editar la categoríaaa",
       debugMessage: "Error en la conexión o servidor",
     };
   }

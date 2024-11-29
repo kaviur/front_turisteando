@@ -6,10 +6,11 @@ import { useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
 
 import ReusableTable from "@/components/ReusableTable/ReusableTable";
-import { ReqCategory } from "@/types/categories";
+import { ResCategory } from "@/types/categories";
+import { fetchCategories, deleteCategory } from "@/lib/categories/categoryActions"; 
 
 const CategoriesPage = () => {
-  const [categories, setCategories] = useState<ReqCategory[]>([]);
+  const [categories, setCategories] = useState<ResCategory[]>([]);
   const { data: session } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,36 +51,19 @@ const CategoriesPage = () => {
 
   useEffect(() => {
     if (session) {
-      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token: string = session?.accessToken;
-
-      const fetchCategories = async () => {
+      const loadCategories = async () => {
         try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          const data = await response.json();
-          if (response.ok) {
-            setCategories(data.data);
-            setLoading(false);
-          } else {
-            setError("Failed to fetch categories");
-          }
+          const categoriesData = await fetchCategories(); // Llama al método importado
+          setCategories(categoriesData);
         } catch (error) {
+          setError("Error al obtener las categorías");
           console.error("Error fetching categories:", error);
         } finally {
           setLoading(false);
         }
       };
 
-      fetchCategories();
+      loadCategories();
     }
   }, [session]);
 
@@ -92,26 +76,29 @@ const CategoriesPage = () => {
   const handleDelete = async (id: string | undefined) => {
     const confirmed = await confirmDelete();
     if (!confirmed || !session) return;
-
+  
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token = session?.accessToken;
-
+    const token: string = session?.accessToken;
+  
     try {
       await toast.promise(
-        fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/delete/${id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }).then((response) => {
-          if (!response.ok) throw new Error("Error al eliminar la categoría");
+        (async () => {
+          const deletedCategoryId = await deleteCategory(token, id); // Llama al método importado
+          if (!deletedCategoryId) {
+            throw new Error("Error al eliminar la categoría");
+          }
           setCategories(categories.filter((category) => category.id !== id));
-        }),
+        })(),
         {
           loading: "Eliminando categoría...",
           success: "Categoría eliminada exitosamente",
-          error: "Error al eliminar la categoría",
+          error: (error) => {
+            // Personaliza el mensaje del toast basado en el error recibido
+            if (error instanceof Error) {
+              return error.message; // Mensaje lanzado desde deleteCategory
+            }
+            return "Error desconocido al eliminar la categoría";
+          },
         }
       );
     } catch (error) {
