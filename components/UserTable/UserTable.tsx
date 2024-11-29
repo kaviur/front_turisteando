@@ -3,11 +3,10 @@ import { User } from "@/types/user";
 import { FiEdit, FiTrash } from "react-icons/fi";
 ///import profileImage from "/public/joseuser.jpg";
 
-import { useState} from "react";
 import Checkbox from "../CheckBox";
 import { useSession } from "next-auth/react";
 
-import { toast, Toaster } from "react-hot-toast";
+import { toast} from "react-hot-toast";
 import { updateUsersRole } from "@/lib/user/userActions";
 
 type UserTableProps = {
@@ -19,7 +18,7 @@ type UserTableProps = {
 const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
   const { data: session } = useSession(); // Obtener la sesión y el token
   
-  const [isPending, setIsPending] = useState(false);
+ 
 
   const handleRoleChange = (userId: string) => {
     updateUsersRole(userId, token); // Llamar a la acción para cambiar el rol
@@ -27,7 +26,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, onEdit, onDelete }) => {
 
   if (!session) {
     toast.error("No se encontró la sesión activa.");
-    setIsPending(false);
+  
     return; // Asegurarte de que no se ejecute nada más si no hay sesión.
   }
  

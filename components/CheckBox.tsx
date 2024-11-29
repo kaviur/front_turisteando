@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 type CheckboxProps = {
   isChecked: boolean; // Estado inicial proporcionado por el padre
@@ -8,7 +7,7 @@ type CheckboxProps = {
 
 export default function Checkbox({ isChecked, onChange }: CheckboxProps) {
   const [checked, setChecked] = useState(isChecked); // Inicializa el estado con la prop
-  const router = useRouter();
+ 
   
   // Sincronizar el estado local con la prop isChecked
   useEffect(() => {

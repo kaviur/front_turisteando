@@ -78,7 +78,8 @@ const CategoriesPage = () => {
     if (!confirmed || !session) return;
   
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-    const token: string = session?.accessToken;
+    const token: string = session?.user?.accessToken;
+    console.log ( "este es el token:", token);
   
     try {
       await toast.promise(
