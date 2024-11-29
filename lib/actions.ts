@@ -4,6 +4,10 @@ import { TouristPlan } from "@/types/touristPlan";
 import { Characteristics } from "@/types/characteristics";
 
 
+/**
+ * *****************************************
+ * FUNCIONES CRUD PARA PLANES **************
+ */
 export const fetchTours = async (): Promise<TouristPlan[]> => {
   try {
     const response = await fetch(
@@ -113,6 +117,83 @@ export const createTouristPlan = async (
     }
   } catch (error) {
     console.error("Error al crear el producto:", error);
+    throw error; // Lanza el error para manejarlo en el componente
+  }
+};
+
+// Método para editar un Tourist Plan
+export const updateTouristPlan = async (
+  token: string,
+  productId: string,
+  touristPlanData: {
+    title: string;
+    description: string;
+    price: number;
+    seller: string;
+    cityId: number;
+    categoryId: number;
+    availabilityStartDate: string;
+    availabilityEndDate: string;
+    capacity: number;
+    duration: string;
+    characteristicIds: number[];
+    images: File[] | null;
+    imagesToDelete: string[];
+  }
+): Promise<void> => {
+  try {
+    const formData = new FormData();
+    const touristPlan = JSON.stringify({
+      title: touristPlanData.title,
+      description: touristPlanData.description,
+      price: touristPlanData.price,
+      seller: touristPlanData.seller,
+      cityId: touristPlanData.cityId,
+      categoryId: touristPlanData.categoryId,
+      availabilityStartDate: touristPlanData.availabilityStartDate,
+      availabilityEndDate: touristPlanData.availabilityEndDate,
+      capacity: touristPlanData.capacity,
+      duration: touristPlanData.duration,
+      characteristicIds: touristPlanData.characteristicIds,
+      imagesToDelete: touristPlanData.imagesToDelete,
+    });
+
+    formData.append(
+      "touristPlan",
+      new Blob([touristPlan], { type: "application/json" })
+    );
+
+    if (touristPlanData.images) {
+      touristPlanData.images.forEach((image) => {
+        formData.append("images", image);
+      });
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/update/${productId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      }
+    );
+
+    console.log("response---",response);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+
+      console.log("errores---",errorData.errors)
+      
+      if (errorData.errors && Array.isArray(errorData.errors)) {
+        throw new Error(errorData.errors.join(", "));
+      }
+      throw new Error("Error desconocido al editar el producto.");
+    }
+  } catch (error) {
+    console.error("Error al editar el producto:", error);
     throw error; // Lanza el error para manejarlo en el componente
   }
 };

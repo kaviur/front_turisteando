@@ -5,6 +5,7 @@ import ProductForm from "@/components/ProductForm/ProductForm";
 import { toast, Toaster } from "react-hot-toast";
 import { createTouristPlan } from "@/lib/actions";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function CreateProductPage() {
   // Estados para manejar los datos del formulario
@@ -25,6 +26,7 @@ export default function CreateProductPage() {
   // Estado adicional
   const [isPending, setIsPending] = useState(false);
   const { data: session } = useSession(); 
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +66,10 @@ export default function CreateProductPage() {
       setCharacteristicIds([]);
       setImages([]);
   
-      toast.success("Producto creado exitosamente!"); // Mensaje de éxito
+      toast.success("Producto creado exitosamente!"); 
+      // Redirigir a admin/productactions después del éxito
+      router.push("/admin/productactions");
+
     } catch (error) {
       console.error("Error:", error);
       toast.error(

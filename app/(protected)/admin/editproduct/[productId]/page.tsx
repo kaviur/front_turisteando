@@ -4,6 +4,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import ProductForm from "@/components/ProductForm/ProductForm";
 import { toast, Toaster } from "react-hot-toast";
+import { updateTouristPlan } from "@/lib/actions";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function EditProductPage({ params }: { params: Promise<{ productId: string }> }) {
   const { productId } = React.use(params); 
@@ -25,6 +28,8 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
 
   // Estado adicional
   const [isPending, setIsPending] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
   
   useEffect(() => {
     const fetchProductData = async () => {
@@ -80,12 +85,14 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
     setIsPending(true);
   
     try {
-      const formData = new FormData();
-      const touristPlan = JSON.stringify({
+      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
+      const token: string = session?.user?.accessToken;
+  
+      const touristPlanData = {
         title,
         description,
         price: Number(price),
-        seller: "admin", //TODO: CHANGE TO THE USER LOGGED
+        seller: "SELLER", // TODO: Cambiar por el usuario autenticado
         cityId: Number(cityId),
         categoryId: Number(categoryId),
         availabilityStartDate,
@@ -93,40 +100,21 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
         capacity: Number(capacity),
         duration,
         characteristicIds: characteristicIds.map((id) => Number(id)),
+        images: images ? Array.from(images) : null,
         imagesToDelete,
-      });
+      };
   
-      formData.append(
-        "touristPlan",
-        new Blob([touristPlan], { type: "application/json" })
-      );
+      await updateTouristPlan(token, productId, touristPlanData);
   
-      if (images) {
-        Array.from(images).forEach((image) => {
-          formData.append("images", image);
-        });
-      }
-  
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/update/${productId}`,
-        {
-          method: "PUT",
-          body: formData,
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        if (errorData.errors && Array.isArray(errorData.errors)) {
-          errorData.errors.forEach((err: string) => toast.error(err));
-        }
-        throw new Error("Error al editar el plan turístico.");
-      }
-
       toast.success("Producto editado exitosamente!");
+      // Redirigir a admin/productactions después del éxito
+      router.push("/admin/productactions");
+
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Hubo un problema al editar el producto.");
+      toast.error(
+        error instanceof Error ? error.message : "Hubo un problema al editar el producto."
+      );
     } finally {
       setIsPending(false);
     }
