@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { fetchCategories } from "@/lib/categories/categoryActions"
-import { updateTouristPlan } from "@/lib/actions";
+import { deleteTouristPlan, updateTouristPlan } from "@/lib/actions";
 
 
 
@@ -58,38 +58,26 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         });
     };
 
-    // Método para eliminar un producto existente
     const handleDelete = async (id: number) => {
         const confirmed = await confirmDelete();
-        if (!confirmed) return;
-
+        if (!confirmed || !session) return;
+    
         /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-        const token = session?.accessToken;
-
+        const token = session?.user?.accessToken;
         try {
-            await toast.promise(
-                fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/toggle-status/${id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }).then(async (response) => {
-                    if (!response.ok) throw new Error("Error al eliminar el producto");
-
-                }),
-                {
-                    loading: "Eliminando producto...",
-                    success: "Producto eliminado exitosamente",
-                    error: "Error al eliminar el producto",
-                }
+          const response = await deleteTouristPlan(token, id);
+          if (response) {
+             toast.success("El plan turistico se ha borrado con éxito");
+             setTouristPlans((prevProducts) =>
+              prevProducts.filter((product) => Number(product.id) !== id)
             );
-            // Filtra el producto eliminado de la lista y actualiza el estado
-            setTouristPlans((prevProducts) => prevProducts.filter((product) => Number(product.id) !== id));
+          }
         } catch (error) {
-            console.error("Error deleting product:", error);
+          console.error("Error eliminando plan turistico:", error);
+        } finally {
+          setLoading(false);
         }
-    };
+      };
 
     const handleCategorySelect = (id: string) => {
         setSelectedCategoryId(id);

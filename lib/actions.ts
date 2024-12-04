@@ -200,6 +200,36 @@ export const updateTouristPlan = async (
   }
 };
 
+
+// Método para eliminar (o cambiar el estado de) un plan turístico
+
+export const deleteTouristPlan= async (token: string, id: number) =>{
+
+  try {
+     const responseDelete = await  fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/delete/${id}`, {
+       method: "DELETE",
+      headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${token}`,
+       },
+     })
+    
+       const data = await responseDelete.json();
+       if (data.success && data.data) {
+         return data.data;
+       } else {
+         return {
+           message: "Error al Actualizar el estado del plan turistico",
+           debugMessage: data.debugMessage || "Error desconocido",
+         };
+       }
+     
+   } catch (error) {
+     console.log ( "Este es el error al borrar un plan turistico", error);
+   }
+ }
+
+
 /**
  * ***********************************
  * FUNCIONES CRUD PARA CARACTERISTICAS
