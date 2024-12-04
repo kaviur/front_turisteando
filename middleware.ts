@@ -9,6 +9,11 @@ export default auth((req) => {
   const isAuthenticated = !!req.auth;
   const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
 
+  // Si la ruta es favorites y el usuario no esta autenticado será redirigido al login
+  if (nextUrl.pathname.startsWith('/favorites') && !isAuthenticated) {
+    return Response.redirect(new URL('/login', nextUrl));
+  }
+
   // Revisar si el usuario tiene rol ADMIN
   //@ts-ignore
   const isAdmin = req.auth?.user?.role === 'ADMIN';
@@ -25,5 +30,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/admin','/admin/:path*'],
+  matcher: ['/admin','/admin/:path*',  '/favorites', '/favorites/:path*'],
 };
