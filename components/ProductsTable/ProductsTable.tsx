@@ -4,12 +4,17 @@ import Link from "next/link";
 
 const ProductsTable = ({ products }: { products: TouristPlan[] }) => {
   return (
+    
     <div className="rounded-sm border border-stroke bg-white shadow-default">
+      
       <div className="px-4 py-6 md:px-6 xl:px-7">
         <h4 className="text-2xl font-semibold text-secondary">Productos</h4>
       </div>
 
-      <div className="grid grid-cols-6 border-t border-stroke px-4 py-4 sm:grid-cols-8 md:px-6 2xl:px-7">
+      <div className="grid grid-cols-7 border-t border-stroke px-4 py-4 sm:grid-cols-9 md:px-6 2xl:px-7">
+      <div className="col-span-1 flex items-center ml-6">
+          <p className="font-medium">Id</p>
+        </div>
         <div className="col-span-4 flex items-center">
           <p className="font-medium py-2">Producto</p>
         </div>
@@ -29,9 +34,12 @@ const ProductsTable = ({ products }: { products: TouristPlan[] }) => {
 
       {products.map((product, key) => (
         <div
-          className="grid grid-cols-6 border-t border-stroke px-4 py-4 sm:grid-cols-8 md:px-6 2xl:px-7"
+          className="grid grid-cols-7 border-t border-stroke px-4 py-4 sm:grid-cols-9 md:px-6 2xl:px-7"
           key={key}
         >
+          <div className="col-span-1 flex items-center ml-6">
+            <p className="text-sm text-black">{product.id}</p> {/* Correcto acceso a la ciudad */}
+          </div>
           <div className="col-span-4 flex items-center">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <div className="h-14 w-20 rounded-md flex items-center">
