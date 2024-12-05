@@ -72,7 +72,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
   const [state, setState] = useState([
     {
       startDate: new Date(),
-      endDate: addDays(new Date(), 7),
+      // endDate: addDays(new Date(), 7),
+      endDate: new Date(),
       key: "selection",
     },
   ]);
@@ -130,7 +131,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
             <div className="flex items-center justify-between p-4   ">
               {/* Indicador de disponibilidad */}
               <div
-                className={`px-4 py-2 rounded-lg text-white font-bold ${
+                className={`px-4 py-2 rounded-lg text-white font-bold cursor-default ${
                   active ? "bg-primary" : "bg-gray-400"
                 }`}
               >
@@ -144,7 +145,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
                     type="radio"
                     name="type"
                     value="tour"
-                    disabled
+                    disabled={category !== "Tours"}
+                    defaultChecked={category === "Tours"}
                     className="radio radio-primary"
                   />
                   Tour
@@ -154,7 +156,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
                     type="radio"
                     name="type"
                     value="activity"
-                    disabled
+                    disabled={category !== "Activity"}
+                    defaultChecked={category === "Activity"}
                     className="radio radio-primary"
                   />
                   Activity
