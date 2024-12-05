@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react"; // Importar la función de signIn de NextAuth
+import { signIn, useSession } from "next-auth/react"; // Importar la función de signIn de NextAuth
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -14,6 +14,7 @@ export default function Login() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, setIsPending] = useState(false); // Estado para controlar el botón de carga
   const router = useRouter();
+  const { update } = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,8 +55,9 @@ export default function Login() {
         if (response?.error) {
           throw new Error(response.error); // Si hay error, lanzamos una excepción
         }
-        router.push("/"); // Redirigir a la página de administración
-        return "Sesión iniciada con éxito!";
+        router.replace('/')
+        update();
+        return 'Sesión iniciada con éxito!';
       }),
       {
         loading: "Iniciando sesión...",
@@ -72,7 +74,7 @@ export default function Login() {
     const loadingToast = toast.loading("Iniciando sesión con Google...");
     setTimeout(() => {
       toast.success("Iniciado sesión con Google", { id: loadingToast });
-      router.push("/");
+      router.replace("/");
     }, 2000);
   };
 

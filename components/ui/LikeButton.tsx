@@ -1,47 +1,21 @@
 import "@/app/globals.css";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSession } from "next-auth/react";
-import {
-  addFavoriteToUser,
-  deleteFavoriteToUser,
-  getFavoritesByUser,
-} from "@/lib/favoriteActions";
+import { useFavorites } from "@/context/FavoritesContext";
 
 interface LikeButtonProps {
   planId: number;
+  isFavorite: boolean;
 }
 
-const LikeButton: React.FC<LikeButtonProps> = ({ planId }) => {
+const LikeButton: React.FC<LikeButtonProps> = ({ planId, isFavorite }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(isFavorite);
+  const { addFavorite, removeFavorite } = useFavorites();
 
-  // Verificar si el plan ya está en los favoritos cuando el componente se monta
-  useEffect(() => {
-    const checkFavorites = async () => {
-      if (session && session.user) {
-        try {
-          try {
-            const response = await getFavoritesByUser(session?.user?.id);
-            if (Array.isArray(response)) {
-              setIsActive(response.some((fav) => fav.id === planId));
-            }
-          } catch (error) {
-            console.error("Error al cargar favoritos:", error);
-          }
-        } catch (error) {
-          console.error("Error al verificar favoritos:", error);
-        }
-      }
-    };
-
-    checkFavorites();
-  }, [session, planId]);
-
-  // Manejar el clic para alternar la clase
   const handleToggle = async () => {
-    //setIsActive((prevState) => !prevState);
     // @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it
     const token = session?.user?.accessToken;
 
@@ -56,22 +30,18 @@ const LikeButton: React.FC<LikeButtonProps> = ({ planId }) => {
       return;
     }
 
-    try {
-      const action = isActive
-        ? deleteFavoriteToUser(token, session?.user?.id, planId)
-        : addFavoriteToUser(token, session?.user?.id, planId);
-
-      setIsActive(!isActive);
-      await action;
-    } catch (error) {
-      console.error("Error al hacer la solicitud:", error);
+    if (isActive) {
+      removeFavorite(planId);
+    } else {
+      addFavorite(planId);
     }
+    setIsActive(!isActive);
   };
 
   return (
-    <div className="btn btn-ghost rounded-full h-20 w-20 bg-white relative shadow-lg">
+    <div className="btn btn-ghost rounded-full h-16 w-16 bg-white relative shadow-lg">
       <div
-        className={` heart absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
+        className={`heart text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
           isActive ? "is-active" : ""
         }`}
         onClick={handleToggle}

@@ -18,13 +18,11 @@ import { fetchProduct, fetchTours } from "@/lib/actions";
 import { fetchReviewsByPlan } from "@/lib/reviews/reviewActions";
 import { Review } from "@/types/review";
 
-
 export default function ProductPage() {
   const [tours, setTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<TouristPlan | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
-
 
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
@@ -58,7 +56,6 @@ export default function ProductPage() {
     const loadReviews = async () => {
       try {
         const reviewsData = await fetchReviewsByPlan(Number(productId));
-        console.log("Reviews Data:", reviewsData);
         setReviews(reviewsData);
       } catch (error) {
         console.error("Error al cargar las reseñas:", error);
@@ -68,11 +65,7 @@ export default function ProductPage() {
     loadReviews();
   }, [productId]);
 
-  console.log(product);
-
   if (!product) return;
-
-  console.log(product);
 
   return (
     <div className="md:mt-28">
@@ -128,7 +121,6 @@ export default function ProductPage() {
                   rating={review.rating}
                 />
               </SwiperSlide>
-
             ))
           ) : (
             <SwiperSlide>
@@ -143,7 +135,6 @@ export default function ProductPage() {
               />
             </SwiperSlide>
           )}
-
         </Swiper>
       </section>
       {/* Desktop Section */}
@@ -186,33 +177,33 @@ export default function ProductPage() {
         >
           {loading
             ? // Renderizar esqueleto mientras se cargan los datos
-            Array.from({ length: 3 }).map((_, index) => (
-              <SwiperSlide key={index}>
-                <div className="flex min-w-56 max-h-96 flex-col gap-4">
-                  <div className="skeleton h-52 w-full"></div>
-                  <div className="skeleton h-4 w-36"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                </div>
-              </SwiperSlide>
-            ))
+              Array.from({ length: 3 }).map((_, index) => (
+                <SwiperSlide key={index}>
+                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                    <div className="skeleton h-52 w-full"></div>
+                    <div className="skeleton h-4 w-36"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                    <div className="skeleton h-4 w-full"></div>
+                  </div>
+                </SwiperSlide>
+              ))
             : // Renderizar tours cuando la carga haya terminado
-            tours.map((tour) => (
-              <SwiperSlide key={tour.id}>
-                <Card
-                  isPrimary={false}
-                  id={tour.id}
-                  mobileTitle={tour.title}
-                  isMobile={false}
-                  imageSrc={tour.images[0]?.imageUrl}
-                  title={tour.title}
-                  description={tour.description}
-                />
-              </SwiperSlide>
-            ))}
+              tours.map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    isPrimary={false}
+                    id={tour.id}
+                    mobileTitle={tour.title}
+                    isMobile={false}
+                    imageSrc={tour.images[0]?.imageUrl}
+                    title={tour.title}
+                    description={tour.description}
+                  />
+                </SwiperSlide>
+              ))}
         </Swiper>
       </section>
 
