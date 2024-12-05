@@ -26,6 +26,7 @@ import ShareProduct from "./ui/ShareButton";
 import LikeButton from "./ui/LikeButton";
 import { DateRange } from "react-date-range";
 import { addDays } from "date-fns";
+import { useFavorites } from "@/context/FavoritesContext";
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -75,6 +76,10 @@ const ProductDetails: React.FC<TouristPlan> = ({
       key: "selection",
     },
   ]);
+  const { touristPlans } = useFavorites();
+  const isFavorite = touristPlans?.some(
+    (plan) => plan.id === id && plan.isFavorite
+  );
 
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
@@ -200,9 +205,9 @@ const ProductDetails: React.FC<TouristPlan> = ({
                 image: images[0].imageUrl,
               }}
             />
-            {/* Like button */}
 
-            <LikeButton planId={id} />
+            {/* Like button */}
+            <LikeButton planId={id} isFavorite={isFavorite} />
           </div>
         </div>
       </div>

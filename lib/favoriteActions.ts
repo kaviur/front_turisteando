@@ -69,15 +69,16 @@ export const deleteFavoriteToUser = async (
 
 // Obtener todos los favoritos de un usuario
 export const getFavoritesByUser = async (
-  userId: string | undefined
-): Promise<TouristPlan[] | undefined> => {
+  token: string
+): Promise<TouristPlan[]> => {
+  
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/allfavoritesbyuserid/${userId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/allfavoritesbyuser`,
       {
-        method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -90,5 +91,6 @@ export const getFavoritesByUser = async (
     return response.data;
   } catch (error) {
     console.error("Error al hacer la solicitud:", error);
+    return [];
   }
 };

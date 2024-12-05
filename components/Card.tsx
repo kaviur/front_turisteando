@@ -11,6 +11,7 @@ interface CardProps {
   description: string;
   isMobile?: boolean;
   mobileTitle: string;
+  isFavorite?: boolean;
 }
 const imageStyle = {
   width: "auto",
@@ -24,6 +25,7 @@ export default function Card({
   description,
   isMobile = false,
   mobileTitle,
+  isFavorite = false,
 }: CardProps) {
   if (isMobile) {
     return (
@@ -60,12 +62,8 @@ export default function Card({
 
   // Desktop Version Card
   return (
-    <Link
-      href={`/product/${id}`}
-      className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden relative"
-      onClick={(event) => event.stopPropagation()}
-    >
-      <figure className="min-h-52 h-48 max-h-64">
+    <div>
+      <figure className="min-h-52 h-48 max-h-64 relative">
         <Image
           className="rounded-t-xl w-full h-full object-cover"
           src={imageSrc}
@@ -73,20 +71,26 @@ export default function Card({
           width={400}
           height={400}
         />
-        {/* El botón de like se posiciona más hacia la izquierda y más arriba */}
-
-        <div className="absolute top-24 right-1">
-          <LikeButton planId={id} />
+        <div className="absolute bottom-0 right-2">
+          <LikeButton planId={id} isFavorite={isFavorite} />
         </div>
       </figure>
-      <div className="h-72 overflow-hidden px-2 pt-2">
-        <h2
-          className={`text-xl ${isPrimary ? "text-primary" : "text-secondary"}`}
-        >
-          {title} <span className="text-gray-500">Perú</span>
-        </h2>
-        <p className="text-justify text-gray-600">{description}</p>
-      </div>
-    </Link>
+      <Link
+        href={`/product/${id}`}
+        className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="h-72 overflow-hidden px-2 pt-2">
+          <h2
+            className={`text-xl ${
+              isPrimary ? "text-primary" : "text-secondary"
+            }`}
+          >
+            {title} <span className="text-gray-500">Perú</span>
+          </h2>
+          <p className="text-justify text-gray-600">{description}</p>
+        </div>
+      </Link>
+    </div>
   );
 }

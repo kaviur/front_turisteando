@@ -41,13 +41,14 @@ export interface TouristPlan {
   availabilityEndDate: string;
   capacity: number;
   duration: string;
-  characteristic:{
-    id: number,
-    name: string,
+  characteristic: {
+    id: number;
+    name: string;
     image: {
       id: number;
       imageUrl: string;
-    }
+    };
   }[];
   active: boolean;
+  isFavorite?: boolean;
 }
