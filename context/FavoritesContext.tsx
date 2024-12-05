@@ -53,6 +53,7 @@ export const FavoritesProvider = ({
 
   useEffect(() => {
     const fetchPlans = async () => {
+      console.log("ESTADO DE LA SESION: ", status)
       if (status === "loading") return;
 
       setLoading(true);

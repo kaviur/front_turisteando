@@ -13,7 +13,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ planId, isFavorite }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [isActive, setIsActive] = useState(isFavorite);
-  console.log("LLEGA EL FAVORITO: ", isActive, "ID PLAN: ", planId)
   const { addFavorite, removeFavorite } = useFavorites();
 
   const handleToggle = async () => {
