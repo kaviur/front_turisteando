@@ -25,8 +25,10 @@ import { MdPets } from "react-icons/md";
 import ShareProduct from "./ui/ShareButton";
 import LikeButton from "./ui/LikeButton";
 import { DateRange } from "react-date-range";
-import { addDays } from "date-fns";
+// import { addDays } from "date-fns";
 import { useFavorites } from "@/context/FavoritesContext";
+import ReservationSummary from "./ReservationSummary";
+import { useSession } from "next-auth/react";
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -49,9 +51,20 @@ const ProductDetails: React.FC<TouristPlan> = ({
   active,
 }) => {
   const router = useRouter();
+  const { data: session } = useSession();
   //const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
+  const [showReservationForm, setShowReservationForm] = useState(false);
+
+  const handleClick = () => {
+    if (!session) {
+      localStorage.setItem("redirectPath", window.location.href);
+      router.push("/login");
+      return;
+    }
+    setShowReservationForm(true);
+  };
 
   const characteristicIcons: Record<string, JSX.Element> = {
     Caminata: <FaWalking />,
@@ -81,6 +94,10 @@ const ProductDetails: React.FC<TouristPlan> = ({
   const isFavorite = touristPlans?.some(
     (plan) => plan.id === id && plan.isFavorite
   );
+
+  const handleClose = () => {
+    setShowReservationForm(false);
+  };
 
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
@@ -181,22 +198,43 @@ const ProductDetails: React.FC<TouristPlan> = ({
               minDate={new Date(availabilityStartDate)}
               maxDate={new Date(availabilityEndDate)}
             />
-
-            <div className="flex gap-2 items-center justify-between px-4 pb-4">
-              <label className="text-lg font-semibold text-secondary">
-                <TiGroup />
-              </label>
-              <input
-                type="number"
-                disabled
-                min={1}
-                max={capacity}
-                className="w-full p-2 border rounded-md text-gray-600"
-                value={numberOfPeople}
-                onChange={(e) => setNumberOfPeople(Number(e.target.value))}
-                placeholder="Número de personas"
-              />
+            <div className="flex gap-5 items-center justify-between px-4 pb-4">
+              <div className="flex justify-between items-center gap-2 flex-1">
+                <label className="text-lg font-semibold text-secondary">
+                  <TiGroup />
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={capacity}
+                  className="w-full p-2.5 border rounded-md text-gray-600 outline-gray-500"
+                  value={numberOfPeople}
+                  onChange={(e) => setNumberOfPeople(Number(e.target.value))}
+                  placeholder="Número de personas"
+                />
+              </div>
+              <div className="flex flex-1 justify-between items-center">
+                <button
+                  className="btn bg-primary text-white hover:bg-primary w-full"
+                  onClick={handleClick}
+                >
+                  Reservar
+                </button>
+              </div>
             </div>
+          </div>
+          <div className={`mt-4 ${showReservationForm ? "" : "hidden"}`}>
+            <ReservationSummary
+              onClose={handleClose}
+              touristPlanId={id}
+              touristPlanTitle={title}
+              numberOfPeople={numberOfPeople}
+              startDate={state[0].startDate}
+              endDate={state[0].endDate}
+              price={price}
+              seller={seller}
+              category={category}
+            />
           </div>
           <div className="flex gap-2 items-center justify-end mt-4">
             {/* Botón de compartir */}
