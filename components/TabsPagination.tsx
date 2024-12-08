@@ -3,7 +3,8 @@ import { BiCategoryAlt } from "react-icons/bi";
 import { LiaTreeSolid } from "react-icons/lia";
 import { PiMountainsFill } from "react-icons/pi";
 import Card from "./Card";
-import { TouristPlan } from "@/types/touristPlan";
+// import { TouristPlan } from "@/types/touristPlan";
+import { useFavorites } from "@/context/FavoritesContext";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -11,34 +12,35 @@ type TabsProps = {
 
 export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
   const [activeTab, setActiveTab] = useState(1);
-  const [tours, setTours] = useState<TouristPlan[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true); // Para el estado de carga
+  // const [loading, setLoading] = useState(true); // Para el estado de carga
   const itemsPerPage = 3;
+  const { touristPlans, loading } = useFavorites();
+  const tours = touristPlans;
 
-  useEffect(() => {
-    const fetchTours = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
-        );
-        const data = await response.json();
-        if (data && Array.isArray(data.data)) {
-          setTours(data.data);
-        } else {
-          console.error(
-            "La respuesta de la API no contiene un array de tours:",
-            data
-          );
-        }
-      } catch (error) {
-        console.error("Error al obtener los datos:", error);
-      } finally {
-        setLoading(false); // Finaliza la carga
-      }
-    };
-    fetchTours();
-  }, []);
+  // useEffect(() => {
+  //   const fetchTours = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
+  //       );
+  //       const data = await response.json();
+  //       if (data && Array.isArray(data.data)) {
+  //         setTours(data.data);
+  //       } else {
+  //         console.error(
+  //           "La respuesta de la API no contiene un array de tours:",
+  //           data
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error al obtener los datos:", error);
+  //     } finally {
+  //       setLoading(false); // Finaliza la carga
+  //     }
+  //   };
+  //   fetchTours();
+  // }, []);
 
   useEffect(() => {
     setCurrentPage(1); // Resetear la paginación al cambiar de pestaña
@@ -90,7 +92,8 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
               title={tour.title}
               isPrimary={tour.category?.name === "Tours"}
               description={tour.description}
-              styles="bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden"
+              styles="max-w-sm"
+              isFavorite={tour.isFavorite}
             />
           ))}
     </div>
@@ -146,23 +149,82 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
       <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
 
       {/* Paginación */}
-      {activeTab === 1 && !loading && (
-        <div className="flex justify-center gap-4 mt-6">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-            (pageNumber) => (
-              <button
-                key={pageNumber}
-                className={`join-item btn btn-square ${
-                  currentPage === pageNumber
-                    ? "bg-primary text-white"
-                    : "bg-gray-200 text-gray-600"
-                }`}
-                onClick={() => handlePageChange(pageNumber)}
-              >
-                {pageNumber}
-              </button>
-            )
-          )}
+      {!loading && (
+        // <div className="flex justify-center gap-4 mt-6">
+        //   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+        //     (pageNumber) => (
+        //       <button
+        //         key={pageNumber}
+        //         className={`join-item btn btn-square ${
+        //           currentPage === pageNumber
+        //             ? "bg-primary text-white"
+        //             : "bg-gray-200 text-gray-600"
+        //         }`}
+        //         onClick={() => handlePageChange(pageNumber)}
+        //       >
+        //         {pageNumber}
+        //       </button>
+        //     )
+        //   )}
+        // </div>
+        <div className="flex justify-center items-center gap-2 mt-6">
+          {/* Botón de flecha izquierda */}
+          <button
+            className="btn btn-square"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            &lt;
+          </button>
+
+          {/* Números de la paginación */}
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter((pageNumber) => {
+              if (window.innerWidth < 640) {
+                const maxVisiblePages = 1;
+                const firstPage = 1;
+                const lastPage = totalPages;
+
+                return (
+                  pageNumber === firstPage ||
+                  pageNumber === lastPage ||
+                  Math.abs(pageNumber - currentPage) < maxVisiblePages
+                );
+              }
+
+              return (
+                pageNumber === 1 ||
+                pageNumber === totalPages ||
+                Math.abs(pageNumber - currentPage) <= 1
+              );
+            })
+            .map((pageNumber, index, filteredPages) => (
+              <React.Fragment key={pageNumber}>
+                {index > 0 && pageNumber > filteredPages[index - 1] + 1 && (
+                  // Agregar puntos suspensivos entre rangos
+                  <span className="px-2">...</span>
+                )}
+                <button
+                  className={`btn btn-square ${
+                    currentPage === pageNumber
+                      ? "bg-primary text-white"
+                      : "bg-gray-200 text-gray-600"
+                  }`}
+                  onClick={() => handlePageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </React.Fragment>
+            ))}
+
+          {/* Botón de flecha derecha */}
+          <button
+            className="btn btn-square"
+            disabled={currentPage === totalPages}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            &gt;
+          </button>
         </div>
       )}
     </div>
