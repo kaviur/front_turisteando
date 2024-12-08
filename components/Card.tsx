@@ -12,6 +12,7 @@ interface CardProps {
   isMobile?: boolean;
   mobileTitle: string;
   isFavorite?: boolean;
+  styles?: string;
 }
 const imageStyle = {
   width: "auto",
@@ -26,6 +27,7 @@ export default function Card({
   isMobile = false,
   mobileTitle,
   isFavorite = false,
+  styles = "",
 }: CardProps) {
   if (isMobile) {
     return (
@@ -62,7 +64,7 @@ export default function Card({
 
   // Desktop Version Card
   return (
-    <div>
+    <div className={`${styles}`}>
       <figure className="min-h-52 h-48 max-h-64 relative">
         <Image
           className="rounded-t-xl w-full h-full object-cover"

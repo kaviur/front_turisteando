@@ -19,12 +19,17 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
   useEffect(() => {
     const fetchTours = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
+        );
         const data = await response.json();
         if (data && Array.isArray(data.data)) {
           setTours(data.data);
         } else {
-          console.error("La respuesta de la API no contiene un array de tours:", data);
+          console.error(
+            "La respuesta de la API no contiene un array de tours:",
+            data
+          );
         }
       } catch (error) {
         console.error("Error al obtener los datos:", error);
@@ -62,7 +67,10 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
     <div className="flex gap-4 flex-wrap justify-center">
       {loading
         ? Array.from({ length: 3 }).map((_, index) => (
-            <div className="flex max-w-xl w-96 max-h-96 flex-col gap-4" key={index}>
+            <div
+              className="flex max-w-xl w-96 max-h-96 flex-col gap-4"
+              key={index}
+            >
               <div className="skeleton h-52 w-full"></div>
               <div className="skeleton h-4 w-36"></div>
               <div className="skeleton h-4 w-full"></div>
@@ -82,6 +90,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
               title={tour.title}
               isPrimary={tour.category?.name === "Tours"}
               description={tour.description}
+              styles="bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden"
             />
           ))}
     </div>
@@ -94,11 +103,16 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
 
   return (
     <div>
-      <div role="tablist" className="mx-6 flex flex-wrap justify-start items-center gap-4 bg-base-100">
+      <div
+        role="tablist"
+        className="mx-6 flex flex-wrap justify-start items-center gap-4 bg-base-100"
+      >
         <a
           role="tab"
           className={`btn btn-ghost rounded-full h-14 px-6 ${
-            activeTab === 1 ? activeTabStyles["tab-active"] : activeTabStyles[""]
+            activeTab === 1
+              ? activeTabStyles["tab-active"]
+              : activeTabStyles[""]
           }`}
           onClick={() => setActiveTab(1)}
         >
@@ -108,7 +122,9 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
         <a
           role="tab"
           className={`btn btn-ghost rounded-full h-14 px-6 ${
-            activeTab === 2 ? activeTabStyles["tab-active"] : activeTabStyles[""]
+            activeTab === 2
+              ? activeTabStyles["tab-active"]
+              : activeTabStyles[""]
           }`}
           onClick={() => setActiveTab(2)}
         >
@@ -117,7 +133,9 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
         <a
           role="tab"
           className={`btn btn-ghost rounded-full h-14 px-6  ${
-            activeTab === 3 ? activeTabStyles["tab-active"] : activeTabStyles[""]
+            activeTab === 3
+              ? activeTabStyles["tab-active"]
+              : activeTabStyles[""]
           }`}
           onClick={() => setActiveTab(3)}
         >
@@ -125,24 +143,26 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
         </a>
       </div>
 
-      <div className="p-4 mt-4 bg-gray-100 rounded-lg">
-        {renderContent()}
-      </div>
+      <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
 
       {/* Paginación */}
       {activeTab === 1 && !loading && (
         <div className="flex justify-center gap-4 mt-6">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-            <button
-              key={pageNumber}
-              className={`join-item btn btn-square ${
-                currentPage === pageNumber ? "bg-primary text-white" : "bg-gray-200 text-gray-600"
-              }`}
-              onClick={() => handlePageChange(pageNumber)}
-            >
-              {pageNumber}
-            </button>
-          ))}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+            (pageNumber) => (
+              <button
+                key={pageNumber}
+                className={`join-item btn btn-square ${
+                  currentPage === pageNumber
+                    ? "bg-primary text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            )
+          )}
         </div>
       )}
     </div>

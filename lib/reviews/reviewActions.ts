@@ -19,7 +19,7 @@ export const fetchReviewsByPlan = async (planId: number): Promise<Review[]> => {
       const errorData = await response.json();
       console.error(
         "Error al obtener las reseñas del plan:",
-        errorData.error || "Error desconocido"
+        errorData || "Error desconocido"
       );
       throw new Error(errorData.error?.join(", ") || "Error desconocido");
     }
