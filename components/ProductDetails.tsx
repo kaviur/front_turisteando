@@ -9,19 +9,9 @@ import "react-image-gallery/styles/css/image-gallery.css";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import {
-  FaArrowLeft,
-  FaHotel,
-  FaStar,
-  FaWalking,
-  FaWifi,
-} from "react-icons/fa";
+import { FaArrowLeft, FaStar } from "react-icons/fa";
 import { TouristPlan } from "@/types/touristPlan";
-import { SiWalkman } from "react-icons/si";
-import { IoAccessibility, IoFastFood } from "react-icons/io5";
-import { TbMoodKid } from "react-icons/tb";
-import { PiStarDuotone, PiTreeEvergreenDuotone } from "react-icons/pi";
-import { MdPets } from "react-icons/md";
+import { PiStarDuotone } from "react-icons/pi";
 import ShareProduct from "./ui/ShareButton";
 import LikeButton from "./ui/LikeButton";
 import { DateRange } from "react-date-range";
@@ -29,6 +19,7 @@ import { DateRange } from "react-date-range";
 import { useFavorites } from "@/context/FavoritesContext";
 import ReservationSummary from "./ReservationSummary";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -66,16 +57,16 @@ const ProductDetails: React.FC<TouristPlan> = ({
     setShowReservationForm(true);
   };
 
-  const characteristicIcons: Record<string, JSX.Element> = {
-    Caminata: <FaWalking />,
-    Hotel: <FaHotel />,
-    "Comida incluida": <IoFastFood />,
-    "Wifi incluido": <FaWifi />,
-    Accesibilidad: <IoAccessibility />,
-    Niños: <TbMoodKid />,
-    Parque: <PiTreeEvergreenDuotone />,
-    "Pets Friendly": <MdPets />,
-  };
+  // const characteristicIcons: Record<string, JSX.Element> = {
+  //   Caminata: <FaWalking />,
+  //   Hotel: <FaHotel />,
+  //   "Comida incluida": <IoFastFood />,
+  //   "Wifi incluido": <FaWifi />,
+  //   Accesibilidad: <IoAccessibility />,
+  //   Niños: <TbMoodKid />,
+  //   Parque: <PiTreeEvergreenDuotone />,
+  //   "Pets Friendly": <MdPets />,
+  // };
 
   const imagesGallery = images.map((img) => ({
     original: img.imageUrl,
@@ -266,11 +257,11 @@ const ProductDetails: React.FC<TouristPlan> = ({
         {/* Información adicional */}
         <div className="flex flex-col md:flex-row gap-4 ">
           <div className="flex gap-2 items-center">
-            <TiGroup size={24} />
+            <TiGroup size={24} className="text-secondary" />
             <span className="text-accent">{`Capacidad: ${capacity} personas`}</span>
           </div>
           <div className="flex gap-2 items-center">
-            <LuClock size={24} />
+            <LuClock size={24} className="text-secondary" />
             <span className="text-gray-600">{`Duración: ${duration}`}</span>
           </div>
         </div>
@@ -279,9 +270,9 @@ const ProductDetails: React.FC<TouristPlan> = ({
       {active ? (
         <>
           <div className="text-center text-gray-500 text-sm">Disponible</div>
-          <div className="text-center text-gray-500 text-sm">{price} €</div>
+          <div className="text-center text-gray-500 text-sm">S/. {price}</div>
           <div className="text-center text-gray-500 text-sm">
-            {seller} vendedor
+            Empresa {seller}
           </div>
           <div className="text-center text-gray-500 text-sm">
             {category}, {categoryDescription}{" "}
@@ -295,9 +286,12 @@ const ProductDetails: React.FC<TouristPlan> = ({
       <div className="flex flex-wrap gap-8 ">
         {characteristic.map((char) => (
           <div key={char.id} className="flex gap-2 items-center">
-            <div className="text-xl text-primary">
-              {characteristicIcons[char.name] || <SiWalkman />}
-            </div>
+            <Image
+              src={char.image.imageUrl}
+              alt={char.name}
+              width={16}
+              height={16}
+            ></Image>
             <span className="text-gray-600">{char.name}</span>
           </div>
         ))}

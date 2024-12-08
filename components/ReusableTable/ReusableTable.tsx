@@ -61,8 +61,8 @@ const ReusableTable = ({
             {item.image ? (
               <Image
                 src={(item.image as { imageUrl: string }).imageUrl}
-                width={60}
-                height={50}
+                width={40}
+                height={30}
                 alt="Icono"
                 className="rounded-md"
               />
