@@ -15,14 +15,20 @@ import { TouristPlan } from "@/types/touristPlan";
 import Card from "@/components/Card";
 import { FaArrowRight } from "react-icons/fa";
 import { fetchProduct, fetchTours } from "@/lib/actions";
-import { fetchReviewsByPlan } from "@/lib/reviews/reviewActions";
+import { fetchReviewsByPlan, fetchReviewsByPlanAndCheckUserReview, obtenerReservasDelUsuario } from "@/lib/reviews/reviewActions";
 import { Review } from "@/types/review";
+import CreateReview from "@/components/CreateReview/CreateReview";
+import { useSession } from "next-auth/react";
 
 export default function ProductPage() {
+  const { data: session } = useSession();
   const [tours, setTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<TouristPlan | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userHasReview, setUserHasReview] = useState(false);
+  const [userHasReservation, setUserHasReservation] = useState(false);
 
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
@@ -35,7 +41,6 @@ export default function ProductPage() {
         setProduct(productData);
       }
     };
-
     loadProduct();
   }, [productId]);
 
@@ -65,6 +70,24 @@ export default function ProductPage() {
     loadReviews();
   }, [productId]);
 
+  // Check if user has already left a review
+  useEffect(() => {
+    const checkUserReview = async () => {
+      if (session && session.user) {
+        try {
+          const userId = session.user.id;
+          const { userHasReview } = await fetchReviewsByPlanAndCheckUserReview(Number(productId), Number(userId));
+          setUserHasReview(userHasReview);
+        } catch (error) {
+          console.error("Error checking user review:", error);
+        }
+      }
+    };
+    checkUserReview();
+  }, [session, productId]);
+
+  
+
   if (!product) return;
 
   return (
@@ -89,6 +112,34 @@ export default function ProductPage() {
         seller={product?.seller}
         active={product?.active}
       />
+
+      {/* Aquí es donde añadimos el botón */}
+      <div className="mt-8">
+        {product?.id && (
+          <button
+            disabled={userHasReview} // Deshabilitar el botón si ya se dejó una reseña
+            className="btn btn-primary text-white rounded-3xl"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Deja tu Reseña
+          </button>
+        )}
+      </div>
+      {/* Modal de Crear Reseña */}
+      {isModalOpen && (
+        <CreateReview
+          //token="your-token"  // Asumiendo que el token se pasa desde algún contexto o estado
+          //userId={1}  
+          planId={product.id}  
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}  
+          onReviewCreated={() => {
+            setIsModalOpen(false);
+            setUserHasReview(true); // Update state after creating a review
+          }}
+        />
+      )}
+
 
       <section className="px-8 py-12 w-full hidden md:block max-w-7xl mx-auto">
         <div>
