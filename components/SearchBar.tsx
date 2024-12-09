@@ -11,6 +11,7 @@ import PriceOption from "./SearchBarOptions/PriceOption";
 import SearchOption from "./SearchBarOptions/SearchOption";
 import CityOption from "./SearchBarOptions/CityOption";
 import CapacityOption from "./SearchBarOptions/CapacityOption";
+import { FaRegCalendarAlt } from "react-icons/fa";
 
 type SearchBarProps = {
   setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>>;
@@ -36,13 +37,19 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
 
   const allowOptions = ["Tours", "Ciudad", "Empresa"];
 
+  const handleClick = () => {
+    setSelectedOption("Fecha");
+    setValue("");
+    setTours(allTours);
+  };
+
   const handleSelectedOption = (e: React.MouseEvent<HTMLLIElement>) => {
     setSelectedOption(e.currentTarget.textContent || "");
     setValue("");
     setTours(allTours);
   };
 
-  // Maneja los filtro por tours y ciudades
+  // Maneja los filtros por tours y ciudades
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setValue(value);
@@ -142,6 +149,12 @@ const SearchBar = ({ setTours, allTours }: SearchBarProps) => {
           onChange={handleChange}
           placeholder="Comienza tu búsqueda aquí..."
           className=" flex-grow p-2 text-gray-700 outline-none"
+        />
+        <FaRegCalendarAlt
+          className="text-primary"
+          size={17}
+          cursor="pointer"
+          onClick={handleClick}
         />
         <MdOutlineSearch className="mr-6" size={24} color="oklch(var(--p))" />
       </div>
