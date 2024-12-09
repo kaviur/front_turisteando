@@ -152,7 +152,7 @@ const ProductForm = ({
         <div className="rounded-sm border border-stroke bg-white shadow">
           <div className="border-b border-stroke px-6 py-5">
             <h3 className="font-medium text-primary text-xl">
-              {isEditing ? `Tour guiado a ${title}` : 'Agregar Producto'}
+              {isEditing ? `${title}` : 'Agregar Producto'}
             </h3>
           </div>
           <form id="product-form" onSubmit={onSubmit}>

@@ -44,8 +44,6 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
 
         const { data } = await response.json();
 
-        console.log(data)
-
         setTitle(data.title);
         setDescription(data.description);
         setPrice(data.price);
@@ -157,7 +155,7 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
     <>
       <div className="ml-96 flex justify-center">
         <Toaster position="top-center" />
-        <ProductForm {...productFormProps} />;
+        <ProductForm {...productFormProps} />
       </div>
     </>
   );
