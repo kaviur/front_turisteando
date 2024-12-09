@@ -20,7 +20,6 @@ const LikeButton: React.FC<LikeButtonProps> = ({ planId, isFavorite }) => {
     const token = session?.user?.accessToken;
 
     if (!session || !token) {
-      console.error("El usuario no está autenticado o falta el token");
       router.push("/login");
       return;
     }

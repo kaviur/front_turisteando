@@ -9,24 +9,17 @@ import "react-image-gallery/styles/css/image-gallery.css";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import {
-  FaArrowLeft,
-  FaHotel,
-  FaStar,
-  FaWalking,
-  FaWifi,
-} from "react-icons/fa";
+import { FaArrowLeft, FaStar } from "react-icons/fa";
 import { TouristPlan } from "@/types/touristPlan";
-import { SiWalkman } from "react-icons/si";
-import { IoAccessibility, IoFastFood } from "react-icons/io5";
-import { TbMoodKid } from "react-icons/tb";
-import { PiStarDuotone, PiTreeEvergreenDuotone } from "react-icons/pi";
-import { MdPets } from "react-icons/md";
+import { PiStarDuotone } from "react-icons/pi";
 import ShareProduct from "./ui/ShareButton";
 import LikeButton from "./ui/LikeButton";
 import { DateRange } from "react-date-range";
-import { addDays } from "date-fns";
+// import { addDays } from "date-fns";
 import { useFavorites } from "@/context/FavoritesContext";
+import ReservationSummary from "./ReservationSummary";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -49,20 +42,31 @@ const ProductDetails: React.FC<TouristPlan> = ({
   active,
 }) => {
   const router = useRouter();
+  const { data: session } = useSession();
   //const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
+  const [showReservationForm, setShowReservationForm] = useState(false);
 
-  const characteristicIcons: Record<string, JSX.Element> = {
-    Caminata: <FaWalking />,
-    Hotel: <FaHotel />,
-    "Comida incluida": <IoFastFood />,
-    "Wifi incluido": <FaWifi />,
-    Accesibilidad: <IoAccessibility />,
-    Niños: <TbMoodKid />,
-    Parque: <PiTreeEvergreenDuotone />,
-    "Pets Friendly": <MdPets />,
+  const handleClick = () => {
+    if (!session) {
+      localStorage.setItem("redirectPath", window.location.href);
+      router.push("/login");
+      return;
+    }
+    setShowReservationForm(true);
   };
+
+  // const characteristicIcons: Record<string, JSX.Element> = {
+  //   Caminata: <FaWalking />,
+  //   Hotel: <FaHotel />,
+  //   "Comida incluida": <IoFastFood />,
+  //   "Wifi incluido": <FaWifi />,
+  //   Accesibilidad: <IoAccessibility />,
+  //   Niños: <TbMoodKid />,
+  //   Parque: <PiTreeEvergreenDuotone />,
+  //   "Pets Friendly": <MdPets />,
+  // };
 
   const imagesGallery = images.map((img) => ({
     original: img.imageUrl,
@@ -72,7 +76,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
   const [state, setState] = useState([
     {
       startDate: new Date(),
-      endDate: addDays(new Date(), 7),
+      // endDate: addDays(new Date(), 7),
+      endDate: new Date(),
       key: "selection",
     },
   ]);
@@ -80,6 +85,10 @@ const ProductDetails: React.FC<TouristPlan> = ({
   const isFavorite = touristPlans?.some(
     (plan) => plan.id === id && plan.isFavorite
   );
+
+  const handleClose = () => {
+    setShowReservationForm(false);
+  };
 
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
@@ -130,7 +139,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
             <div className="flex items-center justify-between p-4   ">
               {/* Indicador de disponibilidad */}
               <div
-                className={`px-4 py-2 rounded-lg text-white font-bold ${
+                className={`px-4 py-2 rounded-lg text-white font-bold cursor-default ${
                   active ? "bg-primary" : "bg-gray-400"
                 }`}
               >
@@ -144,7 +153,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
                     type="radio"
                     name="type"
                     value="tour"
-                    disabled
+                    disabled={category !== "Tours"}
+                    defaultChecked={category === "Tours"}
                     className="radio radio-primary"
                   />
                   Tour
@@ -154,7 +164,8 @@ const ProductDetails: React.FC<TouristPlan> = ({
                     type="radio"
                     name="type"
                     value="activity"
-                    disabled
+                    disabled={category !== "Activity"}
+                    defaultChecked={category === "Activity"}
                     className="radio radio-primary"
                   />
                   Activity
@@ -178,22 +189,43 @@ const ProductDetails: React.FC<TouristPlan> = ({
               minDate={new Date(availabilityStartDate)}
               maxDate={new Date(availabilityEndDate)}
             />
-
-            <div className="flex gap-2 items-center justify-between px-4 pb-4">
-              <label className="text-lg font-semibold text-secondary">
-                <TiGroup />
-              </label>
-              <input
-                type="number"
-                disabled
-                min={1}
-                max={capacity}
-                className="w-full p-2 border rounded-md text-gray-600"
-                value={numberOfPeople}
-                onChange={(e) => setNumberOfPeople(Number(e.target.value))}
-                placeholder="Número de personas"
-              />
+            <div className="flex gap-5 items-center justify-between px-4 pb-4">
+              <div className="flex justify-between items-center gap-2 flex-1">
+                <label className="text-lg font-semibold text-secondary">
+                  <TiGroup />
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={capacity}
+                  className="w-full p-2.5 border rounded-md text-gray-600 outline-gray-500"
+                  value={numberOfPeople}
+                  onChange={(e) => setNumberOfPeople(Number(e.target.value))}
+                  placeholder="Número de personas"
+                />
+              </div>
+              <div className="flex flex-1 justify-between items-center">
+                <button
+                  className="btn bg-primary text-white hover:bg-primary w-full"
+                  onClick={handleClick}
+                >
+                  Reservar
+                </button>
+              </div>
             </div>
+          </div>
+          <div className={`mt-4 ${showReservationForm ? "" : "hidden"}`}>
+            <ReservationSummary
+              onClose={handleClose}
+              touristPlanId={id}
+              touristPlanTitle={title}
+              numberOfPeople={numberOfPeople}
+              startDate={state[0].startDate}
+              endDate={state[0].endDate}
+              price={price}
+              seller={seller}
+              category={category}
+            />
           </div>
           <div className="flex gap-2 items-center justify-end mt-4">
             {/* Botón de compartir */}
@@ -225,11 +257,11 @@ const ProductDetails: React.FC<TouristPlan> = ({
         {/* Información adicional */}
         <div className="flex flex-col md:flex-row gap-4 ">
           <div className="flex gap-2 items-center">
-            <TiGroup size={24} />
+            <TiGroup size={24} className="text-secondary" />
             <span className="text-accent">{`Capacidad: ${capacity} personas`}</span>
           </div>
           <div className="flex gap-2 items-center">
-            <LuClock size={24} />
+            <LuClock size={24} className="text-secondary" />
             <span className="text-gray-600">{`Duración: ${duration}`}</span>
           </div>
         </div>
@@ -238,9 +270,9 @@ const ProductDetails: React.FC<TouristPlan> = ({
       {active ? (
         <>
           <div className="text-center text-gray-500 text-sm">Disponible</div>
-          <div className="text-center text-gray-500 text-sm">{price} €</div>
+          <div className="text-center text-gray-500 text-sm">S/. {price}</div>
           <div className="text-center text-gray-500 text-sm">
-            {seller} vendedor
+            Empresa {seller}
           </div>
           <div className="text-center text-gray-500 text-sm">
             {category}, {categoryDescription}{" "}
@@ -254,9 +286,12 @@ const ProductDetails: React.FC<TouristPlan> = ({
       <div className="flex flex-wrap gap-8 ">
         {characteristic.map((char) => (
           <div key={char.id} className="flex gap-2 items-center">
-            <div className="text-xl text-primary">
-              {characteristicIcons[char.name] || <SiWalkman />}
-            </div>
+            <Image
+              src={char.image.imageUrl}
+              alt={char.name}
+              width={16}
+              height={16}
+            ></Image>
             <span className="text-gray-600">{char.name}</span>
           </div>
         ))}

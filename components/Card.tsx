@@ -12,6 +12,7 @@ interface CardProps {
   isMobile?: boolean;
   mobileTitle: string;
   isFavorite?: boolean;
+  styles?: string;
 }
 const imageStyle = {
   width: "auto",
@@ -26,6 +27,7 @@ export default function Card({
   isMobile = false,
   mobileTitle,
   isFavorite = false,
+  styles,
 }: CardProps) {
   if (isMobile) {
     return (
@@ -62,7 +64,11 @@ export default function Card({
 
   // Desktop Version Card
   return (
-    <div>
+    <div
+      className={`bg-base-100 w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden ${
+        styles ? styles : "max-w-full"
+      } `}
+    >
       <figure className="min-h-52 h-48 max-h-64 relative">
         <Image
           className="rounded-t-xl w-full h-full object-cover"
@@ -75,11 +81,7 @@ export default function Card({
           <LikeButton planId={id} isFavorite={isFavorite} />
         </div>
       </figure>
-      <Link
-        href={`/product/${id}`}
-        className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden"
-        onClick={(event) => event.stopPropagation()}
-      >
+      <Link href={`/product/${id}`} className="cursor-pointer">
         <div className="h-72 overflow-hidden px-2 pt-2">
           <h2
             className={`text-xl ${
