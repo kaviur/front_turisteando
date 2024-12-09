@@ -1,6 +1,7 @@
 "use server";
 
 import { TouristPlan } from "@/types/touristPlan";
+import { TouristPlanReq } from "@/types/touristPlanReq";
 import { Characteristics } from "@/types/characteristics";
 
 
@@ -55,35 +56,13 @@ export const fetchProduct = async (
 // Método para crear un Tourist Plan
 export const createTouristPlan = async (
   token: string,
-  touristPlanData: {
-    title: string;
-    description: string;
-    price: number;
-    seller: string;
-    cityId: number;
-    categoryId: number;
-    availabilityStartDate: string;
-    availabilityEndDate: string;
-    capacity: number;
-    duration: string;
-    characteristicIds: number[];
-    images: File[] | null;
-  }
-): Promise<void> => {
+  form: TouristPlanReq
+): Promise<TouristPlan | string[]> => {
   try {
     const formData = new FormData();
     const touristPlan = JSON.stringify({
-      title: touristPlanData.title,
-      description: touristPlanData.description,
-      price: touristPlanData.price,
-      seller: touristPlanData.seller,
-      cityId: touristPlanData.cityId,
-      categoryId: touristPlanData.categoryId,
-      availabilityStartDate: touristPlanData.availabilityStartDate,
-      availabilityEndDate: touristPlanData.availabilityEndDate,
-      capacity: touristPlanData.capacity,
-      duration: touristPlanData.duration,
-      characteristicIds: touristPlanData.characteristicIds,
+      ...form,
+      characteristicIds: form.characteristicIds,
     });
 
     formData.append(
@@ -91,8 +70,8 @@ export const createTouristPlan = async (
       new Blob([touristPlan], { type: "application/json" })
     );
 
-    if (touristPlanData.images) {
-      touristPlanData.images.forEach((image) => {
+    if (form.images) {
+      form.images.forEach((image) => {
         formData.append("images", image);
       });
     }
@@ -102,24 +81,33 @@ export const createTouristPlan = async (
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // Se agrega el token aquí
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       }
     );
 
+    const responseJson = await response.json(); 
+
     if (!response.ok) {
-      const errorData = await response.json();
-      if (errorData.errors && Array.isArray(errorData.errors)) {
-        throw new Error(errorData.errors.join(", "));
+      console.log("Errordata: ", responseJson);
+      if (responseJson.errors && Array.isArray(responseJson.errors)) {
+        return responseJson.errors;
       }
-      throw new Error("Error desconocido al crear el producto.");
+      throw new Error("Hubo un problema en la creación");
+    }
+
+    if (responseJson.success && responseJson.data) {
+      return responseJson.data;
+    } else {
+      return responseJson.errors || [];
     }
   } catch (error) {
     console.error("Error al crear el producto:", error);
-    throw error; // Lanza el error para manejarlo en el componente
+    throw error; 
   }
 };
+
 
 // Método para editar un Tourist Plan
 export const updateTouristPlan = async (

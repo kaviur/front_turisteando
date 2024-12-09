@@ -6,115 +6,95 @@ import { toast, Toaster } from "react-hot-toast";
 import { createTouristPlan } from "@/lib/actions";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { TouristPlanReq } from "@/types/touristPlanReq";
+import validationsProducts from "@/utils/validators/validationsProducts";
 
 export default function CreateProductPage() {
-  // Estados para manejar los datos del formulario
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [categoryId, setCategoryId] = useState(""); 
-  const [cityId, setCityId] = useState("");
-  const [availabilityStartDate, setAvailabilityStartDate] = useState("");
-  const [availabilityEndDate, setAvailabilityEndDate] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [duration, setDuration] = useState("");
-  const [characteristicIds, setCharacteristicIds] = useState<string[]>([]);
-  const [images, setImages] = useState<File[]>([]);
-
-  const [remainingImagesToUpload, setRemainingImagesToUpload] = useState(5);
-
-  // Estado adicional
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [form, setForm] = useState<TouristPlanReq>({
+    title: "",
+    description: "",
+    price: "",
+    seller: "seller", // TODO: tomar de la sesión
+    cityId: "",
+    categoryId: "",
+    availabilityStartDate: "",
+    availabilityEndDate: "",
+    capacity: 0,
+    duration: "",
+    characteristicIds: [],
+    images: null, // Las imágenes se manejan como `FileList | null`
+  });
   const [isPending, setIsPending] = useState(false);
-  const { data: session } = useSession(); 
+
+  const { data: session } = useSession();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsPending(true);
-  
-    try {
-      /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-      const token: string = session?.user.accessToken;
-  
-      const touristPlanData = {
-        title,
-        description,
-        price: Number(price),
-        seller: "seller", // TODO: Cambiar por el usuario autenticado
-        cityId: Number(cityId),
-        categoryId: Number(categoryId),
-        availabilityStartDate,
-        availabilityEndDate,
-        capacity: Number(capacity),
-        duration,
-        characteristicIds: characteristicIds.map((id) => Number(id)),
-        images: images ? Array.from(images) : null,
-      };
-  
-      await createTouristPlan(token, touristPlanData);
-  
-      // Resetea el formulario si la petición fue exitosa
-      setTitle("");
-      setDescription("");
-      setPrice("");
-      setCityId("");
-      setCategoryId("");
-      setAvailabilityStartDate("");
-      setAvailabilityEndDate("");
-      setCapacity("");
-      setDuration("");
-      setCharacteristicIds([]);
-      setImages([]);
-  
-      toast.success("Producto creado exitosamente!"); 
-      // Redirigir a admin/productactions después del éxito
-      router.push("/admin/productactions");
 
+    // Validación del formulario
+    if (!validationsProducts({ form, setErrors })) {
+      toast.error("Por favor, corrige los errores en el formulario.");
+      return;
+    }
+
+    setIsPending(true);
+
+    try {
+      /* @ts-expect-error: TypeScript no reconoce `accessToken` en `session.user` */
+      const token: string = session?.user?.accessToken;
+    
+      const touristPlanData = {
+        ...form,
+        price: Number(form.price),
+        cityId: Number(form.cityId),
+        categoryId: Number(form.categoryId),
+        capacity: Number(form.capacity),
+        characteristicIds: form.characteristicIds.map((id) => Number(id)),
+        images: form.images ? Array.from(form.images) : null,
+      };
+    
+      // Realiza la petición para crear el producto
+      const response = await createTouristPlan(token, touristPlanData);
+    
+      // Si el response es un array, significa que contiene errores del backend
+      if (Array.isArray(response)) {
+        response.forEach((err: string) => toast.error(err));
+        return;
+      }
+    
+      // Si la respuesta es válida, muestra el mensaje de éxito y redirige
+      toast.success("Producto creado exitosamente!");
+      router.push("/admin/productactions");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("El error:", error);
+    
+      // Muestra un error genérico si ocurre un problema inesperado
       toast.error(
-        error instanceof Error ? error.message : "Hubo un problema al crear el producto."
+        error instanceof Error
+          ? error.message
+          : "Hubo un problema al crear el producto."
       );
     } finally {
       setIsPending(false);
     }
   };
 
-  const productFormProps = {
-    title,
-    setTitle,
-    description,
-    setDescription,
-    price,
-    setPrice,
-    cityId,
-    setCityId,
-    categoryId,
-    setCategoryId,
-    availabilityStartDate,
-    setAvailabilityStartDate,
-    availabilityEndDate,
-    setAvailabilityEndDate,
-    capacity,
-    setCapacity,
-    duration,
-    setDuration,
-    characteristicIds,
-    setCharacteristicIds,
-    images,
-    setImages,
-    onSubmit: handleSubmit,
-    isPending,
-    isEditing: false,
-    remainingImagesToUpload,
-    setRemainingImagesToUpload
-  };
 
   return (
     <>
       <div className="ml-96 flex justify-center">
         <Toaster position="top-center" />
-        <ProductForm {...productFormProps} />;
+        <ProductForm
+          form={form}
+          setForm={setForm}
+          errors={errors}
+          setErrors={setErrors}
+          onSubmit={handleSubmit}
+          isPending={isPending}
+          isEditing={false}
+        />
       </div>
     </>
   );
