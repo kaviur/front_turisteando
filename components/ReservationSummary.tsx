@@ -17,6 +17,7 @@ interface ReservationSummaryProps {
   category: string;
   startDate: Date;
   endDate: Date;
+  onReset: () => void;
 }
 
 const ReservationSummary: React.FC<ReservationSummaryProps> = ({
@@ -29,6 +30,7 @@ const ReservationSummary: React.FC<ReservationSummaryProps> = ({
   touristPlanTitle,
   price,
   seller,
+  onReset,
 }) => {
   const { data: session } = useSession();
   const [isPending, setIsPending] = useState(false);
@@ -66,16 +68,16 @@ const ReservationSummary: React.FC<ReservationSummaryProps> = ({
 
     try {
       const response = await createReservation(token, data);
-      console.log(response);
       if ("debugMessage" in response) {
         handleBackendError(response, "reservation");
         setIsPending(false);
       } else {
         toast.success("Reserva creada exitosamente, verifica tu email");
-
+        
         setTimeout(() => {
           setIsPending(false);
           onClose();
+          onReset();
         }, 1000);
       }
     } catch (error) {

@@ -90,6 +90,17 @@ const ProductDetails: React.FC<TouristPlan> = ({
     setShowReservationForm(false);
   };
 
+  const handleResetValues = () => {
+    setNumberOfPeople(1);
+    setState([
+      {
+        startDate: new Date(),
+        endDate: new Date(),
+        key: "selection",
+      },
+    ]);
+  }
+
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
       {/* Título y enlace de regreso */}
@@ -222,6 +233,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
               numberOfPeople={numberOfPeople}
               startDate={state[0].startDate}
               endDate={state[0].endDate}
+              onReset={handleResetValues}
               price={price}
               seller={seller}
               category={category}
