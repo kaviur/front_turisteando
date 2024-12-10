@@ -27,7 +27,8 @@ export const filterPlansByDateRange = (
     const tourStartDate = new Date(tour.availabilityStartDate);
     const tourEndDate = new Date(tour.availabilityEndDate);
 
-    return tourStartDate >= startDate && tourEndDate <= endDate;
+    // return tourStartDate >= startDate && tourEndDate <= endDate;
+    return tourEndDate >= startDate && tourStartDate <= endDate;
   });
 
   return filteredTours;

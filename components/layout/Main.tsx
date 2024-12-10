@@ -14,20 +14,34 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 import SearchBar from "../SearchBar";
 import { TouristPlan } from "@/types/touristPlan";
-import { fetchTours } from "@/lib/actions";
+import { Review } from "@/types/review";
+import { fetchAllReviews } from "@/lib/reviews/reviewActions";
+import { useFavorites } from "@/context/FavoritesContext";
 
 export const Main = () => {
-  // Tipar el estado 'tours' como un array de 'Tour'
-  const [tours, setTours] = useState<TouristPlan[]>([]);
-  const [allTours, setAllTours] = useState<TouristPlan[]>([]);
-  const [loading, setLoading] = useState(true); // Nuevo estado de carga
+  const { touristPlans, loading } = useFavorites();
+
+  const [allTours, setAllTours] = useState<TouristPlan[]>(touristPlans);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [tours, setTours] = useState<TouristPlan[]>(touristPlans);
 
   useEffect(() => {
-    fetchTours().then((data) => {
-      setTours(data);
-      setAllTours(data);
-      setLoading(false);
-    });
+    setTours(touristPlans);
+    setAllTours(touristPlans);
+  }, [touristPlans]);
+
+  // Cargar las reseñas del producto
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const reviewsData = await fetchAllReviews();
+        setReviews(reviewsData);
+      } catch (error) {
+        console.error("Error al cargar las reseñas:", error);
+      }
+    };
+
+    loadReviews();
   }, []);
 
   return (
@@ -125,6 +139,7 @@ export const Main = () => {
                     imageSrc={tour.images[0]?.imageUrl}
                     title={tour.title}
                     description={tour.description}
+                    isFavorite={tour.isFavorite}
                   />
                 </SwiperSlide>
               ))
@@ -233,6 +248,7 @@ export const Main = () => {
                     imageSrc={tour.images[0]?.imageUrl}
                     title={tour.title}
                     description={tour.description}
+                    isFavorite={tour.isFavorite}
                   />
                 </SwiperSlide>
               ))
@@ -276,61 +292,33 @@ export const Main = () => {
           modules={[FreeMode, Pagination]}
           className="mySwiper"
         >
-          <SwiperSlide>
-            <Testimonial
-              userImage="/juanuser.jpg"
-              userName="Juan Pérez"
-              city="Bogotá"
-              country="Colombia"
-              date="mayo 2024"
-              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-              rating={5}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Testimonial
-              userImage="/sarauser.jpg"
-              userName="Sara User"
-              city="Bogotá"
-              country="Colombia"
-              date="mayo 2024"
-              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-              rating={5}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Testimonial
-              userImage="/anauser.jpg"
-              userName="Ana Susana"
-              city="Bogotá"
-              country="Colombia"
-              date="mayo 2024"
-              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-              rating={5}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Testimonial
-              userImage="/juanuser.jpg"
-              userName="Juan Pérez"
-              city="Bogotá"
-              country="Colombia"
-              date="mayo 2024"
-              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-              rating={5}
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Testimonial
-              userImage="/anauser.jpg"
-              userName="Ana Susana"
-              city="Bogotá"
-              country="Colombia"
-              date="mayo 2024"
-              reviewText="Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera.Me encantó el servicio, realmente superó mis expectativas y lo recomendaría a cualquiera."
-              rating={5}
-            />
-          </SwiperSlide>
+          {reviews.length > 0 ? (
+            reviews.map((review, index) => (
+              <SwiperSlide key={index}>
+                <Testimonial
+                  userImage={""}
+                  userName={review.user.name}
+                  city={"Medellín"}
+                  country={"Colombia"}
+                  date={review.date}
+                  reviewText={review.comment}
+                  rating={review.rating}
+                />
+              </SwiperSlide>
+            ))
+          ) : (
+            <SwiperSlide>
+              <Testimonial
+                userImage="/juanuser.jpg"
+                userName="Juan Pérez"
+                city="Bogotá"
+                country="Colombia"
+                date="mayo 2024"
+                reviewText="No se han encontrado reseñas aún."
+                rating={5}
+              />
+            </SwiperSlide>
+          )}
         </Swiper>
       </section>
     </>

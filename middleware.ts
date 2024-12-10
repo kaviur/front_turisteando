@@ -1,6 +1,6 @@
-import NextAuth from 'next-auth';
-import { DEFAULT_REDIRECT, PUBLIC_ROUTES, ROOT } from '@/lib/routes';
-import { authConfig } from './auth.config';
+import NextAuth from "next-auth";
+import { DEFAULT_REDIRECT, PUBLIC_ROUTES, ROOT } from "@/lib/routes";
+import { authConfig } from "./auth.config";
 
 const { auth } = NextAuth(authConfig);
 
@@ -9,9 +9,19 @@ export default auth((req) => {
   const isAuthenticated = !!req.auth;
   const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
 
+  // Si la ruta es favorites y el usuario no esta autenticado será redirigido al login
+  if (nextUrl.pathname.startsWith("/favorites")) {
+    if (!isAuthenticated) {
+      return Response.redirect(new URL("/login", nextUrl));
+    }
+
+    // Si el usuario esta autenticado y la ruta es favorites, se le permite el acceso
+    return;
+  }
+
   // Revisar si el usuario tiene rol ADMIN
   //@ts-ignore
-  const isAdmin = req.auth?.user?.role === 'ADMIN';
+  const isAdmin = req.auth?.user?.role === "ADMIN";
 
   // Si no está autenticado y la ruta no es pública, redirige a ROOT
   if (!isAuthenticated && !isPublicRoute) {
@@ -25,5 +35,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ['/admin','/admin/:path*'],
+  matcher: ["/admin", "/admin/:path*", "/favorites", "/favorites/:path*"],
 };

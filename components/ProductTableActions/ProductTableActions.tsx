@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { fetchCategories } from "@/lib/categories/categoryActions"
-import { updateTouristPlan } from "@/lib/actions";
+import { deleteTouristPlan, updateTouristPlan } from "@/lib/actions";
 
 
 
@@ -20,7 +20,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(null);
 
-    const { data: session } = useSession(); 
+    const { data: session } = useSession();
     const router = useRouter();
     //const { data: session } = useSession();
 
@@ -58,36 +58,24 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         });
     };
 
-    // Método para eliminar un producto existente
     const handleDelete = async (id: number) => {
         const confirmed = await confirmDelete();
-        if (!confirmed) return;
+        if (!confirmed || !session) return;
 
         /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
-        const token = session?.accessToken;
-
+        const token = session?.user?.accessToken;
         try {
-            await toast.promise(
-                fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/toggle-status/${id}`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }).then(async (response) => {
-                    if (!response.ok) throw new Error("Error al eliminar el producto");
-
-                }),
-                {
-                    loading: "Eliminando producto...",
-                    success: "Producto eliminado exitosamente",
-                    error: "Error al eliminar el producto",
-                }
-            );
-            // Filtra el producto eliminado de la lista y actualiza el estado
-            setTouristPlans((prevProducts) => prevProducts.filter((product) => Number(product.id) !== id));
+            const response = await deleteTouristPlan(token, id);
+            if (response) {
+                toast.success("El plan turistico se ha borrado con éxito");
+                setTouristPlans((prevProducts) =>
+                    prevProducts.filter((product) => Number(product.id) !== id)
+                );
+            }
         } catch (error) {
-            console.error("Error deleting product:", error);
+            console.error("Error eliminando plan turistico:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -112,17 +100,17 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
 
     useEffect(() => {
         const fetchData = async () => {
-          try {
-            const categories = await fetchCategories();
-            setCategories(categories);
-          } catch (error) {
-            console.error("Error fetching categories:", error);
-            setError('Error al obtener las categorías.');
-          } finally {
-            setLoading(false);
-          }
+            try {
+                const categories = await fetchCategories();
+                setCategories(categories);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                setError('Error al obtener las categorías.');
+            } finally {
+                setLoading(false);
+            }
         };
-      
+
         fetchData();
     }, []);
 
@@ -132,7 +120,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
             toast.error("Por favor selecciona una categoría antes de asignar.");
             return;
         }
-    
+
         try {
             /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
             const token: string = session?.user?.accessToken;
@@ -141,7 +129,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
             const characteristicIds = product.characteristic.map((char) => char.id);
 
             await updateTouristPlan(
-                token, 
+                token,
                 product.id.toString(),
                 {
                     title: product.title,
@@ -159,7 +147,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                     imagesToDelete: [],
                 }
             );
-        
+
             // Si todo va bien, muestra el mensaje de éxito
             toast.success("Categoría modificada exitosamente!");
             router.push("/admin/productactions");
@@ -180,7 +168,10 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                 <h4 className="text-2xl font-semibold text-secondary">Productos</h4>
             </div>
 
-            <div className="grid grid-cols-6 border-t border-stroke px-4 py-4 sm:grid-cols-8 md:px-6 2xl:px-7">
+            <div className="grid grid-cols-8 border-t border-stroke px-4 py-4 sm:grid-cols-9 md:px-6 2xl:px-7">
+                <div className="col-span-1 flex items-center ml-6">
+                    <p className="font-medium py-2">Id</p>
+                </div>
                 <div className="col-span-2 flex items-center">
                     <p className="font-medium py-2">Producto</p>
                 </div>
@@ -203,12 +194,16 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
 
             {products.map((product, key) => (
                 <div
-                    className="grid grid-cols-6 border-t border-stroke px-4 py-4 sm:grid-cols-8 md:px-6 2xl:px-7"
+                    className="grid grid-cols-7 border-t border-stroke px-4 py-4 sm:grid-cols-9 md:px-6 2xl:px-7"
                     key={key}
                 >
+                     <div className="col-span-1 flex items-center ml-6">
+                        <p className="text-sm text-black">{product.id}</p>
+                    </div>
                     <div className="col-span-2 flex items-center">
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                            <div className="h-14 w-20 rounded-md flex items-center">
+                            <div className="h-14 w-20 flex-shrink-0 rounded-md flex items-center justify-center"
+                            >
                                 {product.images && product.images.length > 0 ? (
                                     <Image
                                         src={product.images[0].imageUrl}

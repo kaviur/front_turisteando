@@ -1,32 +1,40 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
+import LikeButton from "./ui/LikeButton";
 
 interface CardProps {
-  id: number;  // Añadir el parámetro id
+  id: number; // Añadir el parámetro id
   imageSrc: string;
   title: string;
   isPrimary: boolean;
   description: string;
   isMobile?: boolean;
   mobileTitle: string;
+  isFavorite?: boolean;
+  styles?: string;
 }
 const imageStyle = {
-  width: 'auto',
-  height: 'auto', // Puedes ajustar ambos valores aquí si es necesario
-};  
+  width: "auto",
+  height: "auto", // Puedes ajustar ambos valores aquí si es necesario
+};
 export default function Card({
-  id,  // Asegurarse de recibir el id aquí
+  id, // Asegurarse de recibir el id aquí
   imageSrc,
   title,
   isPrimary,
   description,
   isMobile = false,
-  mobileTitle
+  mobileTitle,
+  isFavorite = false,
+  styles,
 }: CardProps) {
   if (isMobile) {
     return (
-      <Link href={`/product/${id}`} className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6">
+      <Link
+        href={`/product/${id}`}
+        className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6"
+      >
         <Image
           loading="lazy"
           style={imageStyle}
@@ -56,8 +64,12 @@ export default function Card({
 
   // Desktop Version Card
   return (
-    <Link href={`/product/${id}`} className="cursor-pointer bg-base-100 max-w-sm w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden">
-      <figure className="min-h-52 h-48 max-h-64">
+    <div
+      className={`bg-base-100 w-full h-96 max-h-96 mb-12 shadow-md rounded-xl overflow-hidden ${
+        styles ? styles : "max-w-full"
+      } `}
+    >
+      <figure className="min-h-52 h-48 max-h-64 relative">
         <Image
           className="rounded-t-xl w-full h-full object-cover"
           src={imageSrc}
@@ -65,15 +77,22 @@ export default function Card({
           width={400}
           height={400}
         />
+        <div className="absolute bottom-0 right-2">
+          <LikeButton planId={id} isFavorite={isFavorite} />
+        </div>
       </figure>
-      <div className="h-72 overflow-hidden px-2 pt-2">
-        <h2
-          className={`text-xl ${isPrimary ? "text-primary" : "text-secondary"}`}
-        >
-          {title} <span className="text-gray-500">Perú</span>
-        </h2>
-        <p className="text-justify text-gray-600">{description}</p>
-      </div>
-    </Link>
+      <Link href={`/product/${id}`} className="cursor-pointer">
+        <div className="h-72 overflow-hidden px-2 pt-2">
+          <h2
+            className={`text-xl ${
+              isPrimary ? "text-primary" : "text-secondary"
+            }`}
+          >
+            {title} <span className="text-gray-500">Perú</span>
+          </h2>
+          <p className="text-justify text-gray-600">{description}</p>
+        </div>
+      </Link>
+    </div>
   );
 }

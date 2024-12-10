@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react"; // Importar la función de signIn de NextAuth
+import { signIn, useSession } from "next-auth/react"; // Importar la función de signIn de NextAuth
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -14,6 +14,7 @@ export default function Login() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isPending, setIsPending] = useState(false); // Estado para controlar el botón de carga
   const router = useRouter();
+  const { update } = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,34 +46,39 @@ export default function Login() {
 
     setIsPending(true); // Activar el estado de carga
 
-    toast.promise(
-      signIn("credentials", {
-        email: form.email,
-        password: form.password,
-        redirect: false, // No redirigir automáticamente
-      }).then((response) => {
-        if (response?.error) {
-          throw new Error(response.error); // Si hay error, lanzamos una excepción
+    toast
+      .promise(
+        signIn("credentials", {
+          email: form.email,
+          password: form.password,
+          redirect: false, // No redirigir automáticamente
+        }).then((response) => {
+          if (response?.error) {
+            throw new Error(response.error); // Si hay error, lanzamos una excepción
+          }
+          const redirectPath = localStorage.getItem("redirectPath") || "/";
+          localStorage.removeItem("redirectPath");
+          
+          router.replace(redirectPath);
+          update();
+          return "Sesión iniciada con éxito!";
+        }),
+        {
+          loading: "Iniciando sesión...",
+          success: (message) => message, // El mensaje de éxito será el que retorna la promesa
+          error: "Error en el correo o contraseña", // El mensaje de error será el que retorna la promesa
         }
-        router.push("/"); // Redirigir a la página de administración
-        return "Sesión iniciada con éxito!";
-      }),
-      {
-        loading: "Iniciando sesión...",
-        success: (message) => message, // El mensaje de éxito será el que retorna la promesa
-        error: "Error en el correo o contraseña", // El mensaje de error será el que retorna la promesa
-        
-      }
-    ).finally(() => {
-      setIsPending(false); // Desactivar el estado de carga después de la promesa
-    });
+      )
+      .finally(() => {
+        setIsPending(false); // Desactivar el estado de carga después de la promesa
+      });
   };
 
   const handleGoogleLogin = () => {
     const loadingToast = toast.loading("Iniciando sesión con Google...");
     setTimeout(() => {
       toast.success("Iniciado sesión con Google", { id: loadingToast });
-      router.push("/");
+      router.replace("/");
     }, 2000);
   };
 
@@ -91,7 +97,9 @@ export default function Login() {
         onSubmit={handleLogin} // Asignamos la función handleLogin al submit
         className="w-full max-w-sm p-6 bg-white rounded-lg shadow-md mt-14"
       >
-        <h2 className="text-3xl font-bold mt-2 mb-4 text-start">Bienvenido! 👋</h2>
+        <h2 className="text-3xl font-bold mt-2 mb-4 text-start">
+          Bienvenido! 👋
+        </h2>
         <p className="text-[14px] text-[#828F9C] mt-2 mb-8 text-star">
           Estamos felices de verte de nuevo! Por favor ingresa tu mail y
           contraseña para iniciar sesión en tu cuenta.
@@ -100,7 +108,12 @@ export default function Login() {
         {/* Campo de Email */}
         <div className="mb-4">
           <label className="input input-bordered rounded-3xl flex items-center gap-2 mb-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-5 w-5 opacity-70">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="h-5 w-5 opacity-70"
+            >
               <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
               <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
             </svg>
@@ -122,8 +135,17 @@ export default function Login() {
         {/* Campo de Contraseña */}
         <div className="mb-4">
           <label className="input input-bordered rounded-3xl flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-5 w-5 opacity-70">
-              <path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className="h-5 w-5 opacity-70"
+            >
+              <path
+                fillRule="evenodd"
+                d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z"
+                clipRule="evenodd"
+              />
             </svg>
             <input
               type="password"

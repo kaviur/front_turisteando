@@ -47,7 +47,7 @@ const ShareProduct = ({
     <div>
       {/* Botón para abrir el modal */}
       <button
-        className="btn btn-ghost hover:bg-opacity-80 shadow-lg text-accent bg-white rounded-full h-20 w-20"
+        className="btn btn-ghost hover:bg-opacity-80 shadow-lg text-accent bg-white rounded-full h-16 w-16"
         //@ts-expect-error: daisy UI component functionality.
         onClick={() => document.getElementById("share_modal")?.showModal()}
       >
