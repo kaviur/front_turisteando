@@ -75,19 +75,19 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     // Validación del formulario
     if (!validationsProducts({ form, setErrors })) {
       toast.error("Por favor, corrige los errores en el formulario.");
       return;
     }
-
+  
     setIsPending(true);
-
+  
     try {
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token: string = session?.user?.accessToken;
-
+  
       const touristPlanData = {
         ...form,
         price: Number(form.price),
@@ -96,17 +96,26 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
         capacity: Number(form.capacity),
         characteristicIds: form.characteristicIds.map((id) => Number(id)),
         images: form.images ? Array.from(form.images) : null,
-        imagesToDelete,
+        imagesToDelete,  // Añadir las imágenes a eliminar si están presentes
       };
-
-      await updateTouristPlan(token, productId, touristPlanData);
-
+  
+      const response = await updateTouristPlan(token, productId, touristPlanData);
+  
+      // Si la respuesta es un array, significa que contiene errores del backend
+      if (Array.isArray(response)) {
+        response.forEach((err: string) => toast.error(err));  // Mostrar cada error
+        return;
+      }
+  
       toast.success("Producto editado exitosamente!");
       router.push("/admin/productactions");
     } catch (error) {
       console.error("Error:", error);
+  
       toast.error(
-        error instanceof Error ? error.message : "Hubo un problema al editar el producto."
+        error instanceof Error
+          ? error.message
+          : "Hubo un problema al editar el producto, inténtalo más tarde"
       );
     } finally {
       setIsPending(false);

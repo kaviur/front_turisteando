@@ -113,37 +113,17 @@ export const createTouristPlan = async (
 export const updateTouristPlan = async (
   token: string,
   productId: string,
-  touristPlanData: {
-    title: string;
-    description: string;
-    price: number;
-    seller: string;
-    cityId: number;
-    categoryId: number;
-    availabilityStartDate: string;
-    availabilityEndDate: string;
-    capacity: number;
-    duration: string;
-    characteristicIds: number[];
-    images: File[] | null;
-    imagesToDelete: string[];
-  }
-): Promise<void> => {
+  form: TouristPlanReq
+): Promise<TouristPlan | string[]> => {
   try {
+    // Crear FormData para la solicitud
     const formData = new FormData();
+    
+    // Convertir el objeto form en JSON y adjuntarlo a FormData
     const touristPlan = JSON.stringify({
-      title: touristPlanData.title,
-      description: touristPlanData.description,
-      price: touristPlanData.price,
-      seller: touristPlanData.seller,
-      cityId: touristPlanData.cityId,
-      categoryId: touristPlanData.categoryId,
-      availabilityStartDate: touristPlanData.availabilityStartDate,
-      availabilityEndDate: touristPlanData.availabilityEndDate,
-      capacity: touristPlanData.capacity,
-      duration: touristPlanData.duration,
-      characteristicIds: touristPlanData.characteristicIds,
-      imagesToDelete: touristPlanData.imagesToDelete,
+      ...form,
+      characteristicIds: form.characteristicIds,
+      imagesToDelete: form.imagesToDelete || [],  // Asegurarse de que esté presente, incluso si es un array vacío
     });
 
     formData.append(
@@ -151,12 +131,14 @@ export const updateTouristPlan = async (
       new Blob([touristPlan], { type: "application/json" })
     );
 
-    if (touristPlanData.images) {
-      touristPlanData.images.forEach((image) => {
+    // Adjuntar las imágenes si están presentes
+    if (form.images && form.images.length > 0) {
+      form.images.forEach((image) => {
         formData.append("images", image);
       });
     }
 
+    // Realizar la solicitud PUT
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/update/${productId}`,
       {
@@ -168,23 +150,25 @@ export const updateTouristPlan = async (
       }
     );
 
-    const data = await response.json()
+    const responseJson = await response.json();  // Obtener la respuesta en JSON
 
-    console.log("response---",data.data);
-
+    // Validar si la respuesta fue exitosa
     if (!response.ok) {
-      const errorData = await response.json();
-
-      console.log("errores---",errorData.errors)
-      
-      if (errorData.errors && Array.isArray(errorData.errors)) {
-        throw new Error(errorData.errors.join(", "));
+      console.log("Errordata: ", responseJson);
+      if (responseJson.errors && Array.isArray(responseJson.errors)) {
+        return responseJson.errors;  // Retornar los errores si existen
       }
-      throw new Error("Error desconocido al editar el producto.");
+      throw new Error("Hubo un problema al actualizar el plan turístico.");
+    }
+
+    if (responseJson.success && responseJson.data) {
+      return responseJson.data;  // Retornar los datos si la respuesta es exitosa
+    } else {
+      return responseJson.errors || [];  // Retornar los errores si existen
     }
   } catch (error) {
-    console.error("Error al editar el producto:", error);
-    throw error; // Lanza el error para manejarlo en el componente
+    console.error("Error al actualizar el plan turístico:", error);
+    throw error;  // Lanzar error para que pueda ser manejado en el frontend
   }
 };
 

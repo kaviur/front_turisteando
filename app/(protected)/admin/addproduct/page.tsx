@@ -55,7 +55,6 @@ export default function CreateProductPage() {
         images: form.images ? Array.from(form.images) : null,
       };
     
-      // Realiza la petición para crear el producto
       const response = await createTouristPlan(token, touristPlanData);
     
       // Si el response es un array, significa que contiene errores del backend
@@ -64,17 +63,16 @@ export default function CreateProductPage() {
         return;
       }
     
-      // Si la respuesta es válida, muestra el mensaje de éxito y redirige
       toast.success("Producto creado exitosamente!");
       router.push("/admin/productactions");
     } catch (error) {
       console.error("El error:", error);
     
-      // Muestra un error genérico si ocurre un problema inesperado
+      // Error genérico si ocurre un problema inesperado
       toast.error(
         error instanceof Error
           ? error.message
-          : "Hubo un problema al crear el producto."
+          : "Hubo un problema al crear el producto, inténtalo más tarde"
       );
     } finally {
       setIsPending(false);

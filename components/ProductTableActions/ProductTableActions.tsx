@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { TbArrowsExchange } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+//import { useRouter } from "next/navigation";
 import { fetchCategories } from "@/lib/categories/categoryActions"
 import { deleteTouristPlan, updateTouristPlan } from "@/lib/actions";
 
@@ -19,9 +19,10 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
     const [error, setError] = useState<string | null>(null);
     const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
     const [currentCategoryId, setCurrentCategoryId] = useState<string | null>(null);
+    const [currentProduct, setCurrentProduct] = useState<TouristPlan | null>(null);
 
     const { data: session } = useSession();
-    const router = useRouter();
+    //const router = useRouter();
     //const { data: session } = useSession();
 
 
@@ -83,20 +84,23 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         setSelectedCategoryId(id);
     };
 
-    const handleOpenModal = (categoryId: string) => {
+    const handleOpenModal = (product: TouristPlan) => {
         try {
-            setCurrentCategoryId(categoryId);
-            setSelectedCategoryId(null);
-
-            const dialogElement = document.getElementById("my_modal_4") as HTMLDialogElement;
-            if (!dialogElement) {
-                throw new Error("Modal element not found");
-            }
-            dialogElement.showModal();
+          // Establecer el producto actual y su categoría en el estado
+          setCurrentProduct(product);
+          setCurrentCategoryId(product.category.id.toString());
+          setSelectedCategoryId(null);
+      
+          // Mostrar el modal
+          const dialogElement = document.getElementById("my_modal_4") as HTMLDialogElement;
+          if (!dialogElement) {
+            throw new Error("Modal element not found");
+          }
+          dialogElement.showModal();
         } catch (error) {
-            console.error("Error opening modal:", error);
+          console.error("Error opening modal:", error);
         }
-    };
+      };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -114,8 +118,13 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
         fetchData();
     }, []);
 
-    const assignCategory = async (product: TouristPlan) => {
-        alert(product.id)
+    const assignCategory = async (product: TouristPlan | null) => {
+
+        if (!product) {
+            console.error("No product provided");
+            return;
+        }
+
         if (!selectedCategoryId) {
             toast.error("Por favor selecciona una categoría antes de asignar.");
             return;
@@ -150,7 +159,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
 
             // Si todo va bien, muestra el mensaje de éxito
             toast.success("Categoría modificada exitosamente!");
-            router.push("/admin/productactions");
+            window.location.reload(); 
         } catch (error) {
             // Maneja errores lanzados desde `updateTouristPlan`
             console.error("Error al asignar la categoría:", error);
@@ -229,7 +238,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                         </span>
                         <button
                             className="bg-red-400 text-white font-bold p-1 rounded-full ml-4"
-                            onClick={() => handleOpenModal(product.category.id.toString())}
+                            onClick={() => handleOpenModal(product)}
                         >
                             <TbArrowsExchange />
                         </button>
@@ -282,7 +291,7 @@ const ProductsTableActions = ({ products, setTouristPlans }: { products: Tourist
                                     }
                                 </div>
                                 <div className="modal-action flex items-center">
-                                    <button className="btn btn-primary" onClick={() => assignCategory(product)}>
+                                    <button className="btn btn-primary" onClick={() => assignCategory(currentProduct)}>
                                         Asignar esta categoría
                                     </button>
                                     <form method="dialog">
