@@ -15,20 +15,18 @@ import { TouristPlan } from "@/types/touristPlan";
 import Card from "@/components/Card";
 import { FaArrowRight } from "react-icons/fa";
 import { fetchProduct, fetchTours } from "@/lib/actions";
-import { fetchReviewsByPlan, fetchReviewsByPlanAndCheckUserReview, obtenerReservasDelUsuario } from "@/lib/reviews/reviewActions";
+import { fetchReviewsByPlan, fetchReviewsByPlanAndCheckUserReview } from "@/lib/reviews/reviewActions";
 import { Review } from "@/types/review";
 import CreateReview from "@/components/CreateReview/CreateReview";
-import { useSession } from "next-auth/react";
+import ButtonReview from "@/components/ButtonReview/ButtonReview";
 
 export default function ProductPage() {
-  const { data: session } = useSession();
   const [tours, setTours] = useState<TouristPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<TouristPlan | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userHasReview, setUserHasReview] = useState(false);
-  const [userHasReservation, setUserHasReservation] = useState(false);
+  
 
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
@@ -69,24 +67,20 @@ export default function ProductPage() {
 
     loadReviews();
   }, [productId]);
-
-  // Check if user has already left a review
-  useEffect(() => {
-    const checkUserReview = async () => {
-      if (session && session.user) {
-        try {
-          const userId = session.user.id;
-          const { userHasReview } = await fetchReviewsByPlanAndCheckUserReview(Number(productId), Number(userId));
-          setUserHasReview(userHasReview);
-        } catch (error) {
-          console.error("Error checking user review:", error);
-        }
-      }
-    };
-    checkUserReview();
-  }, [session, productId]);
-
   
+  useEffect(() => {
+    if (!isModalOpen) {
+      const loadReviews = async () => {
+        try {
+          const reviewsData = await fetchReviewsByPlan(Number(productId));
+          setReviews(reviewsData);
+        } catch (error) {
+          console.error("Error al cargar las reseñas:", error);
+        }
+      };
+      loadReviews();
+    }
+  }, [isModalOpen]);
 
   if (!product) return;
 
@@ -113,29 +107,23 @@ export default function ProductPage() {
         active={product?.active}
       />
 
-      {/* Aquí es donde añadimos el botón */}
+      {/* Botón de reseñas */}
       <div className="mt-8">
         {product?.id && (
-          <button
-            disabled={userHasReview} // Deshabilitar el botón si ya se dejó una reseña
-            className="btn btn-primary text-white rounded-3xl"
-            onClick={() => setIsModalOpen(true)}
-          >
-            Deja tu Reseña
-          </button>
+          <ButtonReview
+            planId={product.id}
+            onClick={() => setIsModalOpen(true)} 
+          />
         )}
       </div>
       {/* Modal de Crear Reseña */}
       {isModalOpen && (
         <CreateReview
-          //token="your-token"  // Asumiendo que el token se pasa desde algún contexto o estado
-          //userId={1}  
           planId={product.id}  
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}  
           onReviewCreated={() => {
             setIsModalOpen(false);
-            setUserHasReview(true); // Update state after creating a review
           }}
         />
       )}

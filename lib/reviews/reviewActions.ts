@@ -6,8 +6,8 @@ import { Review } from "@/types/review";
 export const fetchReviewsByPlan = async (planId: number): Promise<Review[]> => {
   try {
     const response = await fetch(
-      //`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/plan/${planId}`,  
-      `http://localhost:8080/api/reviews/plan/${planId}`,  
+      `${process.env.NEXT_PUBLIC_BASE_URL}/reviews/plan/${planId}`,  
+      //`http://localhost:8080/api/reviews/plan/${planId}`,  
 
       {
         method: "GET",
@@ -31,10 +31,7 @@ export const fetchReviewsByPlan = async (planId: number): Promise<Review[]> => {
     if (data && Array.isArray(data.data)) {
       return data.data; 
     } else {
-      console.error(
-        "La respuesta de la API no contiene un array de reseñas:",
-        data
-      );
+      console.error( "La respuesta de la API no contiene un array de reseñas:", data );
       return []; 
     }
   } catch (error) {
@@ -47,8 +44,8 @@ export const fetchReviewsByPlan = async (planId: number): Promise<Review[]> => {
 export const fetchAllReviews = async (): Promise<Review[]> => {
   try {
     const response = await fetch(
-      //`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/all`,  
-      `http://localhost:8080/api/reviews/all`,  
+      `${process.env.NEXT_PUBLIC_BASE_URL}/reviews/all`,  
+      //`http://localhost:8080/api/reviews/all`,  
 
       {
         method: "GET",
@@ -90,19 +87,19 @@ export const createReview = async (
   review: { idUser: number; planId: number; rating: number; comment: string }
 ) => {
   try {
-    //const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/create`, {
-    const response = await fetch(`http://localhost:8080/api/reviews/create`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/create`, {
+   // const response = await fetch(`http://localhost:8080/api/reviews/create`, {
 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
+        Authorization: `Bearer ${token}`, 
       },
-      body: JSON.stringify(review), // Convertir el objeto en JSON
+      body: JSON.stringify(review), 
     });
 
     const data = await response.json();
-    console.log('Respuesta de la API:', data);
+    //console.log('Respuesta de la API:', data);
 
     if (response.ok) {
       return { success: true, review: data.data };
@@ -118,10 +115,9 @@ export const createReview = async (
 // Función para obtener las reseñas de un plan turístico y verificar si el usuario ya dejó una reseña
 export const fetchReviewsByPlanAndCheckUserReview = async (planId: number, userId: number): Promise<{ reviews: Review[], userHasReview: boolean }> => {
   try {
-    // Hacemos el fetch para obtener todas las reseñas del plan
     const response = await fetch(
-      //`${process.env.NEXT_PUBLIC_BASE_URL}/reviews/plan/${planId}`,
-      `http://localhost:8080/api/reviews/plan/${planId}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/reviews/plan/${planId}`,
+      //`http://localhost:8080/api/reviews/plan/${planId}`,
 
       {
         method: "GET",
@@ -130,8 +126,6 @@ export const fetchReviewsByPlanAndCheckUserReview = async (planId: number, userI
         },
       }
     );
-
-    // Si la respuesta no es exitosa, lanzamos un error
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error al obtener las reseñas del plan:", errorData.error || "Error desconocido");
@@ -162,21 +156,5 @@ export const fetchReviewsByPlanAndCheckUserReview = async (planId: number, userI
       reviews: [],
       userHasReview: false,
     };
-  }
-};
-
-//Obtener reservas del usuario
-export const obtenerReservasDelUsuario = async (usuarioId: number) => {
-
-  try {
-    const response = await fetch(`http://localhost:8080/api/reservations/search-by-user?userId=${usuarioId}`);
-    if (!response.ok) {
-      throw new Error('Error al obtener las reservas');
-    }
-    const data = await response.json();
-    return data;  // Deberías devolver las reservas para procesarlas
-  } catch (error) {
-    console.error(error);
-    return [];  // Retornamos un array vacío si hay algún error
   }
 };

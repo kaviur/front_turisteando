@@ -45,14 +45,11 @@
         if (result.success) {
           setMessage("¡Reseña creada exitosamente!");
           if (onReviewCreated) {
-            // Asegúrate de que el callback actualice el estado de las reseñas en el componente padre
-            onReviewCreated(); // Llama a este método para actualizar las reseñas
+            onReviewCreated(); 
           }
-          onClose(); // Cierra el modal después de crear la reseña
+          onClose(); 
         } else {
-          // Si la respuesta no fue exitosa, buscamos en los errores
           if (result.errors && Array.isArray(result.errors)) {
-            // Busca el error relacionado con "Ya has realizado una reseña"
             const duplicateReviewError = result.errors.find((error: string) =>
               error.includes('Ya has realizado una reseña')
             );
@@ -87,7 +84,7 @@
                 <button
                   type="button"
                   className="btn"
-                  onClick={onClose} // Esto cierra el modal
+                  onClick={onClose} 
                 >
                   Cerrar
                 </button>
@@ -127,6 +124,7 @@
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     className="textarea textarea-bordered"
+                    maxLength={200}
                     required
                   />
                 </div>
@@ -138,7 +136,7 @@
                   <button
                     type="button"
                     className="btn"
-                    onClick={onClose} // Esto cierra el modal
+                    onClick={onClose} 
                   >
                     Cancelar
                   </button>
