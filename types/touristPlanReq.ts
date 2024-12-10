@@ -11,4 +11,5 @@ export interface TouristPlanReq {
     duration: string;
     characteristicIds: number[];
     images: File[] | null;
+    imagesToDelete?: string[];
 }

@@ -14,7 +14,6 @@ interface ProductFormProps {
   setForm: React.Dispatch<React.SetStateAction<TouristPlanReq>>;
   existingImages?: { id: number; imageUrl: string }[];
   setExistingImages?: React.Dispatch<React.SetStateAction<Array<{ id: number; imageUrl: string }>>>; // Opcional
-  imagesToDelete?: string[]; // Opcional
   setImagesToDelete?: React.Dispatch<React.SetStateAction<string[]>>; // Opcional
   errors: { [key: string]: string }; // Opcional
   setErrors: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>; // Opcional
@@ -28,7 +27,6 @@ const ProductForm = ({
   setForm,
   existingImages, // Opcional
   setExistingImages, // Opcional
-  imagesToDelete, // Opcional
   setImagesToDelete, // Opcional
   errors,
   setErrors,

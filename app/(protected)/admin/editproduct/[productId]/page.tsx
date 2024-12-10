@@ -122,7 +122,6 @@ export default function EditProductPage({ params }: { params: Promise<{ productI
           setForm={setForm}
           existingImages={existingImages}
           setExistingImages={setExistingImages}
-          imagesToDelete={imagesToDelete}
           setImagesToDelete={setImagesToDelete}
           errors={errors}
           setErrors={setErrors}
