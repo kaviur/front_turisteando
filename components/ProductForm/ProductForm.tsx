@@ -5,6 +5,7 @@ import { FaXmark } from "react-icons/fa6";
 import Dropzone from '../ui/Dropzone';
 import Image from 'next/image';
 import { TouristPlanReq } from "@/types/touristPlanReq";
+import { Characteristics } from "@/types/characteristics";
 import { toast } from "react-hot-toast";
 import DurationInput from "./DurationInput";
 
@@ -37,7 +38,7 @@ const ProductForm = ({
   
   const [categories, setCategories] = useState([]);
   const [cities, setCities] = useState([]);
-  const [characteristics, setCharacteristics] = useState<{ id: number; name: string }[]>([]);
+  const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
   const [loading, setLoading] = useState(true);
   const maxImages = 5;
   const [remainingImagesToUpload, setRemainingImagesToUpload] = useState(
@@ -145,30 +146,6 @@ const ProductForm = ({
     });
   };
 
-  // const handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = e.target;
-  
-  //   const updatedValue =
-  //     name === "price" || name === "capacity" || name === "cityId" || name === "categoryId"
-  //       ? value === "" 
-  //         ? 0 
-  //         : Number(value) 
-  //       : value;
-  
-  //   // Actualizamos el estado
-  //   setForm((prevForm) => ({
-  //     ...prevForm,
-  //     [name]: updatedValue,
-  //   }));
-  
-  //   // Limpiamos cualquier mensaje de error asociado
-  //   setErrors((prevErrors) => ({
-  //     ...prevErrors,
-  //     [name]: "",
-  //   }));
-  // };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -246,7 +223,13 @@ const ProductForm = ({
   
         setCategories(categoriesData.data);
         setCities(citiesData.data);
-        setCharacteristics(characteristicsData.data);
+        setCharacteristics(
+          characteristicsData.data.map((item: Characteristics) => ({
+            id: item.id?.toString(),
+            name: item.name,
+            image: item.image,
+          }))
+        );
 
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -366,7 +349,7 @@ const ProductForm = ({
                   onValueChange={(value) =>
                     setForm((prev) => ({
                       ...prev,
-                      price: value || "", // Si el valor es nulo/undefined, usar cadena vacía
+                      price: value || "",
                     }))
                   }
                   decimalsLimit={2} // Máximo 2 decimales
@@ -436,57 +419,66 @@ const ProductForm = ({
                 </div>
               </div>
 
-              <div className="mb-6">
-                <label className="mb-3 block text-sm font-medium text-black">
-                  Características
-                </label>
-                <select
-                  multiple
-                  value={form.characteristicIds.map(String)}
-                  onChange={(e) => {
-                    const selectedValues = Array.from(e.target.selectedOptions, (option) => Number(option.value)); // Convertimos a números
-                    handleArrayChange(selectedValues, "characteristicIds");
-                  }}
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent px-5 py-3 text-black outline-none transition focus:border-accent active:border-accent disabled:cursor-default disabled:bg-whiter"
-                  disabled={loading} 
-                >
-                  <option disabled>{loading ? "Cargando características..." : "Selecciona los atributos"}</option>
-                  {!loading &&
-                    characteristics.map((characteristic: { id: number; name: string }) => (
-                      <option key={characteristic.id} value={characteristic.id}>
-                        {characteristic.name}
-                      </option>
-                    ))}
-                </select>
-                {errors.characteristicIds && 
-                  <div className="text-red-500 text-sm mt-1">{errors.characteristicIds}</div>}
-              </div>
+              <div>
+  <fieldset className="w-full">
+    <legend className="text-black font-bold">Selecciona los atributos</legend>
+    {loading ? (
+      <p>Cargando características...</p>
+    ) : (
+      <div className="flex flex-wrap gap-4 mt-3">
+        {characteristics.map((characteristic) => {
+          const isChecked = form.characteristicIds.includes(Number(characteristic.id)!);
 
-              {/* <div className="mb-6">
-                <label className="mb-3 block text-sm font-medium text-black">Características</label>
-                <div className="flex flex-wrap gap-4">
-                  {characteristics.map((char) => (
-                    <label key={char.id} className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        defaultChecked 
-                        className="checkbox checkbox-primary"
-                        value={String(char.id)}
-                        checked={characteristicIds.includes(String(char.id))}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (e.target.checked) {
-                            setCharacteristicIds([...characteristicIds, value]);
-                          } else {
-                            setCharacteristicIds(characteristicIds.filter((id) => id !== value));
-                          }
-                        }}
-                      />
-                      {char.name}
-                    </label>
-                  ))}
-                </div>
-              </div> */}
+          // Obtener la URL de la imagen
+          const imageUrl = 
+            typeof characteristic.image === "object" && "imageUrl" in characteristic.image
+              ? characteristic.image.imageUrl
+              : "";
+
+          return (
+            <label
+              key={characteristic.id}
+              htmlFor={`characteristic-${characteristic.id}`}
+              className={`relative flex items-center space-x-2 rounded-full border-2 px-4 py-2 transition-all cursor-pointer ${
+                isChecked 
+                  ? "bg-primary text-white border-primary" 
+                  : "border-primary text-primary"
+              }`}
+            >
+              <input
+                type="checkbox"
+                id={`characteristic-${characteristic.id}`}
+                value={characteristic.id}
+                checked={isChecked}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const updatedIds = e.target.checked
+                    ? [...form.characteristicIds, Number(selectedId)]
+                    : form.characteristicIds.filter((id) => id !== Number(selectedId));
+                  handleArrayChange(updatedIds, "characteristicIds");
+                }}
+                className="hidden" // Ocultar el input
+              />
+              {imageUrl && (
+                <Image
+                src={imageUrl}
+                alt={characteristic.name?characteristic.name:""}
+                width={24}  // Puedes ajustar estos valores según el tamaño que desees
+                height={24} // Ajusta según sea necesario
+                className={`transition-all ${isChecked ? "opacity-50 invert" : ""}`}
+              />
+              )}
+              <span>{characteristic.name}</span>
+            </label>
+          );
+        })}
+      </div>
+    )}
+  </fieldset>
+  {errors.characteristicIds && (
+    <div className="text-red-500 text-sm mt-1">{errors.characteristicIds}</div>
+  )}
+</div>
 
               <div className="mb-6">
                   <Dropzone className = "p-16 mt-10 border border-neutral-200" onDrop={handleDrop} remainingImagesToUpload={remainingImagesToUpload} />
