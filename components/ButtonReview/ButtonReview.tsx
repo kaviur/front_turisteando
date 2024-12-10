@@ -8,9 +8,10 @@ import { obtenerReservasDelUsuario } from "@/lib/reservation/reservationActions"
 interface ButtonReviewProps {
   planId: number;
   onClick: () => void; // Acción a realizar cuando el botón es clickeado
+  isReviewCreated: boolean;
 }
 
-const ButtonReview = ({ planId, onClick }: ButtonReviewProps) => {
+const ButtonReview = ({ planId, onClick, isReviewCreated }: ButtonReviewProps) => {
   const { data: session } = useSession();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -48,7 +49,7 @@ const ButtonReview = ({ planId, onClick }: ButtonReviewProps) => {
        const userHasReview = reviews.some((review) => review.user.id === userId);
 
        // Deshabilitar el botón si no tiene reservas o ya dejó una reseña
-       setIsButtonDisabled(!tieneReserva || userHasReview);
+       setIsButtonDisabled(!tieneReserva || userHasReview || isReviewCreated) ;
      } catch (error) {
        console.error("Error al verificar condiciones:", error);
        setIsButtonDisabled(true);
@@ -58,7 +59,7 @@ const ButtonReview = ({ planId, onClick }: ButtonReviewProps) => {
    };
 
    checkConditions();
- }, [planId, session]);
+ }, [planId, session, isReviewCreated]);
 
  if (loading) {
    return <button className="btn btn-disabled">Cargando...</button>;

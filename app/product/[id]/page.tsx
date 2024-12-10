@@ -26,6 +26,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<TouristPlan | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReviewCreated, setIsReviewCreated] = useState(false);
   
 
   const pathname = usePathname();
@@ -54,7 +55,6 @@ export default function ProductPage() {
     loadTours();
   }, []);
 
-  // Cargar las reseñas del producto
   useEffect(() => {
     const loadReviews = async () => {
       try {
@@ -64,23 +64,9 @@ export default function ProductPage() {
         console.error("Error al cargar las reseñas:", error);
       }
     };
-
-    loadReviews();
-  }, [productId]);
   
-  useEffect(() => {
-    if (!isModalOpen) {
-      const loadReviews = async () => {
-        try {
-          const reviewsData = await fetchReviewsByPlan(Number(productId));
-          setReviews(reviewsData);
-        } catch (error) {
-          console.error("Error al cargar las reseñas:", error);
-        }
-      };
-      loadReviews();
-    }
-  }, [isModalOpen]);
+    loadReviews();
+  }, [productId, isModalOpen, isReviewCreated]); // Observa tanto el productId como el estado de isModalOpen
 
   if (!product) return;
 
@@ -113,6 +99,7 @@ export default function ProductPage() {
           <ButtonReview
             planId={product.id}
             onClick={() => setIsModalOpen(true)} 
+            isReviewCreated={isReviewCreated}
           />
         )}
       </div>
@@ -124,6 +111,7 @@ export default function ProductPage() {
           onClose={() => setIsModalOpen(false)}  
           onReviewCreated={() => {
             setIsModalOpen(false);
+            setIsReviewCreated(true);
           }}
         />
       )}
