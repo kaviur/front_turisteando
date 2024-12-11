@@ -15,7 +15,6 @@ import { PiStarDuotone } from "react-icons/pi";
 import ShareProduct from "./ui/ShareButton";
 import LikeButton from "./ui/LikeButton";
 import { DateRange } from "react-date-range";
-// import { addDays } from "date-fns";
 import { useFavorites } from "@/context/FavoritesContext";
 import ReservationSummary from "./ReservationSummary";
 import { useSession } from "next-auth/react";
@@ -43,7 +42,6 @@ const ProductDetails: React.FC<TouristPlan> = ({
 }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  //const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
 
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
@@ -57,16 +55,6 @@ const ProductDetails: React.FC<TouristPlan> = ({
     setShowReservationForm(true);
   };
 
-  // const characteristicIcons: Record<string, JSX.Element> = {
-  //   Caminata: <FaWalking />,
-  //   Hotel: <FaHotel />,
-  //   "Comida incluida": <IoFastFood />,
-  //   "Wifi incluido": <FaWifi />,
-  //   Accesibilidad: <IoAccessibility />,
-  //   Niños: <TbMoodKid />,
-  //   Parque: <PiTreeEvergreenDuotone />,
-  //   "Pets Friendly": <MdPets />,
-  // };
 
   const imagesGallery = images.map((img) => ({
     original: img.imageUrl,
@@ -76,7 +64,6 @@ const ProductDetails: React.FC<TouristPlan> = ({
   const [state, setState] = useState([
     {
       startDate: new Date(),
-      // endDate: addDays(new Date(), 7),
       endDate: new Date(),
       key: "selection",
     },
@@ -133,7 +120,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
 
       {/* Imagen, calendario y cantidad de personas */}
       <div className="pt-12 -z-10 flex xl:flex-nowrap flex-wrap xl:justify-between justify-center gap-4">
-        <div className="max-w-3xl w-3/4 mx-auto space-y-4 bg-black">
+        <div className="max-w-3xl w-3/4 mx-auto space-y-4 ">
           <ImageGallery
             additionalClass="z-10 w-full"
             showBullets={false}
