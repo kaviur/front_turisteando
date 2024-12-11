@@ -5,4 +5,5 @@ export interface Reservation {
   startDate: Date;
   endDate: Date;
   peopleCount: number;
+  totalPrice: number;
 }

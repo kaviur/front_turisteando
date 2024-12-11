@@ -42,4 +42,42 @@ export const createReservation = async (
     console.error("Error al crear la reserva:", error);
     throw new Error("Error al crear la reserva");
   }
+
+
 };
+export const getReservationsByUsers = async (
+  userId: number | undefined,
+  token: string
+) => {
+  try {
+    const responseGet = await fetch(
+      //`${process.env.NEXT_PUBLIC_BASE_URL}/reservations/search-by-user/${userId}`,
+      `http://localhost:8080/api/reservations/search-by-user/${userId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await responseGet.json();
+    console.log (data);
+    if (data.success && data.data) {
+      return data.data;
+    } else {
+      return {
+        message: "Error al Obtener Reservas del Usuario",
+        debugMessage: data.debugMessage || "Error desconocido",
+      };
+    }
+  } catch (error) {
+    console.log("Este es el error al Obtener las Reservas del Usuario", error);
+    return { message: "Hubo un error al realizar la solicitud." }; // Agregado return en caso de error
+  }
+};
+ 
+   
+
+
