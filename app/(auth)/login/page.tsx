@@ -15,7 +15,7 @@ export default function Login() {
   const [isPending, setIsPending] = useState(false); // Estado para controlar el botón de carga
   const router = useRouter();
   const { update } = useSession();
-  const session = useSession();
+  //const session = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
