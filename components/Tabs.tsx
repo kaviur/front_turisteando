@@ -7,14 +7,14 @@ import { FreeMode, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/pagination";
-import Card from "./Card";
 import { TouristPlan } from "@/types/touristPlan";
+import VacationCard from "./VacationCard";
 
 type TabsProps = {
   isMobile?: boolean;
 };
 
-export const Tabs: React.FC<TabsProps> = ({isMobile = false }) => {
+export const Tabs: React.FC<TabsProps> = () => {
   const [activeTab, setActiveTab] = useState(1);
   const [tours, setTours] = useState<TouristPlan[]>([]);
 
@@ -47,15 +47,7 @@ export const Tabs: React.FC<TabsProps> = ({isMobile = false }) => {
     >
       {tours.map((tour) => (
         <SwiperSlide key={tour.id}>
-          <Card
-            id={tour.id}
-            mobileTitle={tour.title}
-            isMobile={isMobile}
-            imageSrc={tour.images[0]?.imageUrl}
-            title={tour.title}
-            isPrimary={tour.category?.name === "Tours"}
-            description={tour.description}
-          />
+          <VacationCard key={tour.id} plan={tour} />
         </SwiperSlide>
       ))}
     </Swiper>

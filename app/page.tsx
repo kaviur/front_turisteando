@@ -2,7 +2,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { Main } from "@/components/layout/Main";
 import { Navbar } from "@/components/layout/Navbar";
-import React, { useState } from "react";
 //import Onboarding from "../components/Onboarding";
 
 export default function Home() {

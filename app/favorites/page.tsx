@@ -1,11 +1,11 @@
 "use client";
-import Card from "@/components/Card";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 // import { TouristPlan } from "@/types/touristPlan";
 import "swiper/css";
 // import { getFavoritesByUser } from "@/lib/favoriteActions";
 import { useFavorites } from "@/context/FavoritesContext";
+import VacationCard from "@/components/VacationCard";
 
 export default function Favorites() {
   // const [touristPlans, setTouristPlans] = useState<TouristPlan[]>([]);
@@ -42,17 +42,7 @@ export default function Favorites() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
             {favorites.map((plan) => (
-              <Card
-                key={plan.id}
-                isPrimary={false}
-                id={plan.id}
-                mobileTitle={plan.title}
-                isMobile={false}
-                imageSrc={plan.images[0]?.imageUrl}
-                title={plan.title}
-                description={plan.description}
-                isFavorite={plan.isFavorite}
-              />
+              <VacationCard key={plan.id} plan={plan} />
             ))}
           </div>
         )}
