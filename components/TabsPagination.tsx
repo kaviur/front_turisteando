@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { BiCategoryAlt } from "react-icons/bi";
-import { LiaTreeSolid } from "react-icons/lia";
-import { PiMountainsFill } from "react-icons/pi";
 // import { TouristPlan } from "@/types/touristPlan";
 import { useFavorites } from "@/context/FavoritesContext";
 import VacationCard from "./VacationCard";
+import { fetchCategories } from "@/lib/categories/categoryActions"
+import { ResCategory } from "@/types/categories";
+import Image from "next/image";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -17,44 +18,32 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
   const itemsPerPage = 9;
   const { touristPlans, loading } = useFavorites();
   const tours = touristPlans;
+  const [categories, setCategories] = useState<ResCategory[]>([]);
 
-  // useEffect(() => {
-  //   const fetchTours = async () => {
-  //     try {
-  //       const response = await fetch(
-  //         `${process.env.NEXT_PUBLIC_BASE_URL}/tourist-plans/all`
-  //       );
-  //       const data = await response.json();
-  //       if (data && Array.isArray(data.data)) {
-  //         setTours(data.data);
-  //       } else {
-  //         console.error(
-  //           "La respuesta de la API no contiene un array de tours:",
-  //           data
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error al obtener los datos:", error);
-  //     } finally {
-  //       setLoading(false); // Finaliza la carga
-  //     }
-  //   };
-  //   fetchTours();
-  // }, []);
 
   useEffect(() => {
     setCurrentPage(1); // Resetear la paginación al cambiar de pestaña
   }, [activeTab]);
 
-  const filteredTours = tours.filter((tour) => {
-    if (activeTab === 2) {
-      return tour.category.name === "Tours";
-    }
-    if (activeTab === 3) {
-      return tour.category.name === "Activity";
-    }
-    return true;
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const categories = await fetchCategories();
+            setCategories(categories);
+            setActiveTab(Number(categories[0]?.id) || 0); // Inicializar con la primera categoría.
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        } finally {
+          console.error("Error fetching categories:");
+        }
+    };
+
+      fetchData();
+  }, []);
+
+  const filteredTours = activeTab === 0
+  ? touristPlans // Muestra todos los planes si activeTab es 0
+  : touristPlans.filter((tour) => tour.category.id === activeTab);
 
   const totalPages = Math.ceil(filteredTours.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -109,42 +98,50 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
         role="tablist"
         className="mx-6 flex flex-wrap justify-start items-center gap-4 bg-base-100"
       >
-        <a
-          role="tab"
-          className={`btn btn-ghost rounded-full h-14 px-6 ${
-            activeTab === 1
+        {/* Botón para "Todos" */}
+        <div
+          className={`flex items-center cursor-pointer p-3 rounded-md transition-all border-2 ${
+            activeTab === 0
               ? activeTabStyles["tab-active"]
               : activeTabStyles[""]
           }`}
-          onClick={() => setActiveTab(1)}
+          onClick={() => setActiveTab(0)}
         >
-          <BiCategoryAlt className="mr-2" size={24} />
-          Todo
-        </a>
-        <a
-          role="tab"
-          className={`btn btn-ghost rounded-full h-14 px-6 ${
-            activeTab === 2
-              ? activeTabStyles["tab-active"]
-              : activeTabStyles[""]
-          }`}
-          onClick={() => setActiveTab(2)}
-        >
-          <PiMountainsFill size={24} className="mr-2" /> Lugares
-        </a>
-        <a
-          role="tab"
-          className={`btn btn-ghost rounded-full h-14 px-6  ${
-            activeTab === 3
-              ? activeTabStyles["tab-active"]
-              : activeTabStyles[""]
-          }`}
-          onClick={() => setActiveTab(3)}
-        >
-          <LiaTreeSolid size={24} className="mr-2" /> Actividades
-        </a>
-      </div>
+          <BiCategoryAlt
+            size={24}
+            className={`mr-2 ${
+              activeTab === 0 ? "text-primary" : "text-black"
+            }`}
+          />
+          <span>Todos</span>
+        </div>
 
+        {categories.map((category) => (
+          <a
+            key={category.id}
+            role="tab"
+            className={`btn btn-ghost rounded-full h-14 px-6 ${
+              activeTab === Number(category.id)
+                ? activeTabStyles["tab-active"]
+                : activeTabStyles[""]
+            }`}
+            onClick={() => setActiveTab(Number(category.id))}
+          >
+            {category.image ? (
+                <Image 
+                  src={category.image.imageUrl} 
+                  alt={category.name} 
+                  width={24} 
+                  height={24} 
+                  className="mr-2"
+                />
+              ) : (
+                <BiCategoryAlt className="mr-2" size={24} />
+              )}
+              {category.name}
+          </a>
+        ))}
+      </div>
       <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
 
       {/* Paginación */}
