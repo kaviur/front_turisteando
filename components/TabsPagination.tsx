@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { BiCategoryAlt } from "react-icons/bi";
 import { LiaTreeSolid } from "react-icons/lia";
 import { PiMountainsFill } from "react-icons/pi";
-import Card from "./Card";
 // import { TouristPlan } from "@/types/touristPlan";
 import { useFavorites } from "@/context/FavoritesContext";
+import VacationCard from "./VacationCard";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -14,7 +14,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
   const [activeTab, setActiveTab] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   // const [loading, setLoading] = useState(true); // Para el estado de carga
-  const itemsPerPage = 3;
+  const itemsPerPage = 9;
   const { touristPlans, loading } = useFavorites();
   const tours = touristPlans;
 
@@ -66,35 +66,34 @@ export const TabsPagination: React.FC<TabsProps> = ({ isMobile = false }) => {
   };
 
   const renderContent = () => (
-    <div className="flex gap-4 flex-wrap justify-center">
+    <div className="flex gap-4 gap-y-8 flex-wrap justify-center">
       {loading
-        ? Array.from({ length: 3 }).map((_, index) => (
-            <div
-              className="flex max-w-xl w-96 max-h-96 flex-col gap-4"
-              key={index}
-            >
-              <div className="skeleton h-52 w-full"></div>
-              <div className="skeleton h-4 w-36"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
-              <div className="skeleton h-4 w-full"></div>
+        ? Array.from({ length: 9 }).map((_, index) => (
+          <div className="relative card w-80 h-128 bg-base-100 shadow-md border border-base-200 p-4">
+            <div className="skeleton w-full h-64 rounded-t-2xl mb-4"></div>
+            <div className="space-y-2">
+              <div className="skeleton h-6 w-3/4 rounded"></div>
+              <div className="skeleton h-4 w-1/2 rounded"></div>
+              <div className="skeleton h-4 w-1/4 rounded"></div>
+              <div className="skeleton h-4 w-1/3 rounded"></div>
+          
+              {/* Características */}
+              <div className="flex gap-2">
+                <div className="skeleton h-6 w-6 rounded-full"></div>
+                <div className="skeleton h-6 w-6 rounded-full"></div>
+                <div className="skeleton h-6 w-6 rounded-full"></div>
+              </div>
+          
+              {/* Precio */}
+              <div className="skeleton h-8 w-2/3 rounded"></div>
             </div>
+          
+            {/* LikeButton */}
+            <div className="skeleton absolute bottom-4 right-4 h-10 w-10 rounded-full"></div>
+          </div>
           ))
         : paginatedTours.map((tour) => (
-            <Card
-              key={tour.id}
-              id={tour.id}
-              mobileTitle={tour.title}
-              isMobile={isMobile}
-              imageSrc={tour.images[0]?.imageUrl}
-              title={tour.title}
-              isPrimary={tour.category?.name === "Tours"}
-              description={tour.description}
-              styles="max-w-sm"
-              isFavorite={tour.isFavorite}
-            />
+          <VacationCard plan={tour} />
           ))}
     </div>
   );

@@ -38,7 +38,7 @@ const LikeButton: React.FC<LikeButtonProps> = ({ planId, isFavorite }) => {
   };
 
   return (
-    <div className="btn btn-ghost rounded-full h-16 w-16 bg-white relative shadow-lg">
+    <div className="btn btn-ghost rounded-full h-16 w-16 bg-white shadow-lg absolute bottom-4 right-4">
       <div
         className={`heart text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
           isActive ? "is-active" : ""
