@@ -9,7 +9,7 @@ export default function Home() {
       {" "}
       <Navbar />
       <div className="md:mt-28 mt-12  max-w-screen-2xl mx-auto ">
-        <TabsPagination isMobile={false} />
+        <TabsPagination />
       </div>
       <Footer />
     </>

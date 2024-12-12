@@ -38,7 +38,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
   capacity,
   duration,
   characteristic,
-  active,
+  active, 
 }) => {
   const router = useRouter();
   const { data: session } = useSession();

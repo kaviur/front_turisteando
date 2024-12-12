@@ -12,11 +12,11 @@ import "swiper/css/pagination";
 import Testimonial from "@/components/Testimonial";
 import Link from "next/link";
 import { TouristPlan } from "@/types/touristPlan";
-import Card from "@/components/Card";
 import { FaArrowRight } from "react-icons/fa";
 import { fetchProduct, fetchTours } from "@/lib/actions";
 import { fetchReviewsByPlan } from "@/lib/reviews/reviewActions";
 import { Review } from "@/types/review";
+import VacationCard from "@/components/VacationCard";
 
 export default function ProductPage() {
   const [tours, setTours] = useState<TouristPlan[]>([]);
@@ -193,15 +193,7 @@ export default function ProductPage() {
             : // Renderizar tours cuando la carga haya terminado
               tours.map((tour) => (
                 <SwiperSlide key={tour.id}>
-                  <Card
-                    isPrimary={false}
-                    id={tour.id}
-                    mobileTitle={tour.title}
-                    isMobile={false}
-                    imageSrc={tour.images[0]?.imageUrl}
-                    title={tour.title}
-                    description={tour.description}
-                  />
+                  <VacationCard key={tour.id} plan={tour} />
                 </SwiperSlide>
               ))}
         </Swiper>

@@ -3,6 +3,8 @@ export interface TouristPlan {
   title: string;
   description: string;
   rating: number;
+  totalReviews?: number;
+  totalStars?: number;  
   price: number;
   seller: string;
   city: {
