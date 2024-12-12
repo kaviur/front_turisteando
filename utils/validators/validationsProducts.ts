@@ -10,9 +10,9 @@ const validationsProducts = ({
     const newErrors: { [key: string]: string } = {};
   
     // Validación de título
-    if (!form.title || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]{3,50}$/.test(form.title)) {
+    if (!form.title || !/^(?=.*[a-zA-Z])[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s\-\'\.,;]{3,50}$/.test(form.title)) {
       newErrors.title =
-        "El título debe tener entre 3 y 50 caracteres y solo puede contener letras y números.";
+        "El título debe tener entre 3 y 50 caracteres, contener al menos una letra y solo puede contener letras, números y caracteres especiales permitidos.";
     }
   
     // Validación de descripción
@@ -24,6 +24,8 @@ const validationsProducts = ({
     // Validación de precio
     if (!form.price || isNaN(Number(form.price)) || Number(form.price) <= 0) {
       newErrors.price = "El precio debe ser un número mayor a 0.";
+    }else if (Number(form.price) > 10000000) { // Establecer un precio máximo
+      newErrors.price = "El precio no puede ser mayor a 10.000.000.";
     }
   
     // Validación de fechas
@@ -43,7 +45,7 @@ const validationsProducts = ({
       newErrors.images = "Debes subir 5 imágenes para tu plan turístico";
     } else {
       const invalidFiles = form.images.filter(
-        (file) => !/\.(jpg|jpeg|png|gif|webp)$/.test(file.name)
+        (file) => !/\.(jpg|jpeg|png|gif|webp)$/i.test(file.name)
       );
       if (invalidFiles.length > 0) {
         newErrors.images =
@@ -64,6 +66,8 @@ const validationsProducts = ({
     // Validación de capacidad
     if (!form.capacity || isNaN(Number(form.capacity)) || Number(form.capacity) <= 0) {
       newErrors.capacity = "La capacidad debe ser un número mayor a 0.";
+    } else if (Number(form.capacity) > 10000) { 
+      newErrors.capacity = "La capacidad no puede ser mayor a 10,000.";
     }
   
     setErrors(newErrors);

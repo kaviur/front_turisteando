@@ -34,7 +34,7 @@ export default function Testimonial({
   // };
 
   return (
-    <div className="max-w-xl w-full mb-12 min-h-80 h-80 max-h-96 shadow-md rounded-xl bg-base-100 p-2 ">
+    <div className="max-w-xl w-full mb-12 min-h-80 h-80 max-h-96 shadow-lg hover:shadow-2xl transition-shadow duration-300 rounded-xl bg-base-100 p-2 ">
       <div className="flex items-center gap-4">
         {/* Foto de usuario */}
         {userImage ? (
@@ -74,7 +74,7 @@ export default function Testimonial({
       </div>
       
       {/* Texto de la experiencia */}
-      <p className="mt-4 text-gray-700">{reviewText}</p>
+      <p className="mt-4 text-gray-700 px-3 text-base h-42 leading-relaxed overflow-hidden">{reviewText}</p>
     </div>
   );
 }

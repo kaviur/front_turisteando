@@ -15,6 +15,7 @@ export default function Login() {
   const [isPending, setIsPending] = useState(false); // Estado para controlar el botón de carga
   const router = useRouter();
   const { update } = useSession();
+  //const session = useSession();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -74,13 +75,7 @@ export default function Login() {
       });
   };
 
-  const handleGoogleLogin = () => {
-    const loadingToast = toast.loading("Iniciando sesión con Google...");
-    setTimeout(() => {
-      toast.success("Iniciado sesión con Google", { id: loadingToast });
-      router.replace("/");
-    }, 2000);
-  };
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
@@ -176,7 +171,10 @@ export default function Login() {
         {/* Botón de Iniciar sesión con Google */}
         <button
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={() => signIn("google", {
+            redirect: true,
+            redirectTo: "/",
+          })}
           className="w-full py-3 px-4 bg-white border-2 border-gray-300 text-gray-700 rounded-3xl flex items-center justify-center gap-4 hover:bg-gray-100"
         >
           Iniciar sesión con Google
