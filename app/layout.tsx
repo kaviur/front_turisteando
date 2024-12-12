@@ -5,7 +5,6 @@ import { ClientProviders } from "@/components/ClientProviders";
 import { Toaster } from "react-hot-toast";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { SessionProvider } from "next-auth/react";
-import WhatsappButton from "@/components/ui/WhatsappButton";
 
 const dmSans = DM_Sans({
   subsets: ["latin"],
@@ -30,7 +29,6 @@ export default function RootLayout({
           <body>
             <Toaster />
             <ClientProviders>{children}</ClientProviders>
-            <WhatsappButton />
           </body>
         </html>
       </FavoritesProvider>
