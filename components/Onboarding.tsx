@@ -27,7 +27,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onSkip }) => {
         Descubre los mejores lugares para visitar en tus vacaciones 😍
       </h2>
       <p className="text-gray-500 text-lg mb-2">
-        Visitas guiadas, actividades y excursiones para que tu viaje sea aún más
+        Visitas guiadasssss, actividades y excursiones para que tu viaje sea aún más
         increíble.
       </p>
       <PrimaryButton

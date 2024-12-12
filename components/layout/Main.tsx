@@ -1,12 +1,14 @@
+'use client';
+
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Card from "../Card";
-import FavouriteCard from "../FavouriteCard";
+//import FavouriteCard from "../FavouriteCard";
 import Testimonial from "../Testimonial";
 import Link from "next/link";
 import { FaArrowRight } from "react-icons/fa";
-import { CgSearch } from "react-icons/cg";
-import { Tabs } from "../Tabs";
+//import { CgSearch } from "react-icons/cg";
+//import { Tabs } from "../Tabs";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -17,6 +19,9 @@ import { TouristPlan } from "@/types/touristPlan";
 import { Review } from "@/types/review";
 import { fetchAllReviews } from "@/lib/reviews/reviewActions";
 import { useFavorites } from "@/context/FavoritesContext";
+import VacationCard from "../VacationCard";
+import { fetchCategories } from "@/lib/categories/categoryActions"
+import { ResCategory } from "@/types/categories";
 
 export const Main = () => {
   const { touristPlans, loading } = useFavorites();
@@ -24,6 +29,7 @@ export const Main = () => {
   const [allTours, setAllTours] = useState<TouristPlan[]>(touristPlans);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [tours, setTours] = useState<TouristPlan[]>(touristPlans);
+  const [categories, setCategories] = useState<ResCategory[]>([]);
 
   useEffect(() => {
     setTours(touristPlans);
@@ -43,6 +49,54 @@ export const Main = () => {
 
     loadReviews();
   }, []);
+
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      } finally {
+        console.error('Error loading categories');
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+
+   // Renderizar el esqueleto mientras se cargan los datos
+   const renderSkeleton = () => (
+    <div className="flex min-w-56 max-h-96 flex-col gap-4">
+      <div className="skeleton h-52 w-full"></div>
+      <div className="skeleton h-4 w-36"></div>
+      <div className="skeleton h-4 w-full"></div>
+    </div>
+  );
+
+  const categoryPhrases = [
+    { regex: /senderismo|tour|experiencia/i, phrases: ["Elige tu próximo recorrido", "Encuentra tu siguiente experiencia", "Explora nuevos lugares"] },
+    { regex: /hotel|alojamiento|hospedaje/i, phrases: ["Encuentra tu próximo hogar lejos de casa", "Reserva tu alojamiento ideal", "Tu próximo destino te espera"] },
+    { regex: /restaurante|comida|sabores/i, phrases: ["Disfruta de tu próxima comida", "Prueba algo nuevo en tu próxima salida", "Explora nuevos sabores"] },
+    { regex: /evento|concierto|fiesta/i, phrases: ["Elige tu próximo evento", "Participa en lo que está por venir", "Tu próxima gran experiencia está aquí"] },
+    { regex: /aventura|deporte|actividades|Activity/i, phrases: ["Prepárate para tu próxima aventura", "Desafía tus límites con nuevas actividades", "Haz algo emocionante hoy"] },
+  ];
+
+  const getCategoryPhrase = (categoryName: string) => {
+    // Busca una coincidencia en las expresiones regulares
+    const match = categoryPhrases.find((item) => item.regex.test(categoryName.toLowerCase()));
+  
+    // Si encuentra una coincidencia, selecciona una frase aleatoria
+    if (match) {
+      const randomPhrase = match.phrases[Math.floor(Math.random() * match.phrases.length)];
+      return randomPhrase;
+    }
+  
+    // Si no encuentra ninguna coincidencia, devuelve un mensaje predeterminado
+    return `Navega por ${categoryName}`;
+  };
 
   return (
     <>
@@ -69,118 +123,124 @@ export const Main = () => {
         </div>
       </section>
 
-      {/* Responsive mobile section  */}
-      <section className="flex items-center justify-center text-white md:hidden mt-18 w-full max-w-3xl">
-        {/* Contenido central */}
-        <div className="px-6 w-full">
-          {/* Buscador */}
-          <div className="flex justify-center items-center gap-2 bg-white rounded-full shadow-lg p-2 py-3 w-full min-w-72 my-6 ">
-            <CgSearch className="ml-2" size={22} color="oklch(var(--p))" />
+      {/* Sección dinámica para versiones móviles */}
+      {categories.length > 0 && categories.map((category) => {
+        // Filtrar los tours de esta categoría
+        const categoryTours = tours.filter((tour) => tour.category.id === Number(category.id));
 
-            <input
-              type="text"
-              placeholder="Comienza tu búsqueda aquí..."
-              className="mr-2 flex-grow p-2 text-gray-700 outline-none"
-            />
-          </div>
-        </div>
-      </section>
+        // Solo renderizar la sección si la categoría tiene al menos un producto asociado
+        if (categoryTours.length > 0) {
+          return (
+            <section
+              key={category.id}
+              className="px-4 md:hidden py-8 max-w-screen-sm mx-auto"
+            >
+              {/* Títulos de categoría */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-primary">
+                  {getCategoryPhrase(category.name)}
+                </h2>
+                <Link
+                  href={`/categories/${category.id}`}
+                  className="text-primary flex items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white"
+                >
+                  Ver todos
+                  <FaArrowRight size={20} />
+                </Link>
+              </div>
 
-      {/* Tours desktop */}
-      <section className="px-8 py-12 hidden md:block max-w-screen-2xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
-          {/* Títulos */}
-          <h2 className="text-3xl font-bold text-primary">
-            Descubre nuestros Tours
-          </h2>
-          <Link
-            href="/categories"
-            className="text-primary flex items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white"
-          >
-            Ver todos
-          </Link>
-        </div>
+              {/* Renderizar las tarjetas */}
+              <div className="flex flex-wrap justify-center sm:grid sm:grid-cols-2 gap-4">
+                {loading ? (
+                  // Renderizar esqueleto mientras se cargan los datos
+                  Array.from({ length: 2 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="w-72 sm:w-full mx-auto"
+                    >
+                      {renderSkeleton()}
+                    </div>
+                  ))
+                ) : (
+                  // Renderizar las tarjetas correspondientes a la categoría
+                  categoryTours.slice(0, 2).map((tour) => (
+                    <div
+                      key={tour.id}
+                      className="w-72 sm:w-full mx-auto"
+                    >
+                      <VacationCard plan={tour} /> 
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
+          );
+        }
+        return null; // No renderizar nada si no hay productos en la categoría
+      })}
 
-        {/* Swiper con Condición de Carga */}
-        <Swiper
-          slidesPerView={3}
-          spaceBetween={30}
-          freeMode={true}
-          pagination={{ clickable: true, dynamicBullets: true }}
-          modules={[FreeMode, Pagination]}
-          className="mySwiper"
-        >
-          {loading ? (
-            // Renderizar esqueleto mientras se cargan los datos
-            Array.from({ length: 3 }).map((_, index) => (
-              <SwiperSlide key={index}>
-                <div className="flex min-w-56 max-h-96 flex-col gap-4">
-                  <div className="skeleton h-52 w-full"></div>
-                  <div className="skeleton h-4 w-36"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                  <div className="skeleton h-4 w-full"></div>
-                </div>
-              </SwiperSlide>
-            ))
-          ) : // Renderizar tours cuando la carga haya terminado
-          tours.length > 0 ? (
-            tours
-              .filter((tour) => tour.category.name === "Tours")
-              .map((tour) => (
-                <SwiperSlide key={tour.id}>
-                  <Card
-                    isPrimary={true}
-                    id={tour.id}
-                    mobileTitle={tour.title}
-                    isMobile={false}
-                    imageSrc={tour.images[0]?.imageUrl}
-                    title={tour.title}
-                    description={tour.description}
-                    isFavorite={tour.isFavorite}
-                  />
-                </SwiperSlide>
-              ))
-          ) : (
-            <div className="text-center text-gray-500 text-xl">
-              No se encontraron tours disponibles
-            </div>
-          )}
-        </Swiper>
-      </section>
+      
+      {/* Sección dinámica para cada categoría a partir de md*/}
+      {categories.length > 0 && categories.map((category) => {
+        // Filtrar los tours de esta categoría
+        const categoryTours = tours.filter((tour) => tour.category.id === Number(category.id));
 
-      {/* Responsive mobile section  */}
-      <section className="px-8 py-12 md:hidden mt-18 w-full max-w-3xl">
-        {/* Encabezado */}
-        {/* Títulos a la izquierda */}
-        <h2 className="text-3xl font-bold  mb-6">Descubre Lugares</h2>
-        {/* //@ts-expect-error Ignorando error*/}
-        <Tabs isMobile={true} />
-      </section>
+        // Solo renderizar la sección si la categoría tiene al menos un producto asociado
+        if (categoryTours.length > 0) {
+          return (
+            <section
+              key={category.id}
+              className="px-8 hidden md:block py-12 max-w-screen-2xl mx-auto"
+            >
+              {/* Títulos de categoría */}
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-3xl font-bold text-primary">
+                {getCategoryPhrase(category.name)}
+                </h2>
+                <Link
+                  href={`/categories/${category.id}`}
+                  className="text-primary flex items-center gap-2 btn btn-ghost rounded-full hover:bg-primary hover:text-white"
+                >
+                  Ver todos
+                  <FaArrowRight size={24} />
+                </Link>
+              </div>
 
-      {/* Responsive mobile section  */}
-      <section className="px-8 py-12 md:hidden ">
-        {/* Encabezado */}
-        <div className="flex items-center justify-between ">
-          {/* Títulos a la izquierda */}
-          <h2 className="text-3xl font-bold">Favoritos</h2>
-          {/* Link a la derecha */}
-          <Link
-            href="/tours"
-            className="text-secondary text-lg font-semibold flex justify-center items-center gap-2 btn btn-ghost rounded-full hover:bg-secondary hover:text-white"
-          >
-            Ver todos
-            <FaArrowRight />
-          </Link>
-        </div>
-        <FavouriteCard
-          imageSrc="/CAÑON_DEL_COLCA.jpg"
-          title="Tour en el Cañón del Colca"
-        />
-      </section>
-
+              {/* Swiper de tarjetas */}
+              <Swiper
+                slidesPerView={3}
+                spaceBetween={30}
+                freeMode={true}
+                pagination={{ clickable: true, dynamicBullets: true }}
+                modules={[FreeMode, Pagination]}
+                className="mySwiper"
+              >
+                {loading ? (
+                  // Renderizar esqueleto mientras se cargan los datos
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <SwiperSlide key={index}>
+                      <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                        <div className="skeleton h-52 w-full"></div>
+                        <div className="skeleton h-4 w-36"></div>
+                        <div className="skeleton h-4 w-full"></div>
+                      </div>
+                    </SwiperSlide>
+                  ))
+                ) : (
+                  // Renderizar las tarjetas correspondientes a la categoría
+                  categoryTours.map((tour) => (
+                    <SwiperSlide key={tour.id}>
+                      <VacationCard plan={tour} />  {/* Pasar el plan turístico al componente VacationCard */}
+                    </SwiperSlide>
+                  ))
+                )}
+              </Swiper>
+            </section>
+          );
+        }
+        return null; // No renderizar nada si no hay productos en la categoría
+      })}
+      
       {/* Desktop Section */}
       <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto ">
         {/* Encabezado */}
@@ -188,7 +248,7 @@ export const Main = () => {
           {/* Títulos a la izquierda */}
           <div>
             <h2 className="text-3xl font-bold text-secondary">
-              Descubre nuestras actividades
+              Descubre los mejores planes
             </h2>
             <p className="text-lg text-gray-500">
               Explora{" "}
@@ -241,15 +301,11 @@ export const Main = () => {
               .map((tour) => (
                 <SwiperSlide key={tour.id}>
                   <Card
+                    plan={tour} // Pasa el objeto completo del plan
                     isPrimary={false}
-                    id={tour.id}
-                    mobileTitle={tour.title}
-                    isMobile={false}
-                    imageSrc={tour.images[0]?.imageUrl}
-                    title={tour.title}
-                    description={tour.description}
-                    isFavorite={tour.isFavorite}
+                    isMobile={false} // Cambiar a true si es versión móvil
                   />
+
                 </SwiperSlide>
               ))
           ) : (
@@ -259,6 +315,81 @@ export const Main = () => {
           )}
         </Swiper>
       </section>
+
+      {/* Sección para versiones móviles */}
+      <section className="px-4 py-8 md:hidden max-w-screen-sm mx-auto">
+        {/* Encabezado */}
+        <div className="flex flex-col items-start mb-4">
+          {/* Títulos centrados */}
+          <h2 className="text-2xl font-bold text-secondary">
+            Descubre los mejores planes
+          </h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Explora{" "}
+            <span className="text-secondary font-semibold">
+              experiencias increíbles
+            </span>
+          </p>
+        </div>
+
+        {/* Link para ver todos */}
+        <Link
+          href="/categories"
+          className="text-secondary flex items-center gap-2 btn btn-ghost rounded-full hover:bg-secondary hover:text-white mb-4"
+        >
+          Ver todos <FaArrowRight size={20} />
+        </Link>
+
+        {/* Cards Swiper Component */}
+        <Swiper
+          slidesPerView={1}
+          spaceBetween={16}
+          breakpoints={{
+            640: { slidesPerView: 2, spaceBetween: 20 }, // En sm muestra 2 cards
+          }}
+          freeMode={true}
+          pagination={{
+            clickable: true,
+            dynamicBullets: true,
+          }}
+          modules={[FreeMode, Pagination]}
+          className="mySwiper"
+        >
+          {loading ? (
+            // Renderizar esqueleto mientras se cargan los datos
+            Array.from({ length: 2 }).map((_, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                  <div className="skeleton h-52 w-full"></div>
+                  <div className="skeleton h-4 w-36"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                </div>
+              </SwiperSlide>
+            ))
+          ) : tours.length > 0 ? (
+            // Renderizar los planes con categoría "Actividad"
+            tours
+              .filter((tour) => tour.category.name === "Activity")
+              .map((tour) => (
+                <SwiperSlide key={tour.id}>
+                  <Card
+                    plan={tour} // Pasa el objeto completo del plan
+                    isPrimary={false}
+                    isMobile={true} // Cambiar a true si es versión móvil
+                  />
+                </SwiperSlide>
+              ))
+          ) : (
+            <div className="text-center text-gray-500 text-sm">
+              No se encontraron actividades disponibles
+            </div>
+          )}
+        </Swiper>
+      </section>
+
 
       <Link
         href={"/categories"}

@@ -2,38 +2,47 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaLocationDot } from "react-icons/fa6";
 import LikeButton from "./ui/LikeButton";
+import { TouristPlan } from "@/types/touristPlan";
+import { Tooltip } from 'react-tooltip';
 
 interface CardProps {
-  id: number; // Añadir el parámetro id
-  imageSrc: string;
-  title: string;
+  plan: TouristPlan;
   isPrimary: boolean;
-  description: string;
   isMobile?: boolean;
-  mobileTitle: string;
-  isFavorite?: boolean;
   styles?: string;
 }
+
 const imageStyle = {
   width: "auto",
-  height: "auto", // Puedes ajustar ambos valores aquí si es necesario
+  height: "auto",
 };
+
 export default function Card({
-  id, // Asegurarse de recibir el id aquí
-  imageSrc,
-  title,
+  plan,
   isPrimary,
-  description,
   isMobile = false,
-  mobileTitle,
-  isFavorite = false,
   styles,
 }: CardProps) {
+  const {
+    id,
+    title,
+    description,
+    city,
+    rating = 0,
+    totalReviews = 0,
+    images,
+    isFavorite = false,
+  } = plan;
+
+  const imageSrc = images[0]?.imageUrl || "/placeholder.jpg"; // Imagen por defecto si no hay imágenes
+
+  const truncatedDescription = description.length > 98 ? `${description.slice(0, 98)} ...` : description;
+
   if (isMobile) {
     return (
       <Link
         href={`/product/${id}`}
-        className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 shadow-xl mb-6"
+        className="rounded-3xl overflow-hidden relative w-44 h-52 max-h-96 max-w-96 shadow-xl mb-6"
       >
         <Image
           loading="lazy"
@@ -45,16 +54,16 @@ export default function Card({
           height={400}
         />
         <div className="absolute bottom-0 rounded-xl m-2 p-2 bg-base-100 opacity-100">
-          <h2>{mobileTitle}</h2>
-          <div className="flex flex-col">
+          <h2 className="text-sm font-semibold truncate">{title}</h2>
+          <div className="flex flex-col text-xs">
             <div className="flex items-center gap-1">
               <FaLocationDot />
-              <p>Location, Pais</p>
+              <p className="truncate">{city.name}, {city.country.name}</p>
             </div>
             <div className="flex">
-              <p>Rating</p>
+              <p>{rating.toFixed(1)} ★</p>
               <div className="divider divider-horizontal mx-0"></div>
-              <p>No Reviews</p>
+              <p>{totalReviews} Reviews</p>
             </div>
           </div>
         </div>
@@ -82,7 +91,7 @@ export default function Card({
         </div>
       </figure>
       <Link href={`/product/${id}`} className="cursor-pointer">
-        <div className="h-72 overflow-hidden px-2 pt-2">
+        <div className="h-72 overflow-hidden px-4 pt-3">
           <h2
             className={`text-xl ${
               isPrimary ? "text-primary" : "text-secondary"
@@ -90,9 +99,17 @@ export default function Card({
           >
             {title} <span className="text-gray-500">Perú</span>
           </h2>
-          <p className="text-justify text-gray-600">{description}</p>
+          <p
+            className="text-justify text-gray-600 m-4"
+            data-tooltip-id={`tooltip-${id}`}
+          >
+            {truncatedDescription}
+          </p>
         </div>
       </Link>
+       <Tooltip id={`tooltip-${id}`} place="top" className="max-w-xs text-base break-words" style={{ zIndex: 9999 }}>
+        {description}
+      </Tooltip>
     </div>
   );
 }

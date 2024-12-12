@@ -24,6 +24,13 @@ const config: Config = {
       },
     ],
   },
+  theme: {
+    extend: {
+      height: {
+        '128': '32rem', // Adjust the value as needed
+      },
+    },
+  },
   plugins: [require("daisyui")],
 };
 export default config;
