@@ -12,4 +12,7 @@ export interface TouristPlanReq {
     characteristicIds: number[];
     images: File[] | null;
     imagesToDelete?: string[];
+    rating?: number;        // Rating como opcional
+    totalReviews?: number;  // Total de reseñas como opcional
+    totalStars?: number;    // Total de estrellas como opcional
 }

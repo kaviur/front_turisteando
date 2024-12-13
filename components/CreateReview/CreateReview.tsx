@@ -2,6 +2,9 @@
   import { createReview } from "@/lib/reviews/reviewActions";
   import { useSession } from "next-auth/react";
   import { Review } from "@/types/review"; 
+  import { TouristPlan } from "@/types/touristPlan";
+  import { TouristPlanReq } from "@/types/touristPlanReq";
+  import { updateTouristPlan } from "@/lib/actions";
 
   interface CreateReviewResponse {
     success: true;
@@ -17,8 +20,8 @@
     | CreateReviewResponse  // Caso de éxito
     | CreateReviewError;    // Caso de error
 
-  const CreateReview = ({ planId, isOpen, onClose, onReviewCreated }: {
-    planId: number;
+  const CreateReview = ({ plan, isOpen, onClose, onReviewCreated }: {
+    plan: TouristPlan;
     isOpen: boolean;
     onClose: () => void;
     onReviewCreated?: (() => void | null) | undefined;
@@ -45,7 +48,7 @@
         return;
       }
 
-      const review = { idUser: userId, planId, rating, comment };
+      const review = { idUser: userId, planId: plan.id, rating, comment };
 
       try {
         const result: CreateReviewResult = await createReview(token, review);
@@ -55,32 +58,50 @@
         // Verificamos si la respuesta fue exitosa
         if (result.success) {
           setMessage("¡Reseña creada exitosamente!");
-          if (onReviewCreated) {
-            onReviewCreated(); 
-          }
-          onClose(); 
-        } else {
-          if (result.message && Array.isArray(result.message)) {
-            const duplicateReviewError = result.message.find((error: string) =>
-              error.includes('Ya has realizado una reseña')
-            );
+          // Aquí actualizamos el plan
+          if (plan) {  // Aseguramos que tenemos el plan para actualizar
+            const updatedRating = ((plan.rating ?? 0) * (plan.totalReviews ?? 0) + rating) / ((plan.totalReviews ?? 0) + 1);
+            const updatedTotalReviews = (plan.totalReviews ?? 0) + 1;
+            const updatedTotalStars = updatedRating * updatedTotalReviews;
 
-            if (duplicateReviewError) {
-              setMessage("Ya has realizado una reseña para este plan turístico.");
-            } else {
-              // Si no encontramos el error específico, mostramos todos los errores
-              setMessage(result.message.join(' ') || "Error al crear la reseña");
+            // Transformamos el objeto plan a TouristPlanReq
+            const updatedPlanReq: TouristPlanReq = {
+              title: plan.title,
+              description: plan.description,
+              price: plan.price,
+              seller: plan.seller,
+              cityId: plan.city.id,  // Extraemos el ID de la ciudad
+              categoryId: plan.category.id,  // Extraemos el ID de la categoría
+              availabilityStartDate: plan.availabilityStartDate,
+              availabilityEndDate: plan.availabilityEndDate,
+              capacity: plan.capacity,
+              duration: plan.duration,
+              characteristicIds: plan.characteristic.map((char) => char.id),  // Extraemos los IDs de las características
+              images: null,  // Si no se van a actualizar imágenes, podemos enviar null
+              rating: updatedRating,  // El nuevo rating calculado
+              totalReviews: updatedTotalReviews,  // Total de reseñas actualizado
+              totalStars: updatedTotalStars,  // Total de estrellas actualizado
+            };
+
+            // Ahora hacemos el update del plan con los nuevos valores
+            await updateTouristPlan(token, plan.id.toString(), updatedPlanReq);
+
+            console.log("Plan actualizado exitosamente!");
+
+            if (onReviewCreated) {
+              onReviewCreated();
             }
-          } else {
-            // Si no hay errores en el array, mostramos el mensaje de la API
-            setMessage(result.message || "Error al crear la reseña");
+            onClose();
           }
+        } else {
+          // Manejo de errores de la respuesta
+          setMessage(result.message || "Error al crear la reseña");
         }
       } catch (error) {
         console.error("Error al crear reseña:", error);
         setMessage("Hubo un error al procesar la reseña. Intenta nuevamente.");
       }
-    }
+    };
 
     if (!session) {
       return isOpen ? (

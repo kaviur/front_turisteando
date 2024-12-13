@@ -151,7 +151,7 @@ export default function ProductPage() {
             {/* Modal de Crear Reseña */}
             {isModalOpen && (
               <CreateReview
-                planId={product.id}
+                plan={product}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onReviewCreated={() => {
