@@ -19,6 +19,17 @@ export default auth((req) => {
     return;
   }
 
+ // Si la ruta es reservations y el usuario no esta autenticado será redirigido al login
+ if (nextUrl.pathname.startsWith("/reservations")) {
+  if (!isAuthenticated) {
+    return Response.redirect(new URL("/login", nextUrl));
+  }
+
+  // Si el usuario esta autenticado y la ruta es reservations, se le permite el acceso
+  return;
+}
+
+
   // Revisar si el usuario tiene rol ADMIN
   //@ts-ignore
   const isAdmin = req.auth?.user?.role === "ADMIN";
@@ -35,5 +46,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/favorites", "/favorites/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/reservations","/reservations/:path*", "/favorites", "/favorites/:path*"],
 };

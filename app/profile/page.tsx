@@ -19,37 +19,43 @@ const Profile = async () => {
       <div className="max-w-2xl mx-auto p-4 md:mt-24">
         <h1 className="text-4xl font-bold mb-6 text-primary">Perfil</h1>
 
-        <div className="bg-white shadow-md rounded-lg p-6">
-          <div className="flex items-center mb-6">
-            {/* Icono de usuario y nombre */}
-            <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center mr-4">
-              <FaUser className="text-white text-3xl" />
+        <div className="bg-white shadow-lg rounded-xl p-8 space-y-6 transition-transform transform hover:scale-105">
+          {/* Avatar de usuario */}
+          <div className="flex items-center justify-start gap-6 mb-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 rounded-full flex items-center justify-center text-white text-3xl font-semibold">
+              {/* Mostrar iniciales o imagen de usuario */}
+              <FaUser />
             </div>
             <div>
-              <h2 className="text-xl font-semibold">{user?.name}</h2>
-              {/* @ts-expect-error: Error en la validación de tipos */}
-              <p className="text-sm text-gray-500">{user?.role}</p>
+              <h2 className="text-2xl font-semibold text-gray-800">{user?.name}</h2>
+              {/* @ts-expect-error */}
+              <p className="text-sm text-gray-600">{user?.role}</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <FaUserTag />
-              {/* @ts-expect-error: Error en la validación de tipos */}
+            {/* Información adicional */}
+            <div className="flex items-center gap-2 text-gray-700">
+              <FaUserTag className="text-lg text-primary" />
+              {/* @ts-expect-error */}
               <p>{user?.role}</p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <FaEnvelope />
+            <div className="flex items-center gap-2 text-gray-700">
+              <FaEnvelope className="text-lg text-primary" />
               <p>{user?.email}</p>
             </div>
-            <pre>{JSON.stringify(session, null, 2)}</pre>
-            <div className="flex items-center gap-2">
-              {/* @ts-expect-error: Error en la validación de tipos */}
+
+            <div className="flex items-center gap-2 text-gray-700">
+              {/* @ts-expect-error */}
               <p>Status: {user?.isActive ? "Activo" : "Inactivo"}</p>
             </div>
           </div>
-          <LogoutButton />
+
+          {/* Botón de Logout */}
+          <div className="text-center mt-6">
+            <LogoutButton />
+          </div>
         </div>
       </div>
       <Footer />
