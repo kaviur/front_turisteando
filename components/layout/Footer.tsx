@@ -3,12 +3,13 @@ import { FaTwitter } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
 import { FaFacebookSquare } from "react-icons/fa";
 import Link from "next/link";
+import WhatsappButton from "../ui/WhatsappButton";
 const imageStyle = {
   width: "auto",
 };
 export const Footer = () => {
   return (
-    <footer className="bg-base-100 text-base-content p-10 max-w-screen-2xl	 mx-auto">
+    <footer className="bg-base-100 text-base-content p-10 max-w-screen-2xl mx-auto">
       {/* Logo y navegación */}
       <div className="divider mb-8"></div>
       <div className="footer flex flex-row justify-around items-center md:items-start gap-6">
@@ -41,7 +42,7 @@ export const Footer = () => {
             <a className="link link-hover">Contáctenos</a>
             <a className="link link-hover">Políticas de privacidad</a>
             <Link href="/terms-and-conditions" className="link link-hover">
-            Términos de servicio
+              Términos de servicio
             </Link>
           </nav>
 
@@ -90,6 +91,7 @@ export const Footer = () => {
         </div>
       </div>
       <p className="text-gray-500 text-center mt-6">2024 © Turisteando</p>
+      <WhatsappButton />
     </footer>
   );
 };
