@@ -17,6 +17,8 @@ import { fetchProduct, fetchTours } from "@/lib/actions";
 import { fetchReviewsByPlan } from "@/lib/reviews/reviewActions";
 import { Review } from "@/types/review";
 import VacationCard from "@/components/VacationCard";
+import CreateReview from "@/components/CreateReview/CreateReview";
+import ButtonReview from "@/components/ButtonReview/ButtonReview";
 
 export default function ProductPage() {
   const [tours, setTours] = useState<TouristPlan[]>([]);
@@ -25,6 +27,9 @@ export default function ProductPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
   const [ratingFilter, setRatingFilter] = useState(0); // Filtro por estrellas
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReviewCreated, setIsReviewCreated] = useState(false);
+
 
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
@@ -37,7 +42,6 @@ export default function ProductPage() {
         setProduct(productData);
       }
     };
-
     loadProduct();
   }, [productId]);
 
@@ -53,7 +57,6 @@ export default function ProductPage() {
     loadTours();
   }, []);
 
-  // Cargar las reseñas del producto
   useEffect(() => {
     const loadReviews = async () => {
       try {
@@ -65,7 +68,7 @@ export default function ProductPage() {
     };
 
     loadReviews();
-  }, [productId]);
+  }, [productId, isModalOpen, isReviewCreated]); // Observa tanto el productId como el estado de isModalOpen
 
   // Actualizar las reseñas filtradas según el filtro seleccionado
   useEffect(() => {
@@ -125,11 +128,39 @@ export default function ProductPage() {
         active={product?.active}
       />
 
+
+
+
       <section className="px-8 py-12 w-full hidden md:block max-w-7xl mx-auto">
         <div>
           <h2 className="text-3xl font-bold text-gray-500 text-center mb-6">
             Comentarios de nuestros Usuarios
           </h2>
+
+          <div>
+            {/* Botón de reseñas */}
+            <div className="mt-8 mb-8">
+              {product?.id && (
+                <ButtonReview
+                  planId={product.id}
+                  onClick={() => setIsModalOpen(true)}
+                  isReviewCreated={isReviewCreated}
+                />
+              )}
+            </div>
+            {/* Modal de Crear Reseña */}
+            {isModalOpen && (
+              <CreateReview
+                planId={product.id}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onReviewCreated={() => {
+                  setIsModalOpen(false);
+                  setIsReviewCreated(true);
+                }}
+              />
+            )}
+          </div>
         </div>
         <div className="w-full mx-auto p-4">
           {/* Mostrar el total de reseñas y el promedio */}
@@ -241,19 +272,19 @@ export default function ProductPage() {
         >
           {loading
             ? // Renderizar esqueleto mientras se cargan los datos
-              Array.from({ length: 3 }).map((_, index) => (
-                <SwiperSlide key={index}>
-                  <div className="flex min-w-56 max-h-96 flex-col gap-4">
-                    <div className="skeleton h-52 w-full"></div>
-                    <div className="skeleton h-4 w-36"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                    <div className="skeleton h-4 w-full"></div>
-                  </div>
-                </SwiperSlide>
-              ))
+            Array.from({ length: 3 }).map((_, index) => (
+              <SwiperSlide key={index}>
+                <div className="flex min-w-56 max-h-96 flex-col gap-4">
+                  <div className="skeleton h-52 w-full"></div>
+                  <div className="skeleton h-4 w-36"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                  <div className="skeleton h-4 w-full"></div>
+                </div>
+              </SwiperSlide>
+            ))
             : // Renderizar tours cuando la carga haya terminado
               tours.map((tour) => (
                 <SwiperSlide key={tour.id}>
