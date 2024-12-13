@@ -5,6 +5,7 @@
   import { TouristPlan } from "@/types/touristPlan";
   import { TouristPlanReq } from "@/types/touristPlanReq";
   import { updateTouristPlan } from "@/lib/actions";
+  import { toast } from "react-hot-toast";
 
   interface CreateReviewResponse {
     success: true;
@@ -30,6 +31,7 @@
     const [rating, setRating] = useState(0);
     const [comment, setComment] = useState("");
     const [message, setMessage] = useState("");
+    const [hoveredStar, setHoveredStar] = useState<number>(0);  // Para manejar la estrella resaltada al pasar el mouse
     
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,7 +59,7 @@
 
         // Verificamos si la respuesta fue exitosa
         if (result.success) {
-          setMessage("¡Reseña creada exitosamente!");
+          toast.success("¡Reseña creada exitosamente!");
           // Aquí actualizamos el plan
           if (plan) {  // Aseguramos que tenemos el plan para actualizar
             const updatedRating = ((plan.rating ?? 0) * (plan.totalReviews ?? 0) + rating) / ((plan.totalReviews ?? 0) + 1);
@@ -134,18 +136,31 @@
               <form onSubmit={handleSubmit} className="mt-4">
                 <div className="form-control">
                   <label className="label">
-                    <span className="label-text">Calificación (1-5):</span>
+                    <span className="label-text">Calificación:</span>
                   </label>
-                  <input
-                    type="number"
-                    min="1"
-                    max="5"
-                    value={rating}
-                    onChange={(e) => setRating(Number(e.target.value))}
-                    className="input input-bordered"
-                    required
-                  />
+                  <div className="flex items-center space-x-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <svg
+                        key={star}
+                        onClick={() => setRating(star)} // Actualiza el rating cuando se hace clic
+                        onMouseEnter={() => setHoveredStar(star)} // Cambia el estado de hover al pasar el ratón
+                        onMouseLeave={() => setHoveredStar(0)} // Restablece el hover cuando el ratón se va
+                        xmlns="http://www.w3.org/2000/svg"
+                        className={`w-8 h-8 cursor-pointer ${rating >= star || hoveredStar >= star ? 'text-yellow-500' : 'text-gray-300'}`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 15.27l4.18 2.73-1.64-5.44 4.5-3.79-5.5-.42L10 0 7.46 8.35l-5.5.42 4.5 3.79L5.82 18z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    ))}
+                  </div>
                 </div>
+                
                 <div className="form-control mt-4">
                   <label className="label">
                     <span className="label-text">Comentario:</span>
@@ -158,7 +173,9 @@
                     required
                   />
                 </div>
+                
                 {message && <p className="text-sm text-red-500 mt-2">{message}</p>}
+                
                 <div className="modal-action">
                   <button type="submit" className="btn btn-primary">
                     Enviar Reseña
