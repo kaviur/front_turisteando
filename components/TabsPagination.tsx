@@ -82,7 +82,7 @@ export const TabsPagination: React.FC<TabsProps> = () => {
         </div>
       ))
       : paginatedTours.map((tour) => (
-        <VacationCard key={tour.id} plan={tour} />
+        <VacationCard key={tour.id} plan={tour} comeForCategories={true}/>
       ))}
     </div>
   );
