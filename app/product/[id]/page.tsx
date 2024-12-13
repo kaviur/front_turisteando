@@ -92,7 +92,7 @@ export default function ProductPage() {
         id={product?.id}
         title={product?.title}
         images={product?.images}
-        rating={product?.rating}
+        rating={Number(averageRating)}
         reviews={product?.reviews}
         description={product?.description}
         capacity={product?.capacity}

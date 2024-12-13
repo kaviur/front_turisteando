@@ -19,6 +19,8 @@ import { useFavorites } from "@/context/FavoritesContext";
 import ReservationSummary from "./ReservationSummary";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { FaStarHalfAlt } from "react-icons/fa";
+
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -105,17 +107,31 @@ const ProductDetails: React.FC<TouristPlan> = ({
       <div className="flex justify-between">
         {/* Estrellas de calificación */}
         <div className="flex items-center gap-2">
-          {[...Array(5)].map((_, index) => (
-            <span key={index} className="text-2xl">
-              {index < rating ? (
-                <FaStar className="text-yellow-500" />
-              ) : (
-                <PiStarDuotone className="text-gray-500" />
-              )}
-            </span>
-          ))}
+          {[...Array(5)].map((_, index) => {
+            if (index < Math.floor(rating)) {
+              // Estrella llena
+              return (
+                <span key={index} className="text-2xl">
+                  <FaStar className="text-yellow-500" />
+                </span>
+              );
+            } else if (index === Math.floor(rating) && rating % 1 >= 0.5) {
+              // Estrella media llena
+              return (
+                <span key={index} className="text-2xl">
+                  <FaStarHalfAlt className="text-yellow-500" />
+                </span>
+              );
+            } else {
+              // Estrella vacía
+              return (
+                <span key={index} className="text-2xl">
+                  <PiStarDuotone className="text-gray-500" />
+                </span>
+              );
+            }
+          })}
         </div>
-        <div></div>
       </div>
 
       {/* Imagen, calendario y cantidad de personas */}
