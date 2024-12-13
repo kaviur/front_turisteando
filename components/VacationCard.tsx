@@ -8,9 +8,10 @@ import { useState } from "react";
 
 interface CardProps {
   plan: TouristPlan;
+  comeForCategories?: boolean;
 }
 
-export default function VacationCard({ plan }: CardProps) {
+export default function VacationCard({ plan, comeForCategories = false }: CardProps) {
   const {
     id,
     title,
@@ -35,7 +36,13 @@ export default function VacationCard({ plan }: CardProps) {
   };
 
   return (
-    <div className="relative card max-w-80 h-128 bg-base-100 shadow-md border border-base-200">
+    <div
+      className={`${
+        comeForCategories
+          ? "relative card max-w-80 h-128 bg-base-100 shadow-md border border-base-200"
+          : "card w-full h-128 bg-base-100 shadow-md border border-base-200"
+      }`}
+    >
       {/* Link envolviendo toda la card */}
       <Link href={`/product/${id}`} className="block w-full h-full">
         {/* Carousel */}

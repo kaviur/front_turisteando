@@ -9,10 +9,11 @@ import Image from "next/image";
 
 type TabsProps = {
   isMobile?: boolean;
+  categoryId?: string;
 };
 
-export const TabsPagination: React.FC<TabsProps> = () => {
-  const [activeTab, setActiveTab] = useState(1);
+export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
+  const [activeTab, setActiveTab] = useState(Number(categoryId));
   const [currentPage, setCurrentPage] = useState(1);
   // const [loading, setLoading] = useState(true); // Para el estado de carga
   const itemsPerPage = 9;
@@ -30,7 +31,7 @@ export const TabsPagination: React.FC<TabsProps> = () => {
         try {
             const categories = await fetchCategories();
             setCategories(categories);
-            setActiveTab(Number(categories[0]?.id) || 0); // Inicializar con la primera categoría.
+            //setActiveTab(Number(categories[0]?.id) || 0); // Inicializar con la primera categoría.
         } catch (error) {
             console.error("Error fetching categories:", error);
         } finally {
@@ -82,7 +83,7 @@ export const TabsPagination: React.FC<TabsProps> = () => {
         </div>
       ))
       : paginatedTours.map((tour) => (
-        <VacationCard key={tour.id} plan={tour} />
+        <VacationCard key={tour.id} plan={tour} comeForCategories={true}/>
       ))}
     </div>
   );
