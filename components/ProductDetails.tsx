@@ -19,8 +19,14 @@ import { useFavorites } from "@/context/FavoritesContext";
 import ReservationSummary from "./ReservationSummary";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { convertDurationToDays } from "@/utils/dateUtils";
 import { FaStarHalfAlt } from "react-icons/fa";
 
+interface CustomRange {
+  startDate: Date;
+  endDate: Date;
+  key: string;
+}
 
 const ProductDetails: React.FC<TouristPlan> = ({
   id,
@@ -35,12 +41,11 @@ const ProductDetails: React.FC<TouristPlan> = ({
   category: { name: category, description: categoryDescription },
   rating,
   images,
-  availabilityStartDate,
   availabilityEndDate,
   capacity,
   duration,
   characteristic,
-  active, 
+  active,
 }) => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -56,7 +61,6 @@ const ProductDetails: React.FC<TouristPlan> = ({
     }
     setShowReservationForm(true);
   };
-
 
   const imagesGallery = images.map((img) => ({
     original: img.imageUrl,
@@ -79,6 +83,19 @@ const ProductDetails: React.FC<TouristPlan> = ({
     setShowReservationForm(false);
   };
 
+  const handleRange = (range: CustomRange) => {
+    const startDate = new Date(range.startDate);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + convertDurationToDays(duration));
+
+    const rangeUpdate = {
+      ...range,
+      endDate,
+    };
+
+    setState([rangeUpdate]);
+  };
+
   const handleResetValues = () => {
     setNumberOfPeople(1);
     setState([
@@ -88,7 +105,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
         key: "selection",
       },
     ]);
-  }
+  };
 
   return (
     <section className="max-w-7xl mx-auto p-4 space-y-4">
@@ -191,7 +208,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
               showMonthAndYearPickers={false}
               // showPreview={false}
               //@ts-expect-error: Ignorando error por ahora
-              onChange={(item) => setState([item.selection])}
+              onChange={(item) => handleRange(item.selection)}
               direction="horizontal"
               ranges={state}
               moveRangeOnFirstSelection={false}
@@ -200,7 +217,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
               showDateDisplay={false}
               months={2}
               className="rounded-lg "
-              minDate={new Date(availabilityStartDate)}
+              minDate={new Date()}
               maxDate={new Date(availabilityEndDate)}
             />
             <div className="flex gap-5 items-center justify-between px-4 pb-4">
