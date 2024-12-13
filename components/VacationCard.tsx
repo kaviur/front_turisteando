@@ -6,6 +6,10 @@ import LikeButton from './ui/LikeButton';
 import { TouristPlan } from "@/types/touristPlan";
 import { useState } from "react";
 
+import { FaStar } from "react-icons/fa";
+import { PiStarDuotone } from "react-icons/pi";
+import { FaStarHalfAlt } from "react-icons/fa";
+
 interface CardProps {
   plan: TouristPlan;
   comeForCategories?: boolean;
@@ -77,18 +81,30 @@ export default function VacationCard({ plan, comeForCategories = false }: CardPr
               </p>
             </div>
             <div className="rating rating-sm">
-              {Array(5)
-                .fill(null)
-                .map((_, i) => (
-                  <input
-                    key={i}
-                    type="radio"
-                    name={`rating-${id}`}
-                    className="mask mask-star-2 bg-orange-400"
-                    checked={i < rating}
-                    readOnly
-                  />
-                ))}
+              {[...Array(5)].map((_, index) => {
+              if (index < Math.floor(rating)) {
+                // Estrella llena
+                return (
+                  <span key={index} className="text-2xl">
+                    <FaStar className="text-yellow-500" />
+                  </span>
+                );
+              } else if (index === Math.floor(rating) && rating % 1 >= 0.5) {
+                // Estrella media llena
+                return (
+                  <span key={index} className="text-2xl">
+                    <FaStarHalfAlt className="text-yellow-500" />
+                  </span>
+                );
+              } else {
+                // Estrella vacía
+                return (
+                  <span key={index} className="text-2xl">
+                    <PiStarDuotone className="text-gray-500" />
+                  </span>
+                );
+              }
+            })}
             </div>
           </div>
 
