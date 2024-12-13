@@ -1,9 +1,6 @@
 "use client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Reservation } from "@/types/reservation";
 import ReservationTable from "@/components/ReservationTable/ReservationTable";
 import { Navbar } from "@/components/layout/Navbar";
@@ -13,7 +10,6 @@ import { getReservationsByUsers } from "@/lib/reservation/reservationActions";
 export default function Home() {
   const [reservation, setReservation] = useState<Reservation[]>([]);
   const { data: session } = useSession();
-  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
@@ -30,7 +26,6 @@ export default function Home() {
 
         // Verificamos la respuesta y actualizamos el estado
         if (response === null) {
-          console.log ("Entró aquí")
           setError("No se encontraron reservas para este usuario.");
           setReservation([]);
         } else if (Array.isArray(response) && response.length > 0) {
@@ -53,7 +48,7 @@ export default function Home() {
     };
 
     fetchReservations();
-  }, [session]);
+  }, [session, reservation]);
 
   return (
     <>

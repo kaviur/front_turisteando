@@ -27,8 +27,10 @@ const Profile = async () => {
               <FaUser />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-gray-800">{user?.name}</h2>
-              {/* @ts-expect-error */}
+              <h2 className="text-2xl font-semibold text-gray-800">
+                {user?.name}
+              </h2>
+              {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
               <p className="text-sm text-gray-600">{user?.role}</p>
             </div>
           </div>
@@ -37,7 +39,7 @@ const Profile = async () => {
             {/* Información adicional */}
             <div className="flex items-center gap-2 text-gray-700">
               <FaUserTag className="text-lg text-primary" />
-              {/* @ts-expect-error */}
+              {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
               <p>{user?.role}</p>
             </div>
 
@@ -47,7 +49,7 @@ const Profile = async () => {
             </div>
 
             <div className="flex items-center gap-2 text-gray-700">
-              {/* @ts-expect-error */}
+              {/* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */}
               <p>Status: {user?.isActive ? "Activo" : "Inactivo"}</p>
             </div>
           </div>
