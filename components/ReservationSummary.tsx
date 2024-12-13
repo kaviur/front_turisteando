@@ -60,7 +60,8 @@ const ReservationSummary: React.FC<ReservationSummaryProps> = ({
     startDate: startDate,
     endDate: endDate,
     peopleCount: numberOfPeople,
-    totalPrice: price
+    totalPrice: price, 
+    touristPlanTitle
   };
 
   const handleSubmit = async (event: React.FormEvent) => {

@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Reservation } from "@/types/reservation";
 import ReservationTable from "@/components/ReservationTable/ReservationTable";
 import { Navbar } from "@/components/layout/Navbar";
@@ -22,7 +23,7 @@ export default function Home() {
 
       /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
       const token: string = session?.user?.accessToken;
-      const userId = session?.user?.id;
+      const userId: string | undefined = session?.user?.id;
 
       try {
         const response = await getReservationsByUsers(userId, token);
@@ -35,7 +36,11 @@ export default function Home() {
         } else if (Array.isArray(response) && response.length > 0) {
           setReservation(response);
         } else {
+          if (reservation.length=== 0 ) {
+            setError("Aún No tiene reservas."); 
+          }else{
           setError("Hubo un problema al obtener las reservas.");
+          }
           setReservation([]);
         }
       } catch (error) {
@@ -75,6 +80,10 @@ export default function Home() {
         <div className="flex justify-center">
           {loading ? (
             <p>Loading...</p>
+          )   : reservation.length === 0 ? ( // Aquí agregamos la validación
+            <p className="text-center text-xl font-semibold text-gray-500">
+              No tiene Reservaciones en este momento.
+            </p>
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (

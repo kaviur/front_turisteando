@@ -45,38 +45,43 @@ export const createReservation = async (
 
 
 };
+
 export const getReservationsByUsers = async (
-  userId: number | undefined,
+  userId: string | undefined,
   token: string
 ) => {
   try {
-    const responseGet = await fetch(
-      //`${process.env.NEXT_PUBLIC_BASE_URL}/reservations/search-by-user/${userId}`,
-      `http://localhost:8080/api/reservations/search-by-user/${userId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    if (!userId) {
+      throw new Error("El ID de usuario es necesario para obtener reservas.");
+    }
+
+    // Construcción de la URL correcta
+            
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL}/reservations/search-by-user?userId=${userId}`;
+    console.log("URL de solicitud:", url);
+
+    const responseGet = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!responseGet.ok) {
+      const errorData = await responseGet.json();
+      console.error("Error de API:", errorData);
+      throw new Error(`Error ${responseGet.status}: ${errorData.debugMessage}`);
+    }
 
     const data = await responseGet.json();
-    console.log (data);
-    if (data.success && data.data) {
-      return data.data;
-    } else {
-      return {
-        message: "Error al Obtener Reservas del Usuario",
-        debugMessage: data.debugMessage || "Error desconocido",
-      };
-    }
+    return data.data || [];
   } catch (error) {
-    console.log("Este es el error al Obtener las Reservas del Usuario", error);
-    return { message: "Hubo un error al realizar la solicitud." }; // Agregado return en caso de error
+    console.error("Error al obtener las reservas:", error);
+    return { message: "Hubo un error al realizar la solicitud." };
   }
 };
+
  
    
 

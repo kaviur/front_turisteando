@@ -1,3 +1,5 @@
+import { string } from "zod";
+
 export interface Reservation {
   touristPlanId: number;
   userId: number;
@@ -6,4 +8,5 @@ export interface Reservation {
   endDate: Date;
   peopleCount: number;
   totalPrice: number;
+  touristPlanTitle: string;
 }
