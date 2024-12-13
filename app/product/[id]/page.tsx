@@ -23,6 +23,8 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<TouristPlan | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [filteredReviews, setFilteredReviews] = useState(reviews);
+  const [ratingFilter, setRatingFilter] = useState(0); // Filtro por estrellas
 
   const pathname = usePathname();
   const productId = pathname.split("/").pop(); // Asumiendo que el ID está en la última parte de la URL
@@ -65,6 +67,21 @@ export default function ProductPage() {
     loadReviews();
   }, [productId]);
 
+  // Actualizar las reseñas filtradas según el filtro seleccionado
+  useEffect(() => {
+    if (ratingFilter > 0) {
+      setFilteredReviews(reviews.filter((review) => review.rating === ratingFilter));
+    } else {
+      setFilteredReviews(reviews); // Mostrar todas las reseñas si el filtro es 0
+    }
+  }, [ratingFilter, reviews]);
+
+  // Calcular el total y el promedio de reseñas
+  const totalReviews = reviews.length;
+  const averageRating = totalReviews > 0 
+    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
+    : 0;
+
   if (!product) return;
 
   return (
@@ -96,22 +113,58 @@ export default function ProductPage() {
             Comentarios de nuestros Usuarios
           </h2>
         </div>
+        <div className="w-full mx-auto p-4">
+          {/* Mostrar el total de reseñas y el promedio */}
+          <div className="flex flex-col items-center mb-6">
+            <p className="text-lg font-semibold text-gray-800">
+              Total de reseñas: {totalReviews}
+            </p>
+            {totalReviews > 0 && (
+              <p className="text-lg text-yellow-500 font-medium">
+                Calificación promedio: {averageRating} ★
+              </p>
+            )}
+          </div>
 
-        <Swiper
-          slidesPerView={3}
-          spaceBetween={30}
-          freeMode={true}
-          pagination={{
-            clickable: true,
-            dynamicBullets: true,
-          }}
-          modules={[FreeMode, Pagination]}
-          className="mySwiper"
-        >
-          {reviews.length > 0 ? (
-            reviews.map((review, index) => (
-              <SwiperSlide key={index}>
-                <Testimonial
+          {/* Filtro por estrellas */}
+          <div className="flex justify-center items-center mb-6">
+            <label
+              htmlFor="ratingFilter"
+              className="text-gray-700 font-medium mr-4"
+            >
+              Filtrar por estrellas:
+            </label>
+            <select
+              id="ratingFilter"
+              value={ratingFilter}
+              onChange={(e) => setRatingFilter(parseInt(e.target.value))}
+              className="select select-bordered select-sm w-40 bg-white text-gray-700"
+            >
+              <option value="0">Todas</option>
+              <option value="5">5 Estrellas</option>
+              <option value="4">4 Estrellas</option>
+              <option value="3">3 Estrellas</option>
+              <option value="2">2 Estrellas</option>
+              <option value="1">1 Estrella</option>
+            </select>
+          </div>
+
+          {/* Swiper para mostrar las reseñas */}
+          <Swiper
+            slidesPerView={3}
+            spaceBetween={30}
+            freeMode={true}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
+            modules={[FreeMode, Pagination]}
+            className="mySwiper"
+          >
+            {filteredReviews.length > 0 ? (
+              filteredReviews.map((review, index) => (
+                <SwiperSlide key={index}>
+                  <Testimonial
                   userImage={""}
                   userName={review.user.name}
                   city={"Medellín"}
@@ -120,22 +173,15 @@ export default function ProductPage() {
                   reviewText={review.comment}
                   rating={review.rating}
                 />
-              </SwiperSlide>
-            ))
-          ) : (
-            <SwiperSlide>
-              <Testimonial
-                userImage="/juanuser.jpg"
-                userName="Juan Pérez"
-                city="Bogotá"
-                country="Colombia"
-                date="mayo 2024"
-                reviewText="No se han encontrado reseñas aún."
-                rating={5}
-              />
-            </SwiperSlide>
-          )}
-        </Swiper>
+                </SwiperSlide>
+              ))
+            ) : (
+              <div className="no-reviews-message">
+                <p>No hay reseñas disponibles para mostrar.</p>
+              </div>
+            )}
+          </Swiper>
+        </div>        
       </section>
       {/* Desktop Section */}
       <section className="px-8 py-12 hidden md:block max-w-screen-2xl	 mx-auto ">

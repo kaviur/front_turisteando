@@ -238,7 +238,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
             />
 
             {/* Like button */}
-            <LikeButton planId={id} isFavorite={isFavorite} />
+            <LikeButton planId={id} isFavorite={isFavorite} isCard={false}/>
           </div>
         </div>
       </div>
