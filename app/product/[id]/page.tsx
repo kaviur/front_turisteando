@@ -82,6 +82,24 @@ export default function ProductPage() {
     ? (reviews.reduce((sum, review) => sum + review.rating, 0) / totalReviews).toFixed(1)
     : 0;
 
+  const citiesInPeru = [
+    "Lima",
+    "Cusco",
+    "Arequipa",
+    "Trujillo",
+    "Chiclayo",
+    "Piura",
+    "Iquitos",
+    "Huancayo",
+    "Tacna",
+    "Pucallpa",
+  ];
+
+  function getRandomCity() {
+    const randomIndex = Math.floor(Math.random() * citiesInPeru.length);
+    return citiesInPeru[randomIndex];
+  }
+
   if (!product) return;
 
   return (
@@ -167,8 +185,8 @@ export default function ProductPage() {
                   <Testimonial
                   userImage={""}
                   userName={review.user.name}
-                  city={"Medellín"}
-                  country={"Colombia"}
+                  city={getRandomCity()}
+                  country={"Perú"}
                   date={review.date}
                   reviewText={review.comment}
                   rating={review.rating}
