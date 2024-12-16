@@ -8,6 +8,7 @@ import { TouristPlanReq } from "@/types/touristPlanReq";
 import { Characteristics } from "@/types/characteristics";
 import { toast } from "react-hot-toast";
 import DurationInput from "./DurationInput";
+import imageCompression from "browser-image-compression";
 
 
 interface ProductFormProps {
@@ -76,9 +77,9 @@ const ProductForm = ({
   };
 
   //Handle multipart images
-  const handleDrop = (acceptedFiles: File[]) => {
-    const mbByImage = 10;
-    const maxFileSize = mbByImage * 1024 * 1024; // 10 MB
+  const handleDrop = async (acceptedFiles: File[]) => {
+    const mbByImage = 1;
+    const maxFileSize = mbByImage * 1024 * 1024; // 1 MB
     const validFiles: File[] = [];
     const previewUrls: string[] = [];
   
@@ -88,17 +89,32 @@ const ProductForm = ({
       return;
     }
   
+    // Configuración de opciones para la compresión
+    const compressionOptions = {
+      maxSizeMB: 0.5, // Tamaño máximo después de la compresión (en MB)
+      maxWidthOrHeight: 800, // Resolución máxima
+      useWebWorker: true, // Usar Web Worker para optimizar rendimiento
+    };
+  
     // Filtrar y validar archivos
-    acceptedFiles.forEach((file) => {
+    for (const file of acceptedFiles) {
       if (file.size > maxFileSize) {
-        toast.error(`El archivo "${file.name}" excede el tamaño máximo de "${mbByImage} MB.`);
+        toast.error(`El archivo "${file.name}" excede el tamaño máximo de "${mbByImage} MB."`);
       } else if (!file.type.startsWith("image/")) {
         toast.error(`El archivo "${file.name}" no es una imagen válida.`);
       } else {
-        validFiles.push(file);
-        previewUrls.push(URL.createObjectURL(file));
+        try {
+          // Comprimir imagen
+          const compressedFile = await imageCompression(file, compressionOptions);
+  
+          validFiles.push(compressedFile); // Agrega el archivo comprimido
+          previewUrls.push(URL.createObjectURL(compressedFile)); // Genera URL para previsualización
+        } catch (error) {
+          console.error("Error al comprimir la imagen:", error);
+          toast.error(`Hubo un problema al procesar "${file.name}".`);
+        }
       }
-    });
+    }
   
     // Verifica que no exceda el número máximo de imágenes permitidas
     const remainingSpace = remainingImagesToUpload;
@@ -495,7 +511,7 @@ const ProductForm = ({
                         src={image.imageUrl}
                         alt={`Imagen ${image.id + 1}`}
                         layout="fill" 
-                        objectFit="cover" 
+                        style={{ objectFit: 'cover' }} 
                         className="rounded-md shadow-slate-400 shadow-lg"
                       />
                       {handleDeleteImage && (
@@ -523,7 +539,7 @@ const ProductForm = ({
                         src={imageUrl}
                         alt={`Previsualización ${index + 1}`}
                         layout="fill" 
-                        objectFit="cover" 
+                        style={{ objectFit: 'cover' }} 
                         className="rounded-md shadow-slate-400 shadow-lg"
                       />
                       <button

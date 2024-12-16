@@ -38,6 +38,12 @@ const nextConfig: NextConfig = {
       ...remotePatternsList,
      ],
   },
+
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
+  },
 };
 
 export default nextConfig;
