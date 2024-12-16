@@ -118,10 +118,10 @@ export const fetchCategoryById = async (
 export const deleteCategory = async (
   token: string,
   id: string | undefined
-): Promise<string | undefined> => {
+): Promise<string | string[]> => {
   try {
+    console.log("Este es el token", token);
 
-    console.log( "Este es el token", token);
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/categories/delete/${id}`,
       {
@@ -133,24 +133,37 @@ export const deleteCategory = async (
       }
     );
 
-    const data = await response.json();
+    const responseJson = await response.json();
 
-    console.log ("Esto es el data", data);
+    console.log("Esto es el responseJson", responseJson);
 
     // Verifica si la respuesta indica un error
     if (!response.ok) {
-      console.log( "error del data error", data.errors);
+      console.error("Error del responseJson.errors:", responseJson.errors);
 
-      const errorMessage = Array.isArray(data.errors)
-        ? data.errors.join(", ") // Combina todos los mensajes de error en uno solo
-        : "Error desconocido al eliminar la categoría.";
-      console.error("Error al eliminar la categoría:", errorMessage);
-      throw new Error(errorMessage);
+      // Retorna un array de errores si existen
+      if (responseJson.errors && Array.isArray(responseJson.errors)) {
+        return responseJson.errors;
+      }
+
+      throw new Error("Error desconocido al eliminar la categoría.");
     }
 
-    return data.data;
+    // Si es exitoso, devuelve el mensaje o valor correspondiente
+    if (responseJson.success && responseJson.data) {
+      return responseJson.data;
+    } else {
+      // Manejo adicional en caso de que no haya errores explícitos, pero tampoco éxito claro
+      return responseJson.errors || ["Ocurrió un problema inesperado."];
+    }
   } catch (error) {
     console.error("Error al eliminar la categoría:", error);
+
+    // Si ocurre un error inesperado, arroja un array con el mensaje del error
+    if (error instanceof Error) {
+      return [error.message];
+    }
+    return ["Error inesperado al eliminar la categoría."];
   }
 };
 

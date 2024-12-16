@@ -72,31 +72,36 @@ const CategoriesPage = () => {
     router.push(`/admin/editcategory/${id}`);
   };
 
-  // Método para eliminar una categoría existente
   const handleDelete = async (id: string | undefined) => {
     const confirmed = await confirmDelete();
     if (!confirmed || !session) return;
   
     /* @ts-expect-error: session object contains accessToken, but TypeScript doesn't recognize it */
     const token: string = session?.user?.accessToken;
-    console.log ( "este es el token:", token);
+    console.log("Este es el token:", token);
   
     try {
       await toast.promise(
         (async () => {
-          const deletedCategoryId = await deleteCategory(token, id); // Llama al método importado
-          if (!deletedCategoryId) {
-            throw new Error("Error al eliminar la categoría");
+          // Llama al método deleteCategory
+          const result = await deleteCategory(token, id);
+  
+          if (Array.isArray(result)) {
+            // Si el resultado es un array de errores, lanza un error para manejarlo en el toast
+            throw new Error(result.join(", "));
           }
+  
+          // Si el resultado es un string (éxito), actualiza el estado
           setCategories(categories.filter((category) => category.id !== id));
+          return "Categoría eliminada exitosamente"; // Mensaje personalizado para el toast de éxito
         })(),
         {
           loading: "Eliminando categoría...",
           success: "Categoría eliminada exitosamente",
           error: (error) => {
-            // Personaliza el mensaje del toast basado en el error recibido
+            // Personaliza el mensaje de error para el toast
             if (error instanceof Error) {
-              return error.message; // Mensaje lanzado desde deleteCategory
+              return error.message; // Toma el mensaje del error lanzado
             }
             return "Error desconocido al eliminar la categoría";
           },
