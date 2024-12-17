@@ -81,6 +81,11 @@
   right: -32px; 
 }
 
+/* Incrementar especificidad */
+.image-gallery-slide .image-gallery-image {
+  min-height: 450px !important;
+  object-fit: cover;
+}
 /* ------------------------------------ */
 /* Custom Calendar */
 /* 
