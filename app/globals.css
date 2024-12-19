@@ -81,11 +81,20 @@
   right: -32px; 
 }
 
-/* Incrementar especificidad */
+
+
 .image-gallery-slide .image-gallery-image {
   min-height: 450px !important;
-  object-fit: cover;
+  object-fit: cover; 
 }
+
+.image-gallery-content.fullscreen .image-gallery-slides {
+  display: flex; /* Flexbox para centrar */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  height: 100vh; /* Ocupa toda la pantalla */
+}
+
 /* ------------------------------------ */
 /* Custom Calendar */
 /* 
