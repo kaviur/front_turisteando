@@ -88,11 +88,26 @@
   object-fit: cover; 
 }
 
-.image-gallery-content.fullscreen .image-gallery-slides {
+.image-gallery-content.fullscreen .image-gallery-slides, image-gallery-thumbnails-container {
   display: flex; /* Flexbox para centrar */
   justify-content: center; /* Centra horizontalmente */
   align-items: center; /* Centra verticalmente */
   height: 100vh; /* Ocupa toda la pantalla */
+}
+
+/* Vista Desktop: thumbnails posicionados verticalmente */
+.image-gallery-thumbnails-container {
+  display: flex; /* Mantiene el diseño como flexbox */
+  flex-direction: column; /* Thumbnails apilados verticalmente */
+  justify-content: flex-start; /* Alineación inicial en desktop */
+}
+
+/* Vista Mobile: thumbnails posicionados horizontalmente y centrados */
+@media (max-width: 768px) {
+  .image-gallery-thumbnails-container {
+    flex-direction: row; /* Thumbnails alineados horizontalmente */
+    justify-content: center; /* Centra los thumbnails en mobile */
+  }
 }
 
 /* ------------------------------------ */

@@ -21,6 +21,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { convertDurationToDays } from "@/utils/dateUtils";
 import { FaStarHalfAlt } from "react-icons/fa";
+import { useEffect } from "react";
 
 interface CustomRange {
   startDate: Date;
@@ -52,6 +53,23 @@ const ProductDetails: React.FC<TouristPlan> = ({
 
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
   const [showReservationForm, setShowReservationForm] = useState(false);
+  const [thumbnailPosition, setThumbnailPosition] = useState<
+    "right" | "bottom" | "top" | "left"
+  >("right");
+
+  // Cambiar la posición de las miniaturas según el tamaño de la pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      setThumbnailPosition(window.innerWidth < 768 ? "bottom" : "right");
+    };
+
+    handleResize(); // Aplicar en el primer renderizado
+    window.addEventListener("resize", handleResize); // Escuchar cambios en el tamaño
+
+    return () => window.removeEventListener("resize", handleResize); // Limpiar evento
+  }, []);
+
+
 
   const handleClick = () => {
     if (!session) {
@@ -159,7 +177,7 @@ const ProductDetails: React.FC<TouristPlan> = ({
             showBullets={false}
             showPlayButton={false}
             showNav={false}
-            thumbnailPosition="right"
+            thumbnailPosition={thumbnailPosition}
             lazyLoad={true}
             items={imagesGallery}
           />
