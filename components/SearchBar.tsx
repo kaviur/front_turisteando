@@ -14,7 +14,7 @@ import CapacityOption from "./SearchBarOptions/CapacityOption";
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 type SearchBarProps = {
-  setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>>;
+  setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>> | ((plans: TouristPlan[]) => void);
   allTours: TouristPlan[];
 };
 

@@ -2,7 +2,7 @@ import { TouristPlan } from "./touristPlan";
 
 export interface RangeProps {
   allTours: TouristPlan[];
-  setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>>;
+  setTours: React.Dispatch<React.SetStateAction<TouristPlan[]>> | ((plans: TouristPlan[]) => void);
   minValue: number;
   maxValue: number;
   onClose: (

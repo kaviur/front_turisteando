@@ -17,19 +17,23 @@ import { TouristPlan } from "@/types/touristPlan";
 import { fetchTours } from "@/lib/actions";
 
 export interface FavoritesContextType {
-  touristPlans: TouristPlan[];
+  allTouristPlans: TouristPlan[]; // todos los planes
+  touristPlans: TouristPlan[]; // Planes filtrados o mostrados
   loading: boolean;
   error: Error | null;
   addFavorite: (planId: number) => void;
   removeFavorite: (planId: number) => void;
+  updateTouristPlans: (plans: TouristPlan[]) => void;
 }
 
 const FavoritesContext = createContext<FavoritesContextType>({
+  allTouristPlans: [],
   touristPlans: [],
   loading: false,
   error: null,
   addFavorite: () => {},
   removeFavorite: () => {},
+  updateTouristPlans: () => {},
 });
 
 export const useFavorites = () => useContext(FavoritesContext);
@@ -41,7 +45,8 @@ interface FavoritesProviderProps {
 export const FavoritesProvider = ({
   children,
 }: FavoritesProviderProps): JSX.Element => {
-  const [touristPlans, setTouristPlans] = useState<TouristPlan[]>([]);
+  const [allTouristPlans, setAllTouristPlans] = useState<TouristPlan[]>([]); // Estado para todos los planes
+  const [touristPlans, setTouristPlans] = useState<TouristPlan[]>([]); // Estado para los planes filtrados
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -63,6 +68,7 @@ export const FavoritesProvider = ({
         }
         const response = await fetchAPI;
         if (response) {
+          setAllTouristPlans(response);
           setTouristPlans(response);
         }
       } catch (err) {
@@ -109,14 +115,21 @@ export const FavoritesProvider = ({
     }
   };
 
+  // Nueva función para actualizar los planes turísticos sin exponer directamente el setter
+  const updateTouristPlans = (plans: TouristPlan[]) => {
+    setTouristPlans(plans);
+  };
+
   return (
     <FavoritesContext.Provider
       value={{
+        allTouristPlans,
         touristPlans,
         loading,
         error,
         addFavorite,
         removeFavorite,
+        updateTouristPlans
       }}
     >
       {children}

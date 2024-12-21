@@ -6,6 +6,7 @@ import VacationCard from "./VacationCard";
 import { fetchCategories } from "@/lib/categories/categoryActions"
 import { ResCategory } from "@/types/categories";
 import Image from "next/image";
+import SearchBar from "./SearchBar";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -16,8 +17,8 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
   const [activeTab, setActiveTab] = useState(Number(categoryId));
   const [currentPage, setCurrentPage] = useState(1);
   // const [loading, setLoading] = useState(true); // Para el estado de carga
-  const itemsPerPage = 9;
-  const { touristPlans, loading } = useFavorites();
+  const itemsPerPage = 12;
+  const { allTouristPlans, touristPlans, loading, updateTouristPlans } = useFavorites();
   //const tours = touristPlans;
   const [categories, setCategories] = useState<ResCategory[]>([]);
 
@@ -58,7 +59,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
   const renderContent = () => (
     <div className="flex gap-4 gap-y-8 flex-wrap justify-center">
       {loading
-      ? Array.from({ length: 9 }).map((_, index) => (
+      ? Array.from({ length: itemsPerPage }).map((_, index) => (
         <div key={index} className="relative card w-80 h-128 bg-base-100 shadow-md border border-base-200 p-4">
           <div className="skeleton w-full h-64 rounded-t-2xl mb-4"></div>
           <div className="space-y-2">
@@ -142,6 +143,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
               {category.name}
           </a>
         ))}
+         <SearchBar setTours={updateTouristPlans} allTours={allTouristPlans} />
       </div>
       <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
 
