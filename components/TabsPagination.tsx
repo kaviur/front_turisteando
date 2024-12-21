@@ -3,10 +3,10 @@ import { BiCategoryAlt } from "react-icons/bi";
 // import { TouristPlan } from "@/types/touristPlan";
 import { useFavorites } from "@/context/FavoritesContext";
 import VacationCard from "./VacationCard";
-import { fetchCategories } from "@/lib/categories/categoryActions"
 import { ResCategory } from "@/types/categories";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
+import { Characteristics } from "@/types/characteristics";
 
 type TabsProps = {
   isMobile?: boolean;
@@ -21,6 +21,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
   const { allTouristPlans, touristPlans, loading, updateTouristPlans } = useFavorites();
   //const tours = touristPlans;
   const [categories, setCategories] = useState<ResCategory[]>([]);
+  const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
 
 
   useEffect(() => {
@@ -29,18 +30,34 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-        try {
-            const categories = await fetchCategories();
-            setCategories(categories);
-            //setActiveTab(Number(categories[0]?.id) || 0); // Inicializar con la primera categoría.
-        } catch (error) {
-            console.error("Error fetching categories:", error);
-        } finally {
-          console.error("Error fetching categories:");
+      try {
+        const [categoriesResponse, characteristicsResponse] = await Promise.all([
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories/all`),
+          fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/characteristics/all`),
+        ]);
+  
+        if (!categoriesResponse.ok ||  !characteristicsResponse.ok) {
+          throw new Error('Error en las solicitudes de categorías o características.');
         }
-    };
+  
+        const categoriesData = await categoriesResponse.json();
+        const characteristicsData = await characteristicsResponse.json();
+  
+        setCategories(categoriesData.data);
+        setCharacteristics(
+          characteristicsData.data.map((item: Characteristics) => ({
+            id: item.id?.toString(),
+            name: item.name,
+            image: item.image,
+          }))
+        );
 
-      fetchData();
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } 
+    };
+  
+    fetchData();
   }, []);
 
   const filteredTours = activeTab === 0
@@ -144,6 +161,27 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
           </a>
         ))}
          <SearchBar setTours={updateTouristPlans} allTours={allTouristPlans} />
+
+        <div className="flex flex-wrap gap-4 mt-3">
+          {characteristics.map((characteristic) => {    
+            // Obtener la URL de la imagen
+            const imageUrl = 
+              typeof characteristic.image === "object" && "imageUrl" in characteristic.image
+                ? characteristic.image.imageUrl
+                : "";
+  
+            return (         
+                imageUrl && (
+                  <Image
+                  src={imageUrl}
+                  alt={characteristic.name?characteristic.name:""}
+                  width={24} 
+                  height={24}
+                />
+                )
+            );
+          })}
+        </div>
       </div>
       <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
 
