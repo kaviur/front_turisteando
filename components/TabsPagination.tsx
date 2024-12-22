@@ -14,19 +14,53 @@ type TabsProps = {
 };
 
 export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
-  const [activeTab, setActiveTab] = useState(Number(categoryId));
+  const [activeCategory, setActiveCategory] = useState<number | null>(Number(categoryId));
+  const [activeCharacteristics, setActiveCharacteristics] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   // const [loading, setLoading] = useState(true); // Para el estado de carga
   const itemsPerPage = 12;
+  const characteristicsToShow = 6;
   const { allTouristPlans, touristPlans, loading, updateTouristPlans } = useFavorites();
   //const tours = touristPlans;
   const [categories, setCategories] = useState<ResCategory[]>([]);
   const [characteristics, setCharacteristics] = useState<Characteristics[]>([]);
 
+  const [characteristicsStartIndex, setCharacteristicsStartIndex] = useState(0);
+  const visibleCharacteristics = characteristics.slice(
+    characteristicsStartIndex,
+    characteristicsStartIndex + characteristicsToShow
+  );
+
+  const handleNextCharacteristics = () => {
+    if (characteristicsStartIndex + characteristicsToShow < characteristics.length) {
+      setCharacteristicsStartIndex((prev) => prev + characteristicsToShow);
+    }
+  };
+  
+  const handlePrevCharacteristics = () => {
+    if (characteristicsStartIndex > 0) {
+      setCharacteristicsStartIndex((prev) => prev - characteristicsToShow);
+    }
+  };
+  
+
+  const handleCategoryClick = (categoryId: number | null) => {
+    setActiveCategory(categoryId);
+  };
+  
+  // Cambiar características activas
+  const handleCharacteristicClick = (characteristicId: number) => {
+    setActiveCharacteristics((prev) =>
+      prev.includes(characteristicId)
+        ? prev.filter((id) => id !== characteristicId) // Desactivar si ya está seleccionada
+        : [...prev, characteristicId] // Activar si no está seleccionada
+    );
+  };
+
 
   useEffect(() => {
     setCurrentPage(1); // Resetear la paginación al cambiar de pestaña
-  }, [activeTab]);
+  }, [activeCategory]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,10 +93,19 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
   
     fetchData();
   }, []);
+ 
 
-  const filteredTours = activeTab === 0
-  ? touristPlans // Muestra todos los planes si activeTab es 0
-  : touristPlans.filter((tour) => tour.category.id === activeTab);
+  const filteredTours = touristPlans.filter((plan) => {
+    const matchesCategory = activeCategory === 0
+    ? touristPlans
+    : plan.category.id === activeCategory;
+
+    const matchesCharacteristics =
+      activeCharacteristics.length === 0 ||
+      activeCharacteristics.every((id) => plan.characteristic.some((char) => char.id === id));
+  
+    return matchesCategory && matchesCharacteristics;
+  });
 
   const totalPages = Math.ceil(filteredTours.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -115,72 +158,93 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
     <div>
       <div
         role="tablist"
-        className="mx-6 flex flex-wrap justify-start items-center gap-4 bg-base-100"
+        className="mx-6 flex flex-wrap justify-around tems-center gap-4 bg-base-100"
       >
-        {/* Botón para "Todos" */}
-        <div
-          className={`flex items-center cursor-pointer p-3 rounded-md transition-all border-2 ${
-            activeTab === 0
-              ? activeTabStyles["tab-active"]
-              : activeTabStyles[""]
-          }`}
-          onClick={() => setActiveTab(0)}
-        >
-          <BiCategoryAlt
-            size={24}
-            className={`mr-2 ${
-              activeTab === 0 ? "text-primary" : "text-black"
-            }`}
-          />
-          <span>Todos</span>
-        </div>
-
-        {categories.map((category) => (
-          <a
-            key={category.id}
-            role="tab"
-            className={`btn btn-ghost rounded-full h-14 px-6 ${
-              activeTab === Number(category.id)
+        <div className="mx-6 flex flex-wrap justify-around tems-center gap-4 bg-base-100">
+          {/* Botón para "Todos" */}
+          <div
+            className={`flex items-center cursor-pointer p-3 rounded-md transition-all border-2 ${
+              activeCategory === 0
                 ? activeTabStyles["tab-active"]
                 : activeTabStyles[""]
             }`}
-            onClick={() => setActiveTab(Number(category.id))}
+            onClick={() => handleCategoryClick(0)}
           >
-            {category.image ? (
-                <Image 
-                  src={category.image.imageUrl} 
-                  alt={category.name} 
-                  width={24} 
-                  height={24} 
-                  className="mr-2"
-                />
-              ) : (
-                <BiCategoryAlt className="mr-2" size={24} />
-              )}
-              {category.name}
-          </a>
-        ))}
-         <SearchBar setTours={updateTouristPlans} allTours={allTouristPlans} />
+            <BiCategoryAlt
+              size={24}
+              className={`mr-2 ${
+                activeCategory === 0 ? "text-primary" : "text-black"
+              }`}
+            />
+            <span>Todos</span>
+          </div>
 
-        <div className="flex flex-wrap gap-4 mt-3">
-          {characteristics.map((characteristic) => {    
-            // Obtener la URL de la imagen
-            const imageUrl = 
-              typeof characteristic.image === "object" && "imageUrl" in characteristic.image
-                ? characteristic.image.imageUrl
-                : "";
-  
-            return (         
+          {categories.map((category) => (
+            <a
+              key={category.id}
+              role="tab"
+              className={`btn btn-ghost rounded-full h-14 px-6 ${
+                activeCategory === Number(category.id)
+                  ? activeTabStyles["tab-active"]
+                  : activeTabStyles[""]
+              }`}
+              onClick={() => handleCategoryClick(Number(category.id))}
+            >
+              {category.image ? (
+                  <Image 
+                    src={category.image.imageUrl} 
+                    alt={category.name} 
+                    width={24} 
+                    height={24} 
+                    className="mr-2"
+                  />
+                ) : (
+                  <BiCategoryAlt className="mr-2" size={24} />
+                )}
+                {category.name}
+            </a>
+          ))}
+        </div>
+        <SearchBar setTours={updateTouristPlans} allTours={allTouristPlans} />
+        <div className="flex items-center">
+          <button
+            onClick={handlePrevCharacteristics}
+            disabled={characteristicsStartIndex === 0}
+          >
+            {"<"}
+          </button>
+          <div className="flex flex-wrap gap-4 mt-3">
+            {visibleCharacteristics.map((characteristic) => {
+              const imageUrl =
+                typeof characteristic.image === "object" && "imageUrl" in characteristic.image
+                  ? characteristic.image.imageUrl
+                  : "";
+
+              const isSelected = activeCharacteristics.includes(characteristic.id?Number(characteristic.id):0);
+
+              return (
                 imageUrl && (
                   <Image
-                  src={imageUrl}
-                  alt={characteristic.name?characteristic.name:""}
-                  width={24} 
-                  height={24}
-                />
+                    key={characteristic.id}
+                    src={imageUrl}
+                    alt={characteristic.name || ""}
+                    width={24}
+                    height={24}
+                    className={`cursor-pointer ${
+                      isSelected ? "border-2 border-blue-500" : ""
+                    }`}
+                    onClick={() => handleCharacteristicClick((characteristic.id?Number(characteristic.id):0))}
+                  />
                 )
-            );
-          })}
+              );
+            })}
+          </div>
+          <button
+            onClick={handleNextCharacteristics}
+            disabled={characteristicsStartIndex + 5 >= characteristics.length}
+          >
+            {">"}
+          </button>
         </div>
       </div>
       <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
