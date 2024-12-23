@@ -479,8 +479,8 @@ const ProductForm = ({
                 <Image
                 src={imageUrl}
                 alt={characteristic.name?characteristic.name:""}
-                width={24}  // Puedes ajustar estos valores según el tamaño que desees
-                height={24} // Ajusta según sea necesario
+                width={24}  
+                height={24} 
                 className={`transition-all ${isChecked ? "opacity-50 invert" : ""}`}
               />
               )}
