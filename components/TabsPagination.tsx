@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BiCategoryAlt } from "react-icons/bi";
+import { HiArrowLeft, HiArrowRight } from "react-icons/hi";
 // import { TouristPlan } from "@/types/touristPlan";
 import { useFavorites } from "@/context/FavoritesContext";
 import VacationCard from "./VacationCard";
@@ -19,7 +20,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
   const [currentPage, setCurrentPage] = useState(1);
   // const [loading, setLoading] = useState(true); // Para el estado de carga
   const itemsPerPage = 12;
-  const characteristicsToShow = 6;
+  const characteristicsToShow = 8;
   const { allTouristPlans, touristPlans, loading, updateTouristPlans } = useFavorites();
   //const tours = touristPlans;
   const [categories, setCategories] = useState<ResCategory[]>([]);
@@ -32,14 +33,22 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
   );
 
   const handleNextCharacteristics = () => {
-    if (characteristicsStartIndex + characteristicsToShow < characteristics.length) {
-      setCharacteristicsStartIndex((prev) => prev + characteristicsToShow);
+    const remainingCharacteristics = characteristics.length - (characteristicsStartIndex + characteristicsToShow);
+  
+    if (remainingCharacteristics > 0) {
+      if (remainingCharacteristics < characteristicsToShow) {
+        setCharacteristicsStartIndex(
+          (prev) => prev + remainingCharacteristics 
+        );
+      } else {
+        setCharacteristicsStartIndex((prev) => prev + characteristicsToShow);
+      }
     }
   };
   
   const handlePrevCharacteristics = () => {
     if (characteristicsStartIndex > 0) {
-      setCharacteristicsStartIndex((prev) => prev - characteristicsToShow);
+      setCharacteristicsStartIndex((prev) => Math.max(0, prev - characteristicsToShow));
     }
   };
   
@@ -160,7 +169,7 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
         role="tablist"
         className="mx-6 flex flex-wrap justify-around tems-center gap-4 bg-base-100"
       >
-        <div className="mx-6 flex flex-wrap justify-around tems-center gap-4 bg-base-100">
+        <div className="mx-6 flex justify-around tems-center gap-4 bg-base-100">
           {/* Botón para "Todos" */}
           <div
             className={`flex items-center cursor-pointer p-3 rounded-md transition-all border-2 ${
@@ -210,10 +219,13 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
           <button
             onClick={handlePrevCharacteristics}
             disabled={characteristicsStartIndex === 0}
+            className={`transition-transform duration-200 ${
+              characteristicsStartIndex > 0 ? "hover:scale-110" : "opacity-50"
+            }`}
           >
-            {"<"}
+            <HiArrowLeft size={24} />
           </button>
-          <div className="flex flex-wrap gap-4 mt-3">
+          <div className="flex flex-wrap gap-4 mt-3 mx-3">
             {visibleCharacteristics.map((characteristic) => {
               const imageUrl =
                 typeof characteristic.image === "object" && "imageUrl" in characteristic.image
@@ -241,13 +253,22 @@ export const TabsPagination: React.FC<TabsProps> = ({ categoryId }) => {
           </div>
           <button
             onClick={handleNextCharacteristics}
-            disabled={characteristicsStartIndex + 5 >= characteristics.length}
+            disabled={
+              characteristicsStartIndex + characteristicsToShow >=
+              characteristics.length
+            }
+            className={`transition-transform duration-200 ${
+              characteristicsStartIndex + characteristicsToShow <
+              characteristics.length
+                ? "hover:scale-110"
+                : "opacity-50"
+            }`}
           >
-            {">"}
+            <HiArrowRight size={24} />
           </button>
         </div>
       </div>
-      <div className="p-4 mt-4 bg-gray-100 rounded-lg">{renderContent()}</div>
+      <div className="p-4 mt-10 bg-gray-100 rounded-lg">{renderContent()}</div>
 
       {/* Paginación */}
       {!loading && (

@@ -45,7 +45,7 @@ const PriceOption: React.FC<RangeProps> = ({
   };
 
   return (
-    <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-xl shadow-md flex flex-col gap-4 items-center">
+    <div className="w-[390px] absolute right-0 -bottom-1 translate-y-full p-6 bg-gray-50 text-gray-700 rounded-xl shadow-md flex flex-col gap-4 items-center z-10">
       <div className="flex items-center justify-between w-full">
         <IoIosArrowDropdown
           className={`text-primary w-6 h-6 cursor-pointer transform ${

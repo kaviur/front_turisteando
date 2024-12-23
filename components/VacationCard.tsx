@@ -43,8 +43,8 @@ export default function VacationCard({ plan, comeForCategories = false }: CardPr
     <div
       className={`${
         comeForCategories
-          ? "relative card max-w-80 h-128 bg-base-100 shadow-md border border-base-200"
-          : "card w-full h-128 bg-base-100 shadow-md border border-base-200"
+          ? "relative card max-w-80 h-128 bg-base-100 shadow-md border border-base-200 z-0"
+          : "card w-full h-128 bg-base-100 shadow-md border border-base-200 z-0"
       }`}
     >
       {/* Link envolviendo toda la card */}
